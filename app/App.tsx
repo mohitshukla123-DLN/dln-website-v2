@@ -15,11 +15,13 @@ import SizeGuidePage from "./pages/SizeGuidePage";
 import PolicyPage from "./pages/PolicyPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Analytics from "./components/common/Analytics";
+import StructuredData from "./components/common/StructuredData";
 
 export default function App() {
   return (
     <>
       <Analytics />
+      <StructuredData />
 
       <Routes>
       <Route
