@@ -27,7 +27,7 @@ export default function SEO({
       <title>{fullTitle}</title>
       <meta
         name="google-site-verification"
-        content="TeqX7Fo62J7I6rLyEqiCOZU_jkSTNalnhCORYuta4zs"
+        content="UdTI7c9GdltUL3ofSY2zQfVYSVmLsBx9PqWyvftN3_E"
       />
 
       <meta
