@@ -25,6 +25,10 @@ export default function SEO({
   return (
     <Helmet>
       <title>{fullTitle}</title>
+      <meta
+        name="google-site-verification"
+        content="TeqX7Fo62J7I6rLyEqiCOZU_jkSTNalnhCORYuta4zs"
+      />
 
       <meta
         name="description"
