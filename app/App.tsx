@@ -14,10 +14,14 @@ import CollectionPage from "./pages/CollectionPage";
 import SizeGuidePage from "./pages/SizeGuidePage";
 import PolicyPage from "./pages/PolicyPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import Analytics from "./components/common/Analytics";
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <Analytics />
+
+      <Routes>
       <Route
         path="/"
         element={
@@ -127,5 +131,6 @@ export default function App() {
     />
       
     </Routes>
+    </>
   );
 }
