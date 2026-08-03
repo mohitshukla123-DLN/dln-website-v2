@@ -6,15 +6,20 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 import App from "../app/App";
 import { queryClient } from "../app/lib/queryClient";
+import { initializeAnalytics } from "../app/lib/analytics";
 
 import "../app/styles/globals.css";
 
+initializeAnalytics();
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
-<React.StrictMode>
-  <HelmetProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </HelmetProvider>
-</React.StrictMode>
+  <React.StrictMode>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </QueryClientProvider>
+    </HelmetProvider>
+  </React.StrictMode>
 );
