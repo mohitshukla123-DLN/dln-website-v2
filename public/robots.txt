@@ -2,4 +2,4 @@ User-agent: *
 
 Allow: /
 
-Sitemap: https://dresslikenawaabs.com/sitemap.xml
+Sitemap: https://dresslikenawaabs.pages.dev/sitemap.xml

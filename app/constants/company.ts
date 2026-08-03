@@ -9,7 +9,7 @@ export const COMPANY = {
 
   email: "dresslikenawaabs@gmail.com",
 
-  website: "https://dresslikenawaabs.com",
+  website: "https://dresslikenawaabs.pages.dev",
 
   address: "Lucknow, Uttar Pradesh, India",
 

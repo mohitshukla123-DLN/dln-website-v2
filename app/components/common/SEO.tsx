@@ -8,7 +8,7 @@ interface SEOProps {
 }
 
 const SITE_NAME = "Dress Like Nawaabs";
-const SITE_URL = "https://dresslikenawaabs.com";
+const SITE_URL = "https://dresslikenawaabs.pages.dev";
 const DEFAULT_IMAGE = "/og-image.jpg";
 
 export default function SEO({
