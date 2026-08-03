@@ -7,10 +7,12 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import App from "../app/App";
 import { queryClient } from "../app/lib/queryClient";
 import { initializeAnalytics } from "../app/lib/analytics";
+import { initializeClarity } from "../app/lib/clarity";
 
 import "../app/styles/globals.css";
 
 initializeAnalytics();
+initializeClarity();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
