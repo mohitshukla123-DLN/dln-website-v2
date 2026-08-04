@@ -18,6 +18,7 @@ import ProductLightbox from "../components/product/ProductLightbox";
 import ProductShare from "../components/product/ProductShare";
 import PageTitle from "../components/common/PageTitle";
 import SEO from "../components/common/SEO";
+import ProductSchema from "../components/common/ProductSchema";
 
 
 
@@ -81,6 +82,8 @@ export default function ProductPage() {
 
   return (
     <>
+    <ProductSchema product={product} />
+    
     <SEO
       title={product.name}
       description={product.description}

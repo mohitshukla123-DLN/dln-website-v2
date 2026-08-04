@@ -5,6 +5,7 @@ interface SEOProps {
   description: string;
   keywords?: string;
   image?: string;
+  canonical?: string;
 }
 
 const SITE_NAME = "Dress Like Nawaabs";
@@ -16,6 +17,7 @@ export default function SEO({
   description,
   keywords,
   image = DEFAULT_IMAGE,
+  canonical,
 }: SEOProps) {
   const fullTitle =
     title === "Home"
@@ -25,10 +27,6 @@ export default function SEO({
   return (
     <Helmet>
       <title>{fullTitle}</title>
-      <meta
-        name="google-site-verification"
-        content="UdTI7c9GdltUL3ofSY2zQfVYSVmLsBx9PqWyvftN3_E"
-      />
 
       <meta
         name="description"
@@ -42,10 +40,46 @@ export default function SEO({
         />
       )}
 
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={SITE_URL} />
+      <link
+        rel="canonical"
+        href={canonical || SITE_URL}
+      />
+
+      <meta
+        name="robots"
+        content="index,follow"
+      />
+
+      <meta
+        name="theme-color"
+        content="#111111"
+      />
+
+      <meta
+        property="og:site_name"
+        content={SITE_NAME}
+      />
+
+      <meta
+        property="og:title"
+        content={fullTitle}
+      />
+
+      <meta
+        property="og:description"
+        content={description}
+      />
+
+      <meta
+        property="og:type"
+        content="website"
+      />
+
+      <meta
+        property="og:url"
+        content={canonical || SITE_URL}
+      />
+
       <meta
         property="og:image"
         content={`${SITE_URL}${image}`}
@@ -55,14 +89,17 @@ export default function SEO({
         name="twitter:card"
         content="summary_large_image"
       />
+
       <meta
         name="twitter:title"
         content={fullTitle}
       />
+
       <meta
         name="twitter:description"
         content={description}
       />
+
       <meta
         name="twitter:image"
         content={`${SITE_URL}${image}`}
