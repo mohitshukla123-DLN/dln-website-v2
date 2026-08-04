@@ -2,12 +2,19 @@ import Container from "../components/ui/Container";
 import Button from "../components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import PageTitle from "../components/common/PageTitle";
+import SEO from "../components/common/SEO";
 
 export default function AboutPage() {
   const navigate = useNavigate();
 
   return (
     <>
+    <SEO
+      title="About Us"
+      description="Learn about Dress Like Nawaabs, our vision, craftsmanship, premium fabrics and commitment to luxury ethnic wear."
+      canonical="https://dresslikenawaabs.pages.dev/about"
+    />
+
     <PageTitle title="About Us" />
       {/* Hero */}
 

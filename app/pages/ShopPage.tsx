@@ -12,6 +12,7 @@ import EmptyState from "../components/shop/EmptyState";
 import { products } from "../data/products";
 import { useSearchParams } from "react-router-dom";
 import PageTitle from "../components/common/PageTitle";
+import SEO from "../components/common/SEO";
 
 export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -88,6 +89,12 @@ export default function ShopPage() {
   return (
 
     <>
+    <SEO
+      title="Shop"
+      description="Browse premium Kurtis, Sarees, Shararas, Co-ord Sets, Jackets and more from Dress Like Nawaabs."
+      canonical="https://dresslikenawaabs.pages.dev/shop"
+    />
+
     <PageTitle title="Shop" />
 
     <section className="py-20">
