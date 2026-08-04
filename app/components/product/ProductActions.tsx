@@ -8,15 +8,22 @@ interface Props {
     price: number;
   };
   selectedSize: string;
+  onEnquiry?: () => void;
 }
 
 export default function ProductActions({
   product,
   selectedSize,
+  onEnquiry,
 }: Props) {
+  function requireSize() {
+    alert("Please select a size.");
+  }
+
   return (
-    <div className="mt-10">
+    <div className="mt-10 flex flex-col gap-4 sm:flex-row">
       <a
+        className="flex-1"
         href={
           selectedSize
             ? buildWhatsAppLink(
@@ -32,14 +39,28 @@ export default function ProductActions({
         onClick={(e) => {
           if (!selectedSize) {
             e.preventDefault();
-            alert("Please select a size.");
+            requireSize();
           }
         }}
       >
-        <Button className="flex items-center justify-center gap-3">
+        <Button className="w-full">
           WhatsApp Enquiry
         </Button>
       </a>
+
+      <Button
+        className="flex-1"
+        onClick={() => {
+          if (!selectedSize) {
+            requireSize();
+            return;
+          }
+
+          onEnquiry?.();
+        }}
+      >
+        Email Enquiry
+      </Button>
     </div>
   );
 }
