@@ -6,6 +6,7 @@ import ProductGrid from "../components/shop/ProductGrid";
 import { products } from "../data/products";
 import { categories } from "../data/categories";
 import PageTitle from "../components/common/PageTitle";
+import SEO from "../components/common/SEO";
 
 export default function CategoryPage() {
   const { slug } = useParams();
@@ -37,7 +38,13 @@ export default function CategoryPage() {
 
   return (
     <>
-    <PageTitle title="Category" />
+    <SEO
+      title={category.name}
+      description={`Browse our premium ${category.name} collection.`}
+      canonical={`https://dresslikenawaabs.pages.dev/category/${category.slug}`}
+    />
+
+    <PageTitle title={category.name} />
     <section className="py-20">
       <Container>
         <div className="mb-14">
