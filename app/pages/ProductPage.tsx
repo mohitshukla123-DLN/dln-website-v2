@@ -16,7 +16,6 @@ import ProductCard from "../components/product/ProductCard";
 import EnquiryDrawer from "../components/product/EnquiryDrawer";
 import ProductLightbox from "../components/product/ProductLightbox";
 import ProductShare from "../components/product/ProductShare";
-import PageTitle from "../components/common/PageTitle";
 import SEO from "../components/common/SEO";
 import ProductSchema from "../components/common/ProductSchema";
 
@@ -99,7 +98,6 @@ export default function ProductPage() {
       ].join(", ")}
     />
     
-    <PageTitle title={product.name} />
     <section className="py-20">
       <Container>
 

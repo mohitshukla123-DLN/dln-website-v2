@@ -1,10 +1,8 @@
 import Container from "../components/ui/Container";
-import PageTitle from "../components/common/PageTitle";
 
 export default function PolicyPage() {
   return (
     <>
-    <PageTitle title="Policies" />
     <section className="py-20">
       <Container className="max-w-5xl">
         <h1 className="text-5xl font-bold">

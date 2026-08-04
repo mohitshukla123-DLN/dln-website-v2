@@ -13,7 +13,6 @@ import Newsletter from "../components/homepage/Newsletter";
 
 import CategoryGrid from "../components/homepage/CategoryGrid";
 import NewArrivals from "../components/homepage/NewArrivals";
-import PageTitle from "../components/common/PageTitle";
 import SEO from "../components/common/SEO";
 
 export default function HomePage() {
@@ -27,7 +26,6 @@ export default function HomePage() {
         canonical="https://dresslikenawaabs.pages.dev/"
         keywords="Lucknow Chikankari, Luxury Kurti, Ethnic Wear, Designer Sarees, Women's Fashion, Dress Like Nawaabs"
       />
-      <PageTitle title="Home" />
       {/* Hero Section */}
       <section className="py-24">
         <Container>

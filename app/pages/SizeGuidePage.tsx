@@ -1,10 +1,8 @@
 import Container from "../components/ui/Container";
-import PageTitle from "../components/common/PageTitle";
 
 export default function SizeGuidePage() {
   return (
     <>
-    <PageTitle title="Size Guide" />
     <section className="py-20">
       <Container>
         <h1 className="text-5xl font-bold">

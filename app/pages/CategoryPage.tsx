@@ -5,7 +5,6 @@ import ProductGrid from "../components/shop/ProductGrid";
 
 import { products } from "../data/products";
 import { categories } from "../data/categories";
-import PageTitle from "../components/common/PageTitle";
 import SEO from "../components/common/SEO";
 
 export default function CategoryPage() {
@@ -18,7 +17,6 @@ export default function CategoryPage() {
   if (!category) {
     return (
       <>
-      <PageTitle title="Category" />
       <Container>
         <section className="py-20 text-center">
           <h1 className="text-4xl font-bold">
@@ -44,7 +42,6 @@ export default function CategoryPage() {
       canonical={`https://dresslikenawaabs.pages.dev/category/${category.slug}`}
     />
 
-    <PageTitle title={category.name} />
     <section className="py-20">
       <Container>
         <div className="mb-14">

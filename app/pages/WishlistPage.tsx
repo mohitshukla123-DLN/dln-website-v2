@@ -3,7 +3,6 @@ import { getWishlist } from "../lib/wishlist";
 
 import Container from "../components/ui/Container";
 import ProductGrid from "../components/shop/ProductGrid";
-import PageTitle from "../components/common/PageTitle";
 
 export default function WishlistPage() {
   const wishlist = getWishlist();
@@ -14,7 +13,6 @@ export default function WishlistPage() {
 
   return (
     <>
-    <PageTitle title="Wishlist" />
     <section className="py-20">
       <Container>
         <div className="mb-12">

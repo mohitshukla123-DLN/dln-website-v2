@@ -1,12 +1,10 @@
 import { Link } from "react-router-dom";
 import Container from "../components/ui/Container";
 import Button from "../components/ui/Button";
-import PageTitle from "../components/common/PageTitle";
 
 export default function NotFoundPage() {
   return (
     <>
-      <PageTitle title="Page Not Found" />
 
       <section className="py-24">
         <Container className="text-center">

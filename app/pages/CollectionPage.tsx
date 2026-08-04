@@ -5,7 +5,6 @@ import ProductGrid from "../components/shop/ProductGrid";
 
 import { products } from "../data/products";
 import { collections } from "../data/collections";
-import PageTitle from "../components/common/PageTitle";
 import SEO from "../components/common/SEO";
 
 export default function CollectionPage() {
@@ -18,7 +17,6 @@ export default function CollectionPage() {
   if (!collection) {
     return (
       <>
-      <PageTitle title="Collections" />
       <Container>
         <section className="py-20">
           <h1 className="text-4xl font-bold">
@@ -44,7 +42,6 @@ export default function CollectionPage() {
       canonical={`https://dresslikenawaabs.pages.dev/collections/${collection.slug}`}
     />
 
-    <PageTitle title={collection.title} />
     <section className="py-20">
       <Container>
         <h1 className="text-5xl font-bold">

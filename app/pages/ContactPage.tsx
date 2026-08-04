@@ -1,6 +1,5 @@
 import Container from "../components/ui/Container";
 import Button from "../components/ui/Button";
-import PageTitle from "../components/common/PageTitle";
 import SEO from "../components/common/SEO";
 
 export default function ContactPage() {
@@ -11,8 +10,6 @@ export default function ContactPage() {
       description="Contact Dress Like Nawaabs for enquiries, WhatsApp assistance, custom orders and customer support."
       canonical="https://dresslikenawaabs.pages.dev/contact"
     />
-
-    <PageTitle title="Contact" />
       {/* Hero */}
 
       <section className="bg-[var(--teal)] py-24 text-white">
