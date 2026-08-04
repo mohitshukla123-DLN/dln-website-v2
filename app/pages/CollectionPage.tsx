@@ -6,6 +6,7 @@ import ProductGrid from "../components/shop/ProductGrid";
 import { products } from "../data/products";
 import { collections } from "../data/collections";
 import PageTitle from "../components/common/PageTitle";
+import SEO from "../components/common/SEO";
 
 export default function CollectionPage() {
   const { slug } = useParams();
@@ -37,7 +38,13 @@ export default function CollectionPage() {
 
   return (
     <>
-      <PageTitle title="Collections" />
+    <SEO
+      title={collection.title}
+      description={collection.description}
+      canonical={`https://dresslikenawaabs.pages.dev/collections/${collection.slug}`}
+    />
+
+    <PageTitle title={collection.title} />
     <section className="py-20">
       <Container>
         <h1 className="text-5xl font-bold">
