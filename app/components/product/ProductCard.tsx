@@ -29,14 +29,16 @@ export default function ProductCard({
   const intervalRef = useRef<number | null>(null);
 
   function handleWishlist() {
-    toggleWishlist(product.id);
+  toggleWishlist(product.id);
 
-    setWishlisted(
-      isWishlisted(product.id)
-    );
-  }
+  window.dispatchEvent(new Event("wishlistUpdated"));
 
-  useEffect(() => {
+  setWishlisted(
+    isWishlisted(product.id)
+  );
+}
+
+useEffect(() => {
   setCurrentImage(0);
 
   if (product.images.length <= 1) return;

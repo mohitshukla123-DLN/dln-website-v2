@@ -24,9 +24,11 @@ export default function Navbar() {
     updateWishlist();
 
     window.addEventListener("storage", updateWishlist);
+    window.addEventListener("wishlistUpdated", updateWishlist);
 
     return () => {
       window.removeEventListener("storage", updateWishlist);
+      window.removeEventListener("wishlistUpdated", updateWishlist);
     };
   }, []);
 
