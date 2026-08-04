@@ -70,6 +70,10 @@ export default function ProductPage() {
 
       async function loadReviews() {
         const data = await getReviews(slug);
+
+        console.log("Current product slug:", slug);
+        console.log("Reviews returned:", data);
+
         setReviews(data);
       }
 
