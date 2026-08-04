@@ -1,9 +1,4 @@
-interface Review {
-  name: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
+import type { Review } from "../../lib/reviews";
 
 interface Props {
   reviews: Review[];
@@ -13,7 +8,17 @@ export default function ProductReviews({
   reviews,
 }: Props) {
   if (reviews.length === 0) {
-    return null;
+    return (
+      <section className="mt-16">
+        <h2 className="text-3xl font-bold">
+          Customer Reviews
+        </h2>
+
+        <p className="mt-6 text-[var(--muted)]">
+          No reviews yet. Be the first to review this product.
+        </p>
+      </section>
+    );
   }
 
   return (
@@ -23,14 +28,14 @@ export default function ProductReviews({
       </h2>
 
       <div className="mt-8 space-y-6">
-        {reviews.map((review, index) => (
+        {reviews.map((review) => (
           <div
-            key={index}
+            key={review.id}
             className="rounded-2xl border border-black/10 p-6"
           >
             <div className="flex items-center justify-between">
               <h3 className="font-semibold">
-                {review.name}
+                {review.customer_name}
               </h3>
 
               <span className="text-yellow-500">
@@ -43,7 +48,14 @@ export default function ProductReviews({
             </p>
 
             <p className="mt-4 text-sm text-gray-500">
-              {review.date}
+              {new Date(review.created_at).toLocaleDateString(
+                "en-IN",
+                {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                }
+              )}
             </p>
           </div>
         ))}
