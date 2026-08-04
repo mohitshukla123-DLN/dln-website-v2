@@ -12,6 +12,7 @@ import EmptyState from "../components/shop/EmptyState";
 import { products } from "../data/products";
 import { useSearchParams } from "react-router-dom";
 import SEO from "../components/common/SEO";
+import PriceFilter from "../components/shop/PriceFilter";
 
 export default function ShopPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -19,6 +20,7 @@ export default function ShopPage() {
   const [category, setCategory] = useState(searchParams.get("category") ?? "All");
   const [subcategory, setSubcategory] = useState(searchParams.get("subcategory") ?? "All");
   const [sort, setSort] = useState("featured");
+  const [priceRange, setPriceRange] = useState("all");
 
   useEffect(() => {
   const params = new URLSearchParams();
@@ -52,10 +54,24 @@ export default function ShopPage() {
         subcategory === "All" ||
         product.subcategory === subcategory;
 
+        const matchesPrice =
+        priceRange === "all" ||
+        (priceRange === "under-2000" &&
+          product.price < 2000) ||
+        (priceRange === "2000-5000" &&
+          product.price >= 2000 &&
+          product.price <= 5000) ||
+        (priceRange === "5000-10000" &&
+          product.price > 5000 &&
+          product.price <= 10000) ||
+        (priceRange === "above-10000" &&
+          product.price > 10000);
+
       return (
         matchesSearch &&
         matchesCategory &&
-        matchesSubcategory
+        matchesSubcategory &&
+        matchesPrice
       );
     });
 
@@ -78,7 +94,13 @@ export default function ShopPage() {
       default:
         return result;
     }
-  }, [search, category, subcategory, sort]);
+      }, [
+      search,
+      category,
+      subcategory,
+      sort,
+      priceRange,
+    ]);
 
   function handleCategory(categoryName: string) {
     setCategory(categoryName);
@@ -120,6 +142,11 @@ export default function ShopPage() {
           category={category}
           selected={subcategory}
           onSelect={setSubcategory}
+        />
+
+        <PriceFilter
+          value={priceRange}
+          onChange={setPriceRange}
         />
 
         <SortDropdown
