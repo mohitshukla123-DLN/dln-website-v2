@@ -16,22 +16,44 @@ export default function ProductGallery({
   setActiveImage,
   onImageClick,
 }: Props) {
-  const [zoom, setZoom] = useState(false);
+  const [zoomStyle, setZoomStyle] = useState({
+    transformOrigin: "center center",
+    transform: "scale(1)",
+  });
+
+  function handleMouseMove(
+    e: React.MouseEvent<HTMLImageElement>
+  ) {
+    const { left, top, width, height } =
+      e.currentTarget.getBoundingClientRect();
+
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+
+    setZoomStyle({
+      transformOrigin: `${x}% ${y}%`,
+      transform: "scale(2)",
+    });
+  }
+
+  function resetZoom() {
+    setZoomStyle({
+      transformOrigin: "center center",
+      transform: "scale(1)",
+    });
+  }
 
   return (
     <div>
-      <div
-        className="overflow-hidden rounded-3xl"
-        onMouseEnter={() => setZoom(true)}
-        onMouseLeave={() => setZoom(false)}
-      >
+      <div className="overflow-hidden rounded-3xl shadow-lg">
         <img
           src={activeImage}
           alt={product.name}
           onClick={onImageClick}
-          className={`w-full cursor-zoom-in rounded-3xl object-cover shadow-lg transition-transform duration-300 ${
-            zoom ? "scale-150" : "scale-100"
-          }`}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={resetZoom}
+          style={zoomStyle}
+          className="w-full cursor-zoom-in object-cover transition-transform duration-200"
         />
       </div>
 
