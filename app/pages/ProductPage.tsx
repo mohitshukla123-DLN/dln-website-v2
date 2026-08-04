@@ -87,6 +87,8 @@ export default function ProductPage() {
     <SEO
       title={product.name}
       description={product.description}
+      canonical={`https://dresslikenawaabs.pages.dev/products/${product.slug}`}
+      image={product.images[0]}
       keywords={[
         product.category,
         product.subcategory,
@@ -96,6 +98,7 @@ export default function ProductPage() {
         "Luxury Ethnic Wear",
       ].join(", ")}
     />
+    
     <PageTitle title={product.name} />
     <section className="py-20">
       <Container>
