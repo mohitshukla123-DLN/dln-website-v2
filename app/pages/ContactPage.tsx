@@ -1,8 +1,75 @@
+import { useState } from "react";
+import emailjs from "@emailjs/browser";
+
 import Container from "../components/ui/Container";
 import Button from "../components/ui/Button";
 import SEO from "../components/common/SEO";
 
 export default function ContactPage() {
+
+      const [form, setForm] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+
+      const [loading, setLoading] = useState(false);
+      const [status, setStatus] = useState("");
+
+      function handleChange(
+        e: React.ChangeEvent<
+          HTMLInputElement | HTMLTextAreaElement
+        >
+      ) {
+        setForm({
+          ...form,
+          [e.target.name]: e.target.value,
+        });
+      }
+
+      async function handleSubmit(
+        e: React.FormEvent<HTMLFormElement>
+      ) {
+        e.preventDefault();
+
+        setLoading(true);
+        setStatus("");
+
+        try {
+          await emailjs.send(
+            "service_2wg6n31",
+            "template_rcz7uct",
+            {
+              title: "Website Enquiry",
+              name: form.name,
+              email: form.email,
+              phone: form.phone,
+              message: form.message,
+            },
+            "Xof8CYOdMm4b949az"
+          );
+
+          setStatus("Message sent successfully.");
+
+          setForm({
+            name: "",
+            email: "",
+            phone: "",
+            message: "",
+          });
+        } catch {
+          setStatus(
+            "Unable to send message. Please try again."
+          );
+        }
+
+        setLoading(false);
+      }
+
+
+
+  
   return (
     <>
     <SEO
@@ -110,35 +177,63 @@ export default function ContactPage() {
                 Send an Enquiry
               </h2>
 
-              <form className="mt-8 space-y-6">
+              <form
+                onSubmit={handleSubmit}
+                className="mt-8 space-y-6"
+              >
 
                 <input
                   type="text"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
                   placeholder="Your Name"
+                  required
                   className="w-full rounded-xl border p-4"
                 />
 
                 <input
                   type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
                   placeholder="Email Address"
+                  required
                   className="w-full rounded-xl border p-4"
                 />
 
                 <input
                   type="tel"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
                   placeholder="Phone Number"
                   className="w-full rounded-xl border p-4"
                 />
 
                 <textarea
                   rows={5}
+                  name="message"
+                  value={form.message}
+                  onChange={handleChange}
                   placeholder="Your Message"
+                  required
                   className="w-full rounded-xl border p-4"
                 />
 
-                <Button className="w-full">
-                  Send Message
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full"
+                >
+                  {loading ? "Sending..." : "Send Message"}
                 </Button>
+
+                {status && (
+                  <p className="text-center text-sm text-[var(--teal)]">
+                    {status}
+                  </p>
+                )}
 
               </form>
 
