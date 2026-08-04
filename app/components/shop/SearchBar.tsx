@@ -1,3 +1,7 @@
+import { Link } from "react-router-dom";
+
+import { products } from "../../data/products";
+
 interface Props {
   value: string;
   onChange: (value: string) => void;
@@ -7,8 +11,20 @@ export default function SearchBar({
   value,
   onChange,
 }: Props) {
+  const suggestions =
+    value.trim() === ""
+      ? []
+      : products
+          .filter((product) =>
+            product.name
+              .toLowerCase()
+              .includes(value.toLowerCase())
+          )
+          .slice(0, 5);
+
   return (
-    <div className="mb-8">
+    <div className="relative mb-8">
+
       <input
         type="text"
         value={value}
@@ -16,6 +32,38 @@ export default function SearchBar({
         placeholder="Search by product, SKU, category, colour..."
         className="w-full rounded-2xl border border-black/10 px-5 py-4 outline-none transition focus:border-[var(--teal)]"
       />
+
+      {suggestions.length > 0 && (
+        <div className="absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border border-black/10 bg-white shadow-xl">
+
+          {suggestions.map((product) => (
+            <Link
+              key={product.id}
+              to={`/products/${product.slug}`}
+              onClick={() => onChange("")}
+              className="flex items-center gap-4 border-b border-black/5 p-4 transition hover:bg-black/5 last:border-b-0"
+            >
+              <img
+                src={product.images[0]}
+                alt={product.name}
+                className="h-16 w-16 rounded-xl object-cover"
+              />
+
+              <div className="flex-1">
+                <p className="font-semibold">
+                  {product.name}
+                </p>
+
+                <p className="text-sm text-[var(--muted)]">
+                  ₹{product.price.toLocaleString("en-IN")}
+                </p>
+              </div>
+            </Link>
+          ))}
+
+        </div>
+      )}
+
     </div>
   );
 }
