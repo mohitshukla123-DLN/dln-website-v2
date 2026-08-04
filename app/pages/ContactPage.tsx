@@ -115,9 +115,13 @@ export default function ContactPage() {
                     📞 Phone
                   </h3>
 
-                  <p className="text-[var(--muted)]">
+                  <a
+                    href="tel:+917570828473"
+                    className="text-[var(--muted)] hover:text-[var(--teal)]"
+                  >
                     +91 75708 28473
-                  </p>
+                  </a>
+
                 </div>
 
                 <div>
@@ -125,9 +129,14 @@ export default function ContactPage() {
                     💬 WhatsApp
                   </h3>
 
-                  <p className="text-[var(--muted)]">
-                    +91 75708 28473
-                  </p>
+                 <a
+                  href="https://wa.me/917570828473"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--muted)] hover:text-[var(--teal)]"
+                >
+                  +91 75708 28473
+                </a>
                 </div>
 
                 <div>
@@ -135,9 +144,12 @@ export default function ContactPage() {
                     ✉️ Email
                   </h3>
 
-                  <p className="text-[var(--muted)]">
+                  <a
+                    href="mailto:dresslikenawaabs@gmail.com"
+                    className="text-[var(--muted)] hover:text-[var(--teal)]"
+                  >
                     dresslikenawaabs@gmail.com
-                  </p>
+                  </a>
                 </div>
 
                 <div>

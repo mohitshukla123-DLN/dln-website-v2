@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<urlset
-  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
     <loc>https://dresslikenawaabs.pages.dev/</loc>
@@ -13,19 +11,15 @@
   </url>
 
   <url>
+    <loc>https://dresslikenawaabs.pages.dev/new-arrivals</loc>
+  </url>
+
+  <url>
     <loc>https://dresslikenawaabs.pages.dev/about</loc>
   </url>
 
   <url>
     <loc>https://dresslikenawaabs.pages.dev/contact</loc>
-  </url>
-
-  <url>
-    <loc>https://dresslikenawaabs.pages.dev/policies</loc>
-  </url>
-
-  <url>
-    <loc>https://dresslikenawaabs.pages.dev/size-guide</loc>
   </url>
 
 </urlset>
