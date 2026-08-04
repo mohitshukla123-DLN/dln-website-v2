@@ -24,6 +24,7 @@ export default function HomePage() {
       <SEO
         title="Home"
         description="Dress Like Nawaabs offers handcrafted luxury ethnic wear inspired by royal heritage. Discover premium kurtis, sarees, jackets and festive collections."
+        canonical="https://dresslikenawaabs.pages.dev/"
         keywords="Lucknow Chikankari, Luxury Kurti, Ethnic Wear, Designer Sarees, Women's Fashion, Dress Like Nawaabs"
       />
       <PageTitle title="Home" />
