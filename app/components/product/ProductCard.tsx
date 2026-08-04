@@ -168,6 +168,20 @@ useEffect(() => {
           ₹{product.price.toLocaleString("en-IN")}
         </p>
 
+          {product.availability && (
+            <p
+              className={`mt-2 text-sm font-semibold ${
+                product.availability === "In Stock"
+                  ? "text-green-600"
+                  : product.availability === "Made to Order"
+                  ? "text-orange-600"
+                  : "text-red-600"
+              }`}
+            >
+              {product.availability}
+            </p>
+          )}
+
         {product.stock === 0 && (
           <p className="mt-2 text-sm font-semibold text-red-600">
             Sold Out

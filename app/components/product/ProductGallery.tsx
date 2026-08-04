@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface Props {
   product: {
     name: string;
@@ -14,14 +16,24 @@ export default function ProductGallery({
   setActiveImage,
   onImageClick,
 }: Props) {
+  const [zoom, setZoom] = useState(false);
+
   return (
     <div>
-      <img
-        src={activeImage}
-        alt={product.name}
-        onClick={onImageClick}
-        className="w-full cursor-zoom-in rounded-3xl object-cover shadow-lg"
-      />
+      <div
+        className="overflow-hidden rounded-3xl"
+        onMouseEnter={() => setZoom(true)}
+        onMouseLeave={() => setZoom(false)}
+      >
+        <img
+          src={activeImage}
+          alt={product.name}
+          onClick={onImageClick}
+          className={`w-full cursor-zoom-in rounded-3xl object-cover shadow-lg transition-transform duration-300 ${
+            zoom ? "scale-150" : "scale-100"
+          }`}
+        />
+      </div>
 
       <div className="mt-6 flex gap-4">
         {product.images.map((image, index) => (

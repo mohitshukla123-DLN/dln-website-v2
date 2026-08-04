@@ -76,13 +76,13 @@ export default function Navbar() {
             )}
           </NavLink>
 
-          <button
-            type="button"
-            aria-label="Search"
+          <Link
+            to="/shop"
+            aria-label="Search Products"
             className="rounded-full p-2 transition-colors hover:bg-black/5"
           >
             🔍
-          </button>
+          </Link>
         </nav>
       </Container>
     </header>
