@@ -6,77 +6,72 @@ import Button from "../components/ui/Button";
 import SEO from "../components/common/SEO";
 
 export default function ContactPage() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
 
-      const [form, setForm] = useState({
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("");
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
+    e.preventDefault();
+
+    setLoading(true);
+    setStatus("");
+
+    try {
+      await emailjs.send(
+        "service_2wg6n31",
+        "template_rcz7uct",
+        {
+          title: "Website Enquiry",
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          message: form.message,
+        },
+        "Xof8CYOdMm4b949az"
+      );
+
+      setStatus("Message sent successfully.");
+
+      setForm({
         name: "",
         email: "",
         phone: "",
         message: "",
       });
+    } catch {
+      setStatus(
+        "Unable to send message. Please try again."
+      );
+    }
 
-      const [loading, setLoading] = useState(false);
-      const [status, setStatus] = useState("");
+    setLoading(false);
+  }
 
-      function handleChange(
-        e: React.ChangeEvent<
-          HTMLInputElement | HTMLTextAreaElement
-        >
-      ) {
-        setForm({
-          ...form,
-          [e.target.name]: e.target.value,
-        });
-      }
-
-      async function handleSubmit(
-        e: React.FormEvent<HTMLFormElement>
-      ) {
-        e.preventDefault();
-
-        setLoading(true);
-        setStatus("");
-
-        try {
-          await emailjs.send(
-            "service_2wg6n31",
-            "template_rcz7uct",
-            {
-              title: "Website Enquiry",
-              name: form.name,
-              email: form.email,
-              phone: form.phone,
-              message: form.message,
-            },
-            "Xof8CYOdMm4b949az"
-          );
-
-          setStatus("Message sent successfully.");
-
-          setForm({
-            name: "",
-            email: "",
-            phone: "",
-            message: "",
-          });
-        } catch {
-          setStatus(
-            "Unable to send message. Please try again."
-          );
-        }
-
-        setLoading(false);
-      }
-
-
-
-  
   return (
     <>
-    <SEO
-      title="Contact"
-      description="Contact Dress Like Nawaabs for enquiries, WhatsApp assistance, custom orders and customer support."
-      canonical="https://dresslikenawaabs.pages.dev/contact"
-    />
+      <SEO
+        title="Contact"
+        description="Contact Dress Like Nawaabs for enquiries, WhatsApp assistance, custom orders and customer support."
+        canonical="https://dresslikenawaabs.pages.dev/contact"
+      />
+
       {/* Hero */}
 
       <section className="bg-[var(--teal)] py-24 text-white">
@@ -91,8 +86,9 @@ export default function ContactPage() {
             </h1>
 
             <p className="mt-8 text-lg text-white/90">
-              Whether you need help choosing a design, size, or wish to
-              customize an outfit, our team is here to assist you.
+              Whether you need help choosing a design,
+              size, or wish to customize an outfit, our
+              team is here to assist you.
             </p>
           </div>
         </Container>
@@ -109,7 +105,6 @@ export default function ContactPage() {
               </h2>
 
               <div className="mt-8 space-y-6">
-
                 <div>
                   <h3 className="font-semibold">
                     📞 Phone
@@ -117,11 +112,10 @@ export default function ContactPage() {
 
                   <a
                     href="tel:+917570828473"
-                    className="text-[var(--muted)] hover:text-[var(--teal)]"
+                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
                   >
                     +91 75708 28473
                   </a>
-
                 </div>
 
                 <div>
@@ -129,14 +123,14 @@ export default function ContactPage() {
                     💬 WhatsApp
                   </h3>
 
-                 <a
-                  href="https://wa.me/917570828473"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--muted)] hover:text-[var(--teal)]"
-                >
-                  +91 75708 28473
-                </a>
+                  <a
+                    href="https://wa.me/917570828473"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
+                  >
+                    +91 75708 28473
+                  </a>
                 </div>
 
                 <div>
@@ -146,7 +140,7 @@ export default function ContactPage() {
 
                   <a
                     href="mailto:dresslikenawaabs@gmail.com"
-                    className="text-[var(--muted)] hover:text-[var(--teal)]"
+                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
                   >
                     dresslikenawaabs@gmail.com
                   </a>
@@ -177,14 +171,12 @@ export default function ContactPage() {
                     India
                   </p>
                 </div>
-
               </div>
             </div>
 
             {/* Contact Form */}
 
             <div className="rounded-3xl border border-black/10 p-8 shadow-sm">
-
               <h2 className="text-3xl font-bold">
                 Send an Enquiry
               </h2>
@@ -193,7 +185,6 @@ export default function ContactPage() {
                 onSubmit={handleSubmit}
                 className="mt-8 space-y-6"
               >
-
                 <input
                   type="text"
                   name="name"
@@ -238,7 +229,9 @@ export default function ContactPage() {
                   disabled={loading}
                   className="w-full"
                 >
-                  {loading ? "Sending..." : "Send Message"}
+                  {loading
+                    ? "Sending..."
+                    : "Send Message"}
                 </Button>
 
                 {status && (
@@ -246,9 +239,7 @@ export default function ContactPage() {
                     {status}
                   </p>
                 )}
-
               </form>
-
             </div>
           </div>
         </Container>
