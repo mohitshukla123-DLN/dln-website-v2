@@ -52,6 +52,16 @@ export default function AddProductModal({
   if (!open) return null;
 
   async function saveProduct() {
+    const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      console.log(session);
+
+      if (!session) {
+        alert("Not logged in");
+        return;
+      }
     setLoading(true);
 
   const uploadedImages: string[] = [];
