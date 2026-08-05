@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import type { AdminProduct } from "../../types/adminProduct";
-import type { Product } from "../../types/product";
-
 
 interface Props {
   open: boolean;
@@ -63,12 +61,6 @@ export default function EditProductModal({
       setOccasion(product.occasion ?? "");
       setCare(product.care ?? "");
 
-      setFabric(product.fabric ?? "");
-      setEmbroidery(product.embroidery ?? "");
-      setFit(product.fit ?? "");
-      setOccasion(product.occasion ?? "");
-      setCare(product.care ?? "");
-
       setAvailability(
         product.availability ?? "In Stock"
       );
@@ -90,25 +82,28 @@ export default function EditProductModal({
     const { error } = await supabase
         .from("products")
         .update({
-            name,
-            category,
-            subcategory,
+          name,
+          category,
+          subcategory,
 
-            price: Number(price),
-            stock: Number(stock),
+          price: Number(price),
+          stock: Number(stock),
 
-            description,
+          description,
 
-            fabric,
-            embroidery,
-            fit,
-            occasion,
-            care,
+          fabric,
+          embroidery,
+          fit,
+          occasion,
+          care,
 
-            featured,
-            bestseller,
-            new_arrival: newArrival,
-          })
+          availability,
+          badge,
+
+          featured,
+          bestseller,
+          new_arrival: newArrival,
+      })
         .eq("id", product.id);
 
     setLoading(false);
@@ -137,13 +132,19 @@ export default function EditProductModal({
           }
         />
 
-        <input
+        <select
           className="mb-4 w-full rounded-lg border p-3"
           value={category}
-          onChange={(e) =>
-            setCategory(e.target.value)
-          }
-        />
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="Kurti">Kurti</option>
+          <option value="Saree">Saree</option>
+          <option value="Sharara">Sharara</option>
+          <option value="Co-ord Set">Co-ord Set</option>
+          <option value="Lehenga">Lehenga</option>
+          <option value="Gown">Gown</option>
+          <option value="Jacket">Jacket</option>
+        </select>
 
         <input
           className="mb-4 w-full rounded-lg border p-3"
@@ -208,18 +209,58 @@ export default function EditProductModal({
           onChange={(e)=>setCare(e.target.value)}
         />
 
+        <select
+          className="mb-4 w-full rounded-lg border p-3"
+          value={availability}
+          onChange={(e) => setAvailability(e.target.value)}
+        >
+          <option>In Stock</option>
+          <option>Made to Order</option>
+          <option>Sold Out</option>
+        </select>
 
-        <label className="mb-6 flex items-center gap-3">
-          <input
-            type="checkbox"
-            checked={featured}
-            onChange={(e) =>
-              setFeatured(e.target.checked)
-            }
-          />
+        <select
+          className="mb-4 w-full rounded-lg border p-3"
+          value={badge}
+          onChange={(e) => setBadge(e.target.value)}
+        >
+          <option value="">No Badge</option>
+          <option value="NEW">NEW</option>
+          <option value="BESTSELLER">BESTSELLER</option>
+          <option value="LIMITED">LIMITED</option>
+          <option value="SALE">SALE</option>
+        </select>
 
-          Featured Product
-        </label>
+        <div className="mb-6 space-y-3">
+
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={featured}
+              onChange={(e) => setFeatured(e.target.checked)}
+            />
+            Featured Product
+          </label>
+
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={bestseller}
+              onChange={(e) => setBestseller(e.target.checked)}
+            />
+            Bestseller
+          </label>
+
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={newArrival}
+              onChange={(e) => setNewArrival(e.target.checked)}
+            />
+            New Arrival
+          </label>
+
+        </div>
 
         <div className="flex justify-end gap-3">
           <button
