@@ -18,6 +18,7 @@ import ProductLightbox from "../components/product/ProductLightbox";
 import ProductShare from "../components/product/ProductShare";
 import SEO from "../components/common/SEO";
 import ProductSchema from "../components/common/ProductSchema";
+import ReviewForm from "../components/product/ReviewForm";
 
 import { products } from "../data/products";
 
@@ -63,22 +64,17 @@ export default function ProductPage() {
     Review[]
   >([]);
 
-    useEffect(() => {
-      if (!product) return;
+  async function loadReviews() {
+  if (!product) return;
 
-      const slug = product.slug;
+  const data = await getReviews(product.slug);
+  setReviews(data);
+}
 
-      async function loadReviews() {
-        const data = await getReviews(slug);
+useEffect(() => {
+  loadReviews();
+}, [product]);
 
-        console.log("Current product slug:", slug);
-        console.log("Reviews returned:", data);
-
-        setReviews(data);
-      }
-
-      loadReviews();
-    }, [product]);
 
   useEffect(() => {
     const viewed: string[] = JSON.parse(
@@ -206,6 +202,16 @@ export default function ProductPage() {
 
               <ProductReviews
                 reviews={reviews}
+              />
+
+              <ReviewForm
+                productSlug={product.slug}
+                onReviewAdded={async () => {
+                  const data = await getReviews(
+                    product.slug
+                  );
+                  setReviews(data);
+                }}
               />
 
               <ProductFAQ />
