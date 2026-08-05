@@ -135,6 +135,9 @@ export default function AdminProductsPage() {
                 <th className="p-4 text-left">
                   Featured
                 </th>
+                <th className="p-4 text-left">
+                  Description
+                </th>
 
                 <th className="p-4 text-left">
                   Actions
@@ -204,6 +207,9 @@ export default function AdminProductsPage() {
                     {product.featured
                       ? "✅"
                       : "—"}
+                  </td>
+                  <td className="p-4">
+                    {product.description}
                   </td>
 
                   <td className="space-x-2 p-4">
