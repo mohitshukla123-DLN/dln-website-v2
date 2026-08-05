@@ -62,18 +62,37 @@ export default function AddProductModal({
     }
 
     const { error } = await supabase
-      .from("products")
-      .insert({
-        name,
-        slug: slugify(name),
-        sku: generateSKU(),
-        category,
-        price: Number(price),
-        stock: Number(stock),
+  .from("products")
+  .insert({
+    name,
+    slug: slugify(name),
+    sku: generateSKU(),
 
-        image: uploadedImages[0] ?? null,
-        images: uploadedImages,
-      });
+    category,
+    subcategory: null,
+
+    price: Number(price),
+    stock: Number(stock),
+
+    featured: false,
+    bestseller: false,
+
+    badge: null,
+
+    availability: "In Stock",
+
+    description: null,
+
+    fabric: null,
+    embroidery: null,
+    fit: null,
+    occasion: null,
+    care: null,
+
+    sizes: [],
+
+    image: uploadedImages[0] ?? null,
+  });
 
     setLoading(false);
 
