@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { uploadProductImage } from "../../lib/storage";
 
 interface Props {
   open: boolean;
@@ -53,6 +54,13 @@ export default function AddProductModal({
   async function saveProduct() {
     setLoading(true);
 
+  const uploadedImages: string[] = [];
+
+    for (const image of images) {
+      const uploaded = await uploadProductImage(image);
+      uploadedImages.push(uploaded.url);
+    }
+
     const { error } = await supabase
       .from("products")
       .insert({
@@ -62,6 +70,9 @@ export default function AddProductModal({
         category,
         price: Number(price),
         stock: Number(stock),
+
+        image: uploadedImages[0] ?? null,
+        images: uploadedImages,
       });
 
     setLoading(false);

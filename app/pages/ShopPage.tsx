@@ -9,7 +9,7 @@ import SortDropdown from "../components/shop/SortDropdown";
 import ProductGrid from "../components/shop/ProductGrid";
 import EmptyState from "../components/shop/EmptyState";
 
-import { products } from "../data/products";
+import { getProducts } from "../lib/products";
 import { useSearchParams } from "react-router-dom";
 import SEO from "../components/common/SEO";
 import PriceFilter from "../components/shop/PriceFilter";
@@ -21,6 +21,7 @@ export default function ShopPage() {
   const [subcategory, setSubcategory] = useState(searchParams.get("subcategory") ?? "All");
   const [sort, setSort] = useState("featured");
   const [priceRange, setPriceRange] = useState("all");
+  const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
   const params = new URLSearchParams();
@@ -35,6 +36,16 @@ export default function ShopPage() {
 
   setSearchParams(params);
 }, [category, subcategory, setSearchParams]);
+
+
+  useEffect(() => {
+    async function loadProducts() {
+      const data = await getProducts();
+      setProducts(data);
+    }
+
+    loadProducts();
+  }, []);
 
   const filteredProducts = useMemo(() => {
     const result = products.filter((product) => {
