@@ -1,33 +1,76 @@
 import { useEffect, useState } from "react";
 
 import Container from "../../components/ui/Container";
-
 import AddProductModal from "../../components/admin/AddProductModal";
-import ProductTable from "../../components/admin/ProductTable";
+import EditProductModal from "../../components/admin/EditProductModal";
 
-import { getProducts } from "../../lib/products";
-import type { Product } from "../../types/product";
+
+import { supabase } from "../../lib/supabase";
+
+interface Product {
+  id: number;
+  image: string | null;
+  name: string;
+  category: string;
+  price: number;
+  stock: number;
+  featured: boolean;
+}
 
 export default function AdminProductsPage() {
   const [open, setOpen] = useState(false);
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [editOpen, setEditOpen] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] =
+    useState<Product | null>(null);
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadProducts();
-  }, []);
+  const [products, setProducts] = useState<Product[]>([]);
 
   async function loadProducts() {
     setLoading(true);
 
-    const data = await getProducts();
+    const { data, error } = await supabase
+      .from("products")
+      .select(
+        "id,image,name,category,price,stock,featured"
+      )
+      .order("created_at", {
+        ascending: false,
+      });
 
-    setProducts(data);
+    if (!error && data) {
+      setProducts(data);
+    }
 
     setLoading(false);
   }
+
+          async function deleteProduct(id: number) {
+          const confirmed = window.confirm(
+            "Delete this product?"
+          );
+
+          if (!confirmed) return;
+
+          const { error } = await supabase
+            .from("products")
+            .delete()
+            .eq("id", id);
+
+          if (error) {
+            alert(error.message);
+            return;
+          }
+
+          loadProducts();
+        }
+
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
   return (
     <Container>
@@ -38,8 +81,8 @@ export default function AdminProductsPage() {
               Product Management
             </h1>
 
-            <p className="mt-3 text-[var(--muted)]">
-              Add, edit and manage products.
+            <p className="mt-2 text-[var(--muted)]">
+              Manage products, pricing and inventory.
             </p>
           </div>
 
@@ -51,20 +94,144 @@ export default function AdminProductsPage() {
           </button>
         </div>
 
-        {loading ? (
-          <p>Loading products...</p>
-        ) : (
-          <ProductTable products={products} />
-        )}
-      </section>
+        <div className="overflow-hidden rounded-2xl border bg-white">
+          <table className="w-full">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-4 text-left">
+                  Image
+                </th>
 
-      <AddProductModal
-        open={open}
-        onClose={() => {
-          setOpen(false);
-          loadProducts();
-        }}
-      />
+                <th className="p-4 text-left">
+                  Product
+                </th>
+
+                <th className="p-4 text-left">
+                  Category
+                </th>
+
+                <th className="p-4 text-left">
+                  Price
+                </th>
+
+                <th className="p-4 text-left">
+                  Stock
+                </th>
+
+                <th className="p-4 text-left">
+                  Featured
+                </th>
+
+                <th className="p-4 text-left">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {loading && (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="p-10 text-center"
+                  >
+                    Loading...
+                  </td>
+                </tr>
+              )}
+
+              {!loading &&
+                products.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan={7}
+                      className="p-10 text-center"
+                    >
+                      No products found
+                    </td>
+                  </tr>
+                )}
+
+              {products.map((product) => (
+                <tr
+                  key={product.id}
+                  className="border-t"
+                >
+                  <td className="p-4">
+                    {product.image ? (
+                      <img
+                        src={product.image}
+                        className="h-16 w-16 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-200 text-xs">
+                        No Image
+                      </div>
+                    )}
+                  </td>
+
+                  <td className="p-4 font-medium">
+                    {product.name}
+                  </td>
+
+                  <td className="p-4">
+                    {product.category}
+                  </td>
+
+                  <td className="p-4">
+                    ₹{product.price}
+                  </td>
+
+                  <td className="p-4">
+                    {product.stock}
+                  </td>
+
+                  <td className="p-4">
+                    {product.featured
+                      ? "✅"
+                      : "—"}
+                  </td>
+
+                  <td className="space-x-2 p-4">
+                    <button
+                      onClick={() => {
+                        setSelectedProduct(product);
+                        setEditOpen(true);
+                      }}
+                      className="rounded bg-blue-600 px-3 py-1 text-sm text-white"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => deleteProduct(product.id)}
+                      className="rounded bg-red-600 px-3 py-1 text-sm text-white"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <AddProductModal
+          open={open}
+          onClose={() => {
+            setOpen(false);
+            loadProducts();
+          }}
+        />
+
+          <EditProductModal
+            open={editOpen}
+            product={selectedProduct}
+            onClose={() => setEditOpen(false)}
+            onSaved={loadProducts}
+          />
+
+      </section>
     </Container>
   );
 }
