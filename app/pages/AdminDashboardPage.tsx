@@ -21,7 +21,7 @@ export default function AdminDashboardPage() {
     {
       title: "Categories",
       description: "Coming Soon",
-      link: "#",
+      link: "/admin/categories",
     },
     {
       title: "Orders",

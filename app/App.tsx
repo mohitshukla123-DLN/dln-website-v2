@@ -7,6 +7,7 @@ import AdminLoginPage from "./pages/AdminLoginPage";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminHomepagePage from "./pages/admin/AdminHomepagePage";
+import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ShopPage = lazy(() => import("./pages/ShopPage"));
@@ -159,6 +160,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <AdminHomepagePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/categories"
+            element={
+              <ProtectedRoute>
+                <AdminCategoriesPage />
               </ProtectedRoute>
             }
           />
