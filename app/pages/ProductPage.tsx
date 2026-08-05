@@ -1,4 +1,9 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+  lazy,
+  Suspense,
+} from "react";
 import { Link, useParams } from "react-router-dom";
 
 import Container from "../components/ui/Container";
@@ -11,21 +16,37 @@ import ProductDescription from "../components/product/ProductDescription";
 import ProductSpecifications from "../components/product/ProductSpecifications";
 import ProductReviews from "../components/product/ProductReviews";
 import ProductFAQ from "../components/product/ProductFAQ";
-import RecentlyViewed from "../components/product/RecentlyViewed";
 import ProductCard from "../components/product/ProductCard";
-import EnquiryDrawer from "../components/product/EnquiryDrawer";
-import ProductLightbox from "../components/product/ProductLightbox";
 import ProductShare from "../components/product/ProductShare";
 import SEO from "../components/common/SEO";
 import ProductSchema from "../components/common/ProductSchema";
 import ReviewForm from "../components/product/ReviewForm";
-
 import { products } from "../data/products";
-
 import {
   getReviews,
   type Review,
 } from "../lib/reviews";
+
+const ProductLightbox = lazy(
+  () =>
+    import(
+      "../components/product/ProductLightbox"
+    )
+);
+
+const RecentlyViewed = lazy(
+  () =>
+    import(
+      "../components/product/RecentlyViewed"
+    )
+);
+
+const EnquiryDrawer = lazy(
+  () =>
+    import(
+      "../components/product/EnquiryDrawer"
+    )
+);
 
 export default function ProductPage() {
   const { slug } = useParams();
@@ -239,27 +260,33 @@ useEffect(() => {
         )}
 
         <Container>
-          <RecentlyViewed
-            currentSlug={product.slug}
-          />
+          <Suspense fallback={null}>
+            <RecentlyViewed
+              currentSlug={product.slug}
+            />
+          </Suspense>
         </Container>
 
-        <EnquiryDrawer
-          open={drawerOpen}
-          onClose={() =>
-            setDrawerOpen(false)
-          }
-        />
+        <Suspense fallback={null}>
+          <EnquiryDrawer
+            open={drawerOpen}
+            onClose={() =>
+              setDrawerOpen(false)
+            }
+          />
+        </Suspense>
 
-        <ProductLightbox
-          images={product.images}
-          activeImage={activeImage}
-          open={lightboxOpen}
-          onClose={() =>
-            setLightboxOpen(false)
-          }
-          onImageChange={setActiveImage}
-        />
+        <Suspense fallback={null}>
+          <ProductLightbox
+            images={product.images}
+            activeImage={activeImage}
+            open={lightboxOpen}
+            onClose={() =>
+              setLightboxOpen(false)
+            }
+            onImageChange={setActiveImage}
+          />
+        </Suspense>
       </section>
     </>
   );

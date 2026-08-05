@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import Container from "../ui/Container";
-import logo from "../../assets/logos/logo.png";
+import logo from "../../assets/logos/logo-navbar.png";
 
 import { getWishlist } from "../../lib/wishlist";
 

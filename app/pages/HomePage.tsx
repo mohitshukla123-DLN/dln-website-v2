@@ -4,7 +4,7 @@ import Button from "../components/ui/Button";
 import Container from "../components/ui/Container";
 import FeaturedCollections from "../components/homepage/FeaturedCollections";
 
-import logo from "../assets/logos/logo.png";
+import logo from "../assets/logos/logo-home.png";
 
 import WhyChooseUs from "../components/homepage/WhyChooseUs";
 import BestSellers from "../components/homepage/BestSellers";
@@ -56,10 +56,16 @@ export default function HomePage() {
 
             <div className="flex justify-center">
               <img
-                src={logo}
-                alt="Dress Like Nawaabs"
-                className="w-full max-w-md rounded-full shadow-2xl"
-              />
+              src={logo}
+              alt="Dress Like Nawaabs"
+              className="w-full max-w-md rounded-full shadow-2xl"
+              loading="eager"
+              decoding="sync"
+              style={{
+                imageRendering: "auto",
+                transform: "translateZ(0)",
+              }}
+            />
             </div>
           </div>
         </Container>
