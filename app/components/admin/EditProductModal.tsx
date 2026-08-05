@@ -1,18 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import type { AdminProduct } from "../../types/adminProduct";
+import type { Product } from "../../types/product";
 
-interface Product {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  stock: number;
-  featured: boolean;
-}
 
 interface Props {
   open: boolean;
-  product: Product | null;
+  product: AdminProduct | null;
   onClose: () => void;
   onSaved: () => void;
 }
@@ -27,19 +21,57 @@ export default function EditProductModal({
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
+  const [subcategory, setSubcategory] = useState("");
+
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
-  const [featured, setFeatured] =
-    useState(false);
+
+  const [description, setDescription] = useState("");
+
+  const [fabric, setFabric] = useState("");
+  const [embroidery, setEmbroidery] = useState("");
+  const [fit, setFit] = useState("");
+  const [occasion, setOccasion] = useState("");
+  const [care, setCare] = useState("");
+
+  const [availability, setAvailability] = useState("In Stock");
+
+  const [badge, setBadge] = useState("");
+
+  const [featured, setFeatured] = useState(false);
+
+  const [bestseller, setBestseller] = useState(false);
+
+  const [newArrival, setNewArrival] = useState(false);
 
   useEffect(() => {
     if (!product) return;
 
-    setName(product.name);
-    setCategory(product.category);
-    setPrice(product.price.toString());
-    setStock(product.stock.toString());
-    setFeatured(product.featured);
+      setName(product.name);
+
+      setCategory(product.category);
+      setSubcategory(product.subcategory ?? "");
+
+      setPrice(product.price.toString());
+      setStock((product.stock ?? 0).toString());
+
+      setDescription(product.description ?? "");
+
+      setFabric(product.fabric ?? "");
+      setEmbroidery(product.embroidery ?? "");
+      setFit(product.fit ?? "");
+      setOccasion(product.occasion ?? "");
+      setCare(product.care ?? "");
+
+      setAvailability(
+        product.availability ?? "In Stock"
+      );
+
+      setBadge(product.badge ?? "");
+
+      setFeatured(product.featured);
+      setBestseller(product.bestseller);
+      setNewArrival(product.new_arrival ?? false);
   }, [product]);
 
   if (!open || !product) return null;

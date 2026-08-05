@@ -6,16 +6,8 @@ import EditProductModal from "../../components/admin/EditProductModal";
 
 
 import { supabase } from "../../lib/supabase";
-
-interface Product {
-  id: number;
-  image: string | null;
-  name: string;
-  category: string;
-  price: number;
-  stock: number;
-  featured: boolean;
-}
+import type { Product } from "../../types/product";
+import type { AdminProduct } from "../../types/adminProduct";
 
 export default function AdminProductsPage() {
   const [open, setOpen] = useState(false);
@@ -23,20 +15,42 @@ export default function AdminProductsPage() {
   const [editOpen, setEditOpen] = useState(false);
 
   const [selectedProduct, setSelectedProduct] =
-    useState<Product | null>(null);
+  useState<AdminProduct | null>(null);
 
   const [loading, setLoading] = useState(true);
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<AdminProduct[]>([]);
 
   async function loadProducts() {
     setLoading(true);
 
     const { data, error } = await supabase
       .from("products")
-      .select(
-        "id,image,name,category,price,stock,featured"
-      )
+      .select(`
+              id,
+              name,
+              slug,
+              sku,
+              category,
+              subcategory,
+              price,
+              stock,
+              featured,
+              bestseller,
+              new_arrival,
+              badge,
+              availability,
+              description,
+              fabric,
+              embroidery,
+              fit,
+              occasion,
+              care,
+              sizes,
+              image,
+              created_at,
+              updated_at
+            `)
       .order("created_at", {
         ascending: false,
       });
