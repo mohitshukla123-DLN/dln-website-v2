@@ -63,6 +63,12 @@ export default function EditProductModal({
       setOccasion(product.occasion ?? "");
       setCare(product.care ?? "");
 
+      setFabric(product.fabric ?? "");
+      setEmbroidery(product.embroidery ?? "");
+      setFit(product.fit ?? "");
+      setOccasion(product.occasion ?? "");
+      setCare(product.care ?? "");
+
       setAvailability(
         product.availability ?? "In Stock"
       );
@@ -92,6 +98,12 @@ export default function EditProductModal({
             stock: Number(stock),
 
             description,
+
+            fabric,
+            embroidery,
+            fit,
+            occasion,
+            care,
 
             featured,
             bestseller,
@@ -156,6 +168,46 @@ export default function EditProductModal({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <input
+            className="rounded-lg border p-3"
+            placeholder="Fabric"
+            value={fabric}
+            onChange={(e)=>setFabric(e.target.value)}
+          />
+
+          <input
+            className="rounded-lg border p-3"
+            placeholder="Embroidery"
+            value={embroidery}
+            onChange={(e)=>setEmbroidery(e.target.value)}
+          />
+
+          <input
+            className="rounded-lg border p-3"
+            placeholder="Fit"
+            value={fit}
+            onChange={(e)=>setFit(e.target.value)}
+          />
+
+          <input
+            className="rounded-lg border p-3"
+            placeholder="Occasion"
+            value={occasion}
+            onChange={(e)=>setOccasion(e.target.value)}
+          />
+
+        </div>
+
+        <textarea
+          className="mb-4 w-full rounded-lg border p-3"
+          rows={3}
+          placeholder="Care Instructions"
+          value={care}
+          onChange={(e)=>setCare(e.target.value)}
+        />
+
 
         <label className="mb-6 flex items-center gap-3">
           <input
