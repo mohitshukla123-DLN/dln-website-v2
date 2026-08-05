@@ -84,12 +84,19 @@ export default function EditProductModal({
     const { error } = await supabase
         .from("products")
         .update({
-        name,
-        category,
-        price: Number(price),
-        stock: Number(stock),
-        featured,
-        })
+            name,
+            category,
+            subcategory,
+
+            price: Number(price),
+            stock: Number(stock),
+
+            description,
+
+            featured,
+            bestseller,
+            new_arrival: newArrival,
+          })
         .eq("id", product.id);
 
     setLoading(false);
@@ -140,6 +147,14 @@ export default function EditProductModal({
           onChange={(e) =>
             setStock(e.target.value)
           }
+        />
+
+        <textarea
+          className="mb-4 w-full rounded-lg border p-3"
+          rows={5}
+          placeholder="Product Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
 
         <label className="mb-6 flex items-center gap-3">
