@@ -4,49 +4,87 @@ import Container from "../../components/ui/Container";
 
 export default function AdminSiteSettingsPage() {
   const [loading, setLoading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState("");
 
   const [siteName, setSiteName] = useState("");
   const [tagline, setTagline] = useState("");
 
   const [announcement, setAnnouncement] = useState("");
-  const [announcementEnabled, setAnnouncementEnabled] =
-    useState(true);
+  const [announcementEnabled, setAnnouncementEnabled] = useState(true);
 
   useEffect(() => {
     loadSettings();
   }, []);
 
   async function loadSettings() {
-    const { data } = await supabase
-      .from("site_settings")
-      .select("*")
-      .limit(1)
-      .single();
 
-    if (!data) return;
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("*")
+    .limit(1)
+    .single();
 
-    setSiteName(data.site_name ?? "");
-    setTagline(data.tagline ?? "");
-
-    setAnnouncement(data.announcement_text ?? "");
-    setAnnouncementEnabled(
-      data.announcement_enabled ?? true
-    );
+  if (error) {
+    alert(error.message);
+    return;
   }
+
+  if (!data) return;
+
+  setLogoUrl(data.logo_url ?? "");
+  setSiteName(data.site_name ?? "");
+  setTagline(data.tagline ?? "");
+  setAnnouncement(data.announcement_text ?? "");
+  setAnnouncementEnabled(
+    data.announcement_enabled ?? true
+  );
+}
+
+    async function uploadLogo(
+      e: React.ChangeEvent<HTMLInputElement>
+    ) {
+      if (!e.target.files?.length) return;
+
+      const file = e.target.files[0];
+
+      const extension = file.name.split(".").pop();
+
+      const fileName = `logo-${Date.now()}.${extension}`;
+
+      const { error } = await supabase.storage
+        .from("site-assets")
+        .upload(fileName, file);
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      const { data } = supabase.storage
+        .from("site-assets")
+        .getPublicUrl(fileName);
+
+      setLogoUrl(data.publicUrl);
+    }
+
 
   async function saveSettings() {
     setLoading(true);
 
+    console.log(await supabase.auth.getSession());
+
     const { error } = await supabase
       .from("site_settings")
       .update({
-        site_name: siteName,
-        tagline,
+          site_name: siteName,
+          tagline,
 
-        announcement_text: announcement,
-        announcement_enabled:
-          announcementEnabled,
-      })
+          logo_url: logoUrl,
+
+          announcement_text: announcement,
+          announcement_enabled:
+            announcementEnabled,
+        })
       .eq("id", 1);
 
     setLoading(false);
@@ -89,6 +127,28 @@ export default function AdminSiteSettingsPage() {
                 setTagline(e.target.value)
               }
             />
+
+            <div>
+
+              <label className="mb-2 block font-medium">
+                Website Logo
+              </label>
+
+              {logoUrl && (
+                <img
+                  src={logoUrl}
+                  alt=""
+                  className="mb-4 h-20 rounded-lg border p-2"
+                />
+              )}
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={uploadLogo}
+              />
+
+            </div>
 
             <textarea
               rows={3}

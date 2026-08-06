@@ -1,7 +1,30 @@
 import { Link } from "react-router-dom";
 import Container from "../ui/Container";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
 
 export default function Footer() {
+
+const [siteName, setSiteName] = useState("{siteName}");
+const [tagline, setTagline] = useState("");
+
+useEffect(() => {
+  async function loadSettings() {
+    const { data } = await supabase
+      .from("site_settings")
+      .select("site_name,tagline")
+      .limit(1)
+      .single();
+
+    if (!data) return;
+
+    setSiteName(data.site_name ?? "{siteName}");
+    setTagline(data.tagline ?? "");
+  }
+
+  loadSettings();
+}, []);
+
   return (
     <footer className="mt-24 bg-black text-white">
       <Container className="py-16">
@@ -12,12 +35,11 @@ export default function Footer() {
 
           <div>
             <h2 className="text-2xl font-bold">
-              Dress Like Nawaabs
+              {siteName}
             </h2>
 
             <p className="mt-4 text-sm text-gray-300 leading-7">
-              Premium Indian ethnic wear inspired by royal heritage,
-              handcrafted with elegance and timeless craftsmanship.
+              {tagline}
             </p>
           </div>
 
@@ -76,7 +98,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-gray-400">
-          © {new Date().getFullYear()} Dress Like Nawaabs.
+          © {new Date().getFullYear()} {siteName}.
           All Rights Reserved.
         </div>
 
