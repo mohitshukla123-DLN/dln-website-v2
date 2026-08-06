@@ -13,6 +13,10 @@ export default function AdminHomepagePage() {
   const [featuredCategoriesTitle, setFeaturedCategoriesTitle] = useState("");
   const [featuredCategoriesSubtitle, setFeaturedCategoriesSubtitle] = useState("");
   const [featuredCategoriesEnabled, setFeaturedCategoriesEnabled] = useState(true);
+  const [newArrivalsTitle, setNewArrivalsTitle] = useState("");
+  const [newArrivalsSubtitle, setNewArrivalsSubtitle] = useState("");
+  const [newArrivalsCount, setNewArrivalsCount] = useState(8);
+  const [newArrivalsEnabled, setNewArrivalsEnabled] = useState(true);
 
   async function loadSettings() {
     const { data } = await supabase
@@ -20,9 +24,12 @@ export default function AdminHomepagePage() {
       .select("*")
       .limit(1)
       .single();
-      setHeroEnabled(
-      data.hero_enabled ?? true
-    );
+      setHeroEnabled(data.hero_enabled ?? true);
+      setNewArrivalsTitle(data.new_arrivals_title ?? "");
+      setNewArrivalsSubtitle(data.new_arrivals_subtitle ?? "");
+      setNewArrivalsCount(data.new_arrivals_count ?? 8);
+      setNewArrivalsEnabled(data.new_arrivals_enabled ?? true);
+          
 
     if (!data) return;
 
@@ -53,6 +60,10 @@ export default function AdminHomepagePage() {
         featured_categories_title: featuredCategoriesTitle,
         featured_categories_subtitle: featuredCategoriesSubtitle,
         featured_categories_enabled: featuredCategoriesEnabled,
+        new_arrivals_title: newArrivalsTitle,
+        new_arrivals_subtitle: newArrivalsSubtitle,
+        new_arrivals_count: newArrivalsCount,
+        new_arrivals_enabled: newArrivalsEnabled,
       })
       .eq("id", 1);
 
@@ -89,6 +100,56 @@ export default function AdminHomepagePage() {
           <h2 className="text-2xl font-semibold">
             Featured Categories
           </h2>
+
+          <div className="mt-10 rounded-2xl border bg-white p-8">
+
+            <h2 className="text-2xl font-semibold">
+              New Arrivals
+            </h2>
+
+            <div className="mt-6 space-y-4">
+
+              <input
+                className="w-full rounded-lg border p-3"
+                placeholder="Section Title"
+                value={newArrivalsTitle}
+                onChange={(e)=>setNewArrivalsTitle(e.target.value)}
+              />
+
+              <textarea
+                rows={3}
+                className="w-full rounded-lg border p-3"
+                placeholder="Subtitle"
+                value={newArrivalsSubtitle}
+                onChange={(e)=>setNewArrivalsSubtitle(e.target.value)}
+              />
+
+              <input
+                type="number"
+                className="w-full rounded-lg border p-3"
+                value={newArrivalsCount}
+                onChange={(e)=>
+                  setNewArrivalsCount(Number(e.target.value))
+                }
+              />
+
+              <label className="flex items-center gap-3">
+
+                <input
+                  type="checkbox"
+                  checked={newArrivalsEnabled}
+                  onChange={(e)=>
+                    setNewArrivalsEnabled(e.target.checked)
+                  }
+                />
+
+                Enable New Arrivals
+
+              </label>
+
+            </div>
+
+          </div>
 
           <div className="mt-6 space-y-4">
 

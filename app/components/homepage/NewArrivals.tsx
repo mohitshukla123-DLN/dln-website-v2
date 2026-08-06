@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import { supabase } from "../../lib/supabase";
 
 import Button from "../ui/Button";
 import Container from "../ui/Container";
@@ -7,9 +10,37 @@ import ProductGrid from "../shop/ProductGrid";
 import { products } from "../../data/products";
 
 export default function NewArrivals() {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadSettings() {
+      const { data } = await supabase
+        .from("homepage_settings")
+        .select(`
+          new_arrivals_title,
+          new_arrivals_subtitle,
+          new_arrivals_enabled,
+          new_arrivals_count
+        `)
+        .limit(1)
+        .single();
+
+      setSettings(data);
+      console.log("Homepage settings", data);
+    }
+
+    loadSettings();
+  }, []);
+
+  if (settings?.new_arrivals_enabled === false) {
+    return null;
+  }
+
+  const count = settings?.new_arrivals_count ?? 3;
+
   const newProducts = products
     .filter((product) => product.badge === "NEW")
-    .slice(0, 3);
+    .slice(0, count);
 
   if (newProducts.length === 0) {
     return null;
@@ -18,23 +49,33 @@ export default function NewArrivals() {
   return (
     <section className="py-24">
       <Container>
+
         <div className="mb-12 flex items-center justify-between">
+
           <div>
+
             <p className="text-sm uppercase tracking-[0.3em] text-[var(--teal)]">
-              Latest Collection
+              {settings?.new_arrivals_subtitle ??
+                "Latest Collection"}
             </p>
 
             <h2 className="mt-3 text-4xl font-bold">
-              New Arrivals
+              {settings?.new_arrivals_title ??
+                "New Arrivals"}
             </h2>
+
           </div>
 
           <Link to="/new-arrivals">
-            <Button>View All</Button>
+            <Button>
+              View All
+            </Button>
           </Link>
+
         </div>
 
         <ProductGrid products={newProducts} />
+
       </Container>
     </section>
   );
