@@ -20,6 +20,9 @@ export default function AdminHomepagePage() {
   const [featuredCollectionsTitle, setFeaturedCollectionsTitle] = useState("");
   const [featuredCollectionsSubtitle, setFeaturedCollectionsSubtitle] = useState("");
   const [featuredCollectionsEnabled, setFeaturedCollectionsEnabled] = useState(true);
+  const [whyChooseTitle, setWhyChooseTitle] = useState("");
+  const [whyChooseSubtitle, setWhyChooseSubtitle] = useState("");
+  const [whyChooseEnabled, setWhyChooseEnabled] = useState(true);
 
   async function loadSettings() {
     const { data } = await supabase
@@ -46,6 +49,9 @@ export default function AdminHomepagePage() {
     setFeaturedCategoriesTitle(data.featured_categories_title ?? "");
     setFeaturedCategoriesSubtitle(data.featured_categories_subtitle ?? "");
     setFeaturedCategoriesEnabled(data.featured_categories_enabled ?? true);
+    setWhyChooseTitle(data.why_choose_us_title ?? "");
+    setWhyChooseSubtitle(data.why_choose_us_subtitle ?? "");
+    setWhyChooseEnabled(data.why_choose_us_enabled ?? true);
   }
 
   useEffect(() => {
@@ -73,6 +79,9 @@ export default function AdminHomepagePage() {
         featured_collections_title: featuredCollectionsTitle,
         featured_collections_subtitle: featuredCollectionsSubtitle,
         featured_collections_enabled: featuredCollectionsEnabled,
+        why_choose_us_title: whyChooseTitle,
+        why_choose_us_subtitle: whyChooseSubtitle,
+        why_choose_us_enabled: whyChooseEnabled,
       })
       .eq("id", 1);
 
@@ -121,6 +130,45 @@ export default function AdminHomepagePage() {
             <h2 className="text-2xl font-semibold">
               Featured Collections
             </h2>
+
+            <div className="mt-10 rounded-2xl border bg-white p-8">
+
+              <h2 className="text-2xl font-semibold">
+                Why Choose Us
+              </h2>
+
+              <div className="mt-6 space-y-4">
+
+                <input
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Section Title"
+                  value={whyChooseTitle}
+                  onChange={(e) => setWhyChooseTitle(e.target.value)}
+                />
+
+                <textarea
+                  rows={3}
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Subtitle"
+                  value={whyChooseSubtitle}
+                  onChange={(e) => setWhyChooseSubtitle(e.target.value)}
+                />
+
+                <label className="flex items-center gap-3">
+
+                  <input
+                    type="checkbox"
+                    checked={whyChooseEnabled}
+                    onChange={(e) => setWhyChooseEnabled(e.target.checked)}
+                  />
+
+                  Enable Why Choose Us
+
+                </label>
+
+              </div>
+
+            </div>
 
             <div className="mt-6 space-y-4">
 

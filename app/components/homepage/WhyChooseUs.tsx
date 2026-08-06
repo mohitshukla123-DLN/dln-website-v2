@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+
 import Container from "../ui/Container";
 
 const features = [
@@ -28,22 +31,50 @@ const features = [
 ];
 
 export default function WhyChooseUs() {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadSettings() {
+      const { data } = await supabase
+        .from("homepage_settings")
+        .select(`
+          why_choose_us_title,
+          why_choose_us_subtitle,
+          why_choose_us_enabled
+        `)
+        .limit(1)
+        .single();
+
+      setSettings(data);
+    }
+
+    loadSettings();
+  }, []);
+
+  if (settings?.why_choose_us_enabled === false) {
+    return null;
+  }
+
   return (
     <section className="bg-[var(--background)] py-24">
       <Container>
+
         <div className="mb-14 text-center">
+
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
             Why Choose Us
           </p>
 
           <h2 className="mt-4 text-4xl font-bold">
-            Crafted for Modern Royalty
+            {settings?.why_choose_us_title ??
+              "Crafted for Modern Royalty"}
           </h2>
 
           <p className="mx-auto mt-5 max-w-2xl text-[var(--muted)]">
-            We blend heritage craftsmanship with contemporary design to create
-            clothing that makes every celebration unforgettable.
+            {settings?.why_choose_us_subtitle ??
+              "We blend heritage craftsmanship with contemporary design to create clothing that makes every celebration unforgettable."}
           </p>
+
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -63,9 +94,11 @@ export default function WhyChooseUs() {
               <p className="mt-4 text-sm text-[var(--muted)]">
                 {feature.description}
               </p>
+
             </article>
           ))}
         </div>
+
       </Container>
     </section>
   );
