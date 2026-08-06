@@ -48,8 +48,6 @@ const EnquiryDrawer = lazy(
     )
 );
 
-const [selectedSize, setSelectedSize] = useState("");
-
 export default function ProductPage() {
   const { slug } = useParams();
 
