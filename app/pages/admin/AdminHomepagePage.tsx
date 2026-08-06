@@ -9,6 +9,10 @@ export default function AdminHomepagePage() {
   const [heroSubtitle, setHeroSubtitle] = useState("");
   const [heroButtonText, setHeroButtonText] = useState("");
   const [heroButtonUrl, setHeroButtonUrl] = useState("");
+  const [heroEnabled, setHeroEnabled] = useState(true);
+  const [featuredCategoriesTitle, setFeaturedCategoriesTitle] = useState("");
+  const [featuredCategoriesSubtitle, setFeaturedCategoriesSubtitle] = useState("");
+  const [featuredCategoriesEnabled, setFeaturedCategoriesEnabled] = useState(true);
 
   async function loadSettings() {
     const { data } = await supabase
@@ -16,6 +20,9 @@ export default function AdminHomepagePage() {
       .select("*")
       .limit(1)
       .single();
+      setHeroEnabled(
+      data.hero_enabled ?? true
+    );
 
     if (!data) return;
 
@@ -23,6 +30,9 @@ export default function AdminHomepagePage() {
     setHeroSubtitle(data.hero_subtitle ?? "");
     setHeroButtonText(data.hero_button_text ?? "");
     setHeroButtonUrl(data.hero_button_url ?? "");
+    setFeaturedCategoriesTitle(data.featured_categories_title ?? "");
+    setFeaturedCategoriesSubtitle(data.featured_categories_subtitle ?? "");
+    setFeaturedCategoriesEnabled(data.featured_categories_enabled ?? true);
   }
 
   useEffect(() => {
@@ -39,6 +49,10 @@ export default function AdminHomepagePage() {
         hero_subtitle: heroSubtitle,
         hero_button_text: heroButtonText,
         hero_button_url: heroButtonUrl,
+        hero_enabled: heroEnabled,
+        featured_categories_title: featuredCategoriesTitle,
+        featured_categories_subtitle: featuredCategoriesSubtitle,
+        featured_categories_enabled: featuredCategoriesEnabled,
       })
       .eq("id", 1);
 
@@ -70,6 +84,47 @@ export default function AdminHomepagePage() {
             Hero Section
           </h2>
 
+          <div className="mt-10 rounded-2xl border bg-white p-8">
+
+          <h2 className="text-2xl font-semibold">
+            Featured Categories
+          </h2>
+
+          <div className="mt-6 space-y-4">
+
+            <input
+              className="w-full rounded-lg border p-3"
+              placeholder="Section Title"
+              value={featuredCategoriesTitle}
+              onChange={(e)=>setFeaturedCategoriesTitle(e.target.value)}
+            />
+
+            <textarea
+              rows={3}
+              className="w-full rounded-lg border p-3"
+              placeholder="Subtitle"
+              value={featuredCategoriesSubtitle}
+              onChange={(e)=>setFeaturedCategoriesSubtitle(e.target.value)}
+            />
+
+            <label className="flex items-center gap-3">
+
+              <input
+                type="checkbox"
+                checked={featuredCategoriesEnabled}
+                onChange={(e)=>
+                  setFeaturedCategoriesEnabled(e.target.checked)
+                }
+              />
+
+              Enable Featured Categories
+
+            </label>
+
+          </div>
+
+        </div>
+
           <div className="mt-6 space-y-4">
 
             <input
@@ -100,6 +155,20 @@ export default function AdminHomepagePage() {
               placeholder="Button URL"
               onChange={(e) => setHeroButtonUrl(e.target.value)}
             />
+
+            <label className="flex items-center gap-3">
+
+              <input
+                type="checkbox"
+                checked={heroEnabled}
+                onChange={(e)=>
+                  setHeroEnabled(e.target.checked)
+                }
+              />
+
+              Enable Hero Section
+
+            </label>
 
             <button
               onClick={saveSettings}

@@ -45,7 +45,8 @@ useEffect(() => {
         keywords="Lucknow Chikankari, Luxury Kurti, Ethnic Wear, Designer Sarees, Women's Fashion, Dress Like Nawaabs"
       />
       {/* Hero Section */}
-      <section className="py-24">
+      {settings?.hero_enabled !== false && (
+        <section className="py-24">
         <Container>
           <div className="grid items-center gap-16 lg:grid-cols-2">
             <div>
@@ -92,6 +93,7 @@ useEffect(() => {
           </div>
         </Container>
       </section>
+)}
 
       <CategoryGrid />
 
