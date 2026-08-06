@@ -5,21 +5,27 @@ import { supabase } from "../../lib/supabase";
 
 export default function Footer() {
 
-const [siteName, setSiteName] = useState("{siteName}");
+const [siteName, setSiteName] = useState("Dress Like Nawaabs");
 const [tagline, setTagline] = useState("");
+const [phone, setPhone] = useState("");
+const [email, setEmail] = useState("");
+const [address, setAddress] = useState("");
 
 useEffect(() => {
   async function loadSettings() {
     const { data } = await supabase
       .from("site_settings")
-      .select("site_name,tagline")
+      .select("site_name,tagline,phone,email,address")
       .limit(1)
       .single();
 
     if (!data) return;
 
-    setSiteName(data.site_name ?? "{siteName}");
+    setSiteName(data.site_name ?? "Dress Like Nawaabs");
     setTagline(data.tagline ?? "");
+    setPhone(data.phone ?? "");
+    setEmail(data.email ?? "");
+    setAddress(data.address ?? "");
   }
 
   loadSettings();
@@ -86,11 +92,11 @@ useEffect(() => {
 
             <div className="space-y-3 text-gray-300">
 
-              <p>📞 +91 XXXXX XXXXX</p>
+              <p>📞 {phone}</p>
 
-              <p>✉️ contact@dresslikenawaabs.com</p>
+              <p>✉️ {email}</p>
 
-              <p>📍 India</p>
+              <p>📍 {address}</p>
 
             </div>
           </div>

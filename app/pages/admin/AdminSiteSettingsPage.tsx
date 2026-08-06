@@ -9,6 +9,10 @@ export default function AdminSiteSettingsPage() {
   const [siteName, setSiteName] = useState("");
   const [tagline, setTagline] = useState("");
 
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+
   const [announcement, setAnnouncement] = useState("");
   const [announcementEnabled, setAnnouncementEnabled] = useState(true);
 
@@ -34,6 +38,9 @@ export default function AdminSiteSettingsPage() {
   setLogoUrl(data.logo_url ?? "");
   setSiteName(data.site_name ?? "");
   setTagline(data.tagline ?? "");
+  setPhone(data.phone ?? "");
+  setEmail(data.email ?? "");
+  setAddress(data.address ?? "");
   setAnnouncement(data.announcement_text ?? "");
   setAnnouncementEnabled(
     data.announcement_enabled ?? true
@@ -78,6 +85,9 @@ export default function AdminSiteSettingsPage() {
       .update({
           site_name: siteName,
           tagline,
+          phone,
+          email,
+          address,
 
           logo_url: logoUrl,
 
@@ -126,6 +136,27 @@ export default function AdminSiteSettingsPage() {
               onChange={(e)=>
                 setTagline(e.target.value)
               }
+            />
+
+            <input
+              className="w-full rounded-lg border p-3"
+              placeholder="Phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+
+            <input
+              className="w-full rounded-lg border p-3"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <input
+              className="w-full rounded-lg border p-3"
+              placeholder="Address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
             />
 
             <div>
