@@ -28,18 +28,14 @@ export default function AddProductModal({
   open,
   onClose,
 }: Props) {
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [name, setName] = useState("");
-  const [category, setCategory] =
-    useState("");
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
 
-  const [images, setImages] = useState<
-    File[]
-  >([]);
+  const [images, setImages] = useState<File[]>([]);
 
   function handleImages(
     e: ChangeEvent<HTMLInputElement>
@@ -53,18 +49,17 @@ export default function AddProductModal({
 
   async function saveProduct() {
     const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      data: { session },
+    } = await supabase.auth.getSession();
 
-      console.log(session);
+    if (!session) {
+      alert("Not logged in");
+      return;
+    }
 
-      if (!session) {
-        alert("Not logged in");
-        return;
-      }
     setLoading(true);
 
-  const uploadedImages: string[] = [];
+    const uploadedImages: string[] = [];
 
     for (const image of images) {
       const uploaded = await uploadProductImage(image);
@@ -72,37 +67,37 @@ export default function AddProductModal({
     }
 
     const { error } = await supabase
-  .from("products")
-  .insert({
-    name,
-    slug: slugify(name),
-    sku: generateSKU(),
+      .from("products")
+      .insert({
+        name,
+        slug: slugify(name),
+        sku: generateSKU(),
 
-    category,
-    subcategory: null,
+        category,
+        subcategory: null,
 
-    price: Number(price),
-    stock: Number(stock),
+        price: Number(price),
+        stock: Number(stock),
 
-    featured: false,
-    bestseller: false,
+        featured: false,
+        bestseller: false,
 
-    badge: null,
+        badge: null,
 
-    availability: "In Stock",
+        availability: "In Stock",
 
-    description: null,
+        description: null,
 
-    fabric: null,
-    embroidery: null,
-    fit: null,
-    occasion: null,
-    care: null,
+        fabric: null,
+        embroidery: null,
+        fit: null,
+        occasion: null,
+        care: null,
 
-    sizes: [],
+        sizes: [],
 
-    image: uploadedImages[0] ?? null,
-  });
+        image: uploadedImages[0] ?? null,
+      });
 
     setLoading(false);
 
@@ -126,36 +121,28 @@ export default function AddProductModal({
           className="mb-4 w-full rounded-lg border p-3"
           placeholder="Product Name"
           value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
+          onChange={(e) => setName(e.target.value)}
         />
 
         <input
           className="mb-4 w-full rounded-lg border p-3"
           placeholder="Category"
           value={category}
-          onChange={(e) =>
-            setCategory(e.target.value)
-          }
+          onChange={(e) => setCategory(e.target.value)}
         />
 
         <input
           className="mb-4 w-full rounded-lg border p-3"
           placeholder="Price"
           value={price}
-          onChange={(e) =>
-            setPrice(e.target.value)
-          }
+          onChange={(e) => setPrice(e.target.value)}
         />
 
         <input
           className="mb-4 w-full rounded-lg border p-3"
           placeholder="Stock"
           value={stock}
-          onChange={(e) =>
-            setStock(e.target.value)
-          }
+          onChange={(e) => setStock(e.target.value)}
         />
 
         <div className="mb-6">
@@ -194,9 +181,7 @@ export default function AddProductModal({
             disabled={loading}
             className="rounded-lg bg-black px-5 py-2 text-white"
           >
-            {loading
-              ? "Saving..."
-              : "Save Product"}
+            {loading ? "Saving..." : "Save Product"}
           </button>
         </div>
       </div>

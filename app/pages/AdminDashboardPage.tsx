@@ -35,8 +35,8 @@ export default function AdminDashboardPage() {
     },
     {
       title: "Media Library",
-      description: "Coming Soon",
-      link: "#",
+      description: "Manage website images",
+      link: "/admin/media",
     },
     {
       title: "Navigation",

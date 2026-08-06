@@ -41,6 +41,8 @@ export default function EditProductModal({
   const [bestseller, setBestseller] = useState(false);
 
   const [newArrival, setNewArrival] = useState(false);
+  const [image, setImage] = useState("");
+  const [libraryImages, setLibraryImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (!product) return;
@@ -70,16 +72,35 @@ export default function EditProductModal({
       setFeatured(product.featured);
       setBestseller(product.bestseller);
       setNewArrival(product.new_arrival ?? false);
+      setImage(product.image ?? "");
+      loadLibraryImages();
   }, [product]);
+
+    async function loadLibraryImages() {
+    const { data } = await supabase.storage
+      .from("media-library")
+      .list("", { limit: 200 });
+
+    if (!data) return;
+
+    setLibraryImages(
+      data.map(
+        (file) =>
+          supabase.storage
+            .from("media-library")
+            .getPublicUrl(file.name).data.publicUrl
+      )
+    );
+  }
 
   if (!open || !product) return null;
 
     async function saveChanges() {
-    if (!product) return;
+  if (!product) return;
 
-    setLoading(true);
+      setLoading(true);
 
-    const { error } = await supabase
+      const { error } = await supabase
         .from("products")
         .update({
           name,
@@ -88,6 +109,7 @@ export default function EditProductModal({
 
           price: Number(price),
           stock: Number(stock),
+          image,
 
           description,
 
@@ -103,23 +125,27 @@ export default function EditProductModal({
           featured,
           bestseller,
           new_arrival: newArrival,
-      })
+
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", product.id);
 
-    setLoading(false);
+      setLoading(false);
 
-    if (error) {
-      alert(error.message);
-      return;
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      alert("Product Updated");
+
+      onSaved();
+      onClose();
     }
 
-    onSaved();
-    onClose();
-  }
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-      <div className="w-full max-w-lg rounded-2xl bg-white p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-6">
+      <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white p-8">
         <h2 className="mb-6 text-2xl font-bold">
           Edit Product
         </h2>
@@ -161,6 +187,40 @@ export default function EditProductModal({
             setStock(e.target.value)
           }
         />
+
+        <label className="mb-2 block font-medium">
+            Product Image
+          </label>
+
+          {image && (
+            <img
+              src={image}
+              alt=""
+              className="mb-4 h-40 rounded-lg border object-cover"
+            />
+          )}
+
+          <div className="mb-6 grid grid-cols-4 gap-3 max-h-64 overflow-y-auto rounded-lg border p-3">
+
+            {libraryImages.map((url) => (
+
+              <img
+                key={url}
+                src={url}
+                alt=""
+                onClick={() => setImage(url)}
+                className={`h-20 w-full cursor-pointer rounded-lg object-cover border-2 transition
+                  ${
+                    image === url
+                      ? "border-black"
+                      : "border-transparent"
+                  }`}
+              />
+
+            ))}
+
+          </div>
+
 
         <textarea
           className="mb-4 w-full rounded-lg border p-3"

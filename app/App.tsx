@@ -9,6 +9,7 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminHomepagePage from "./pages/admin/AdminHomepagePage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import AdminSiteSettingsPage from "./pages/admin/AdminSiteSettingsPage";
+import AdminMediaLibraryPage from "./pages/admin/Admin/AdminMediaLibraryPage";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ShopPage = lazy(() => import("./pages/ShopPage"));
@@ -177,6 +178,11 @@ export default function App() {
           <Route
             path="/admin/site-settings"
             element={<AdminSiteSettingsPage />}
+          />
+
+          <Route
+            path="/admin/media"
+            element={<AdminMediaLibraryPage />}
           />
 
           <Route
