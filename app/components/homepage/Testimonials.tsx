@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
+
 import Container from "../ui/Container";
 
 const testimonials = [
@@ -22,31 +25,64 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    async function loadSettings() {
+      const { data } = await supabase
+        .from("homepage_settings")
+        .select(`
+          testimonials_title,
+          testimonials_subtitle,
+          testimonials_enabled
+        `)
+        .limit(1)
+        .single();
+
+      setSettings(data);
+    }
+
+    loadSettings();
+  }, []);
+
+  if (settings?.testimonials_enabled === false) {
+    return null;
+  }
+
   return (
     <section className="bg-[var(--background)] py-24">
       <Container>
+
         <div className="mb-14 text-center">
+
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
             Testimonials
           </p>
 
           <h2 className="mt-4 text-4xl font-bold">
-            Loved by Our Customers
+            {settings?.testimonials_title ??
+              "Loved by Our Customers"}
           </h2>
 
           <p className="mx-auto mt-5 max-w-2xl text-[var(--muted)]">
-            Hear what our customers have to say about their Dress Like
-            Nawaabs experience.
+            {settings?.testimonials_subtitle ??
+              "Hear what our customers have to say about their Dress Like Nawaabs experience."}
           </p>
+
         </div>
 
         <div className="grid gap-8 md:grid-cols-3">
+
           {testimonials.map((item) => (
+
             <article
               key={item.name}
               className="rounded-3xl bg-white p-8 shadow-sm transition hover:-translate-y-2 hover:shadow-xl"
             >
-              <div className="mb-5 text-3xl">⭐⭐⭐⭐⭐</div>
+
+              <div className="mb-5 text-3xl">
+                ⭐⭐⭐⭐⭐
+              </div>
 
               <p className="italic text-[var(--muted)]">
                 "{item.review}"
@@ -59,9 +95,13 @@ export default function Testimonials() {
               <p className="text-sm text-[var(--muted)]">
                 {item.city}
               </p>
+
             </article>
+
           ))}
+
         </div>
+
       </Container>
     </section>
   );

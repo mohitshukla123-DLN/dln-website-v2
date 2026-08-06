@@ -27,6 +27,9 @@ export default function AdminHomepagePage() {
   const [bestSellersSubtitle, setBestSellersSubtitle] = useState("");
   const [bestSellersCount, setBestSellersCount] = useState(4);
   const [bestSellersEnabled, setBestSellersEnabled] = useState(true);
+  const [testimonialsTitle, setTestimonialsTitle] = useState("");
+  const [testimonialsSubtitle, setTestimonialsSubtitle] = useState("");
+  const [testimonialsEnabled, setTestimonialsEnabled] = useState(true);
 
   async function loadSettings() {
     const { data } = await supabase
@@ -46,6 +49,9 @@ export default function AdminHomepagePage() {
       setBestSellersSubtitle(data.best_sellers_subtitle ?? "");
       setBestSellersCount(data.best_sellers_count ?? 4);
       setBestSellersEnabled(data.best_sellers_enabled ?? true);
+      setTestimonialsTitle(data.testimonials_title ?? "");
+      setTestimonialsSubtitle(data.testimonials_subtitle ?? "");
+      setTestimonialsEnabled(data.testimonials_enabled ?? true);
           
 
     if (!data) return;
@@ -94,6 +100,9 @@ export default function AdminHomepagePage() {
         best_sellers_subtitle: bestSellersSubtitle,
         best_sellers_count: bestSellersCount,
         best_sellers_enabled: bestSellersEnabled,
+        testimonials_title: testimonialsTitle,
+        testimonials_subtitle: testimonialsSubtitle,
+        testimonials_enabled: testimonialsEnabled,
       })
       .eq("id", 1);
 
@@ -182,7 +191,7 @@ export default function AdminHomepagePage() {
 
             </div>
 
-                        <div className="mt-10 rounded-2xl border bg-white p-8">
+            <div className="mt-10 rounded-2xl border bg-white p-8">
 
               <h2 className="text-2xl font-semibold">
                 Best Sellers
@@ -225,6 +234,47 @@ export default function AdminHomepagePage() {
                   />
 
                   Enable Best Sellers
+
+                </label>
+
+              </div>
+
+            </div>
+
+            <div className="mt-10 rounded-2xl border bg-white p-8">
+
+              <h2 className="text-2xl font-semibold">
+                Testimonials
+              </h2>
+
+              <div className="mt-6 space-y-4">
+
+                <input
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Section Title"
+                  value={testimonialsTitle}
+                  onChange={(e)=>setTestimonialsTitle(e.target.value)}
+                />
+
+                <textarea
+                  rows={3}
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Subtitle"
+                  value={testimonialsSubtitle}
+                  onChange={(e)=>setTestimonialsSubtitle(e.target.value)}
+                />
+
+                <label className="flex items-center gap-3">
+
+                  <input
+                    type="checkbox"
+                    checked={testimonialsEnabled}
+                    onChange={(e)=>
+                      setTestimonialsEnabled(e.target.checked)
+                    }
+                  />
+
+                  Enable Testimonials
 
                 </label>
 
