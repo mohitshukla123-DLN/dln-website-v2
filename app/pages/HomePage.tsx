@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
 import Button from "../components/ui/Button";
 import Container from "../components/ui/Container";
@@ -18,6 +20,22 @@ import SEO from "../components/common/SEO";
 export default function HomePage() {
   const navigate = useNavigate();
 
+const [settings, setSettings] = useState<any>(null);
+
+useEffect(() => {
+  async function loadHomepage() {
+    const { data } = await supabase
+      .from("homepage_settings")
+      .select("*")
+      .limit(1)
+      .single();
+
+    setSettings(data);
+  }
+
+  loadHomepage();
+}, []);
+
   return (
     <>
       <SEO
@@ -32,24 +50,28 @@ export default function HomePage() {
           <div className="grid items-center gap-16 lg:grid-cols-2">
             <div>
               <p className="mb-4 uppercase tracking-[0.3em] text-[var(--teal)]">
-                Luxury Indian Ethnic Wear
+                {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
               </p>
 
               <h1 className="text-5xl font-bold leading-tight lg:text-7xl">
-                Dress Like
-                <br />
-                Nawaabs
+                {settings?.hero_title || "Dress Like Nawaabs"}
               </h1>
 
               <p className="mt-8 max-w-xl text-lg text-[var(--muted)]">
-                Timeless craftsmanship inspired by royal heritage.
-                Discover handcrafted ethnic wear designed for weddings,
-                celebrations and unforgettable occasions.
+                {settings?.hero_subtitle ||
+                "Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions."}
               </p>
 
               <div className="mt-10">
-                <Button onClick={() => navigate("/shop")}>
-                  Explore Collection
+                <Button
+                  onClick={() =>
+                    navigate(
+                      settings?.hero_button_url || "/shop"
+                    )
+                  }
+                >
+                  {settings?.hero_button_text ||
+                    "Explore Collection"}
                 </Button>
               </div>
             </div>
