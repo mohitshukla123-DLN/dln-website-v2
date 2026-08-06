@@ -23,6 +23,10 @@ export default function AdminHomepagePage() {
   const [whyChooseTitle, setWhyChooseTitle] = useState("");
   const [whyChooseSubtitle, setWhyChooseSubtitle] = useState("");
   const [whyChooseEnabled, setWhyChooseEnabled] = useState(true);
+  const [bestSellersTitle, setBestSellersTitle] = useState("");
+  const [bestSellersSubtitle, setBestSellersSubtitle] = useState("");
+  const [bestSellersCount, setBestSellersCount] = useState(4);
+  const [bestSellersEnabled, setBestSellersEnabled] = useState(true);
 
   async function loadSettings() {
     const { data } = await supabase
@@ -38,6 +42,10 @@ export default function AdminHomepagePage() {
       setFeaturedCollectionsTitle(data.featured_collections_title ?? "");
       setFeaturedCollectionsSubtitle(data.featured_collections_subtitle ?? "");
       setFeaturedCollectionsEnabled(data.featured_collections_enabled ?? true);
+      setBestSellersTitle(data.best_sellers_title ?? "");
+      setBestSellersSubtitle(data.best_sellers_subtitle ?? "");
+      setBestSellersCount(data.best_sellers_count ?? 4);
+      setBestSellersEnabled(data.best_sellers_enabled ?? true);
           
 
     if (!data) return;
@@ -82,6 +90,10 @@ export default function AdminHomepagePage() {
         why_choose_us_title: whyChooseTitle,
         why_choose_us_subtitle: whyChooseSubtitle,
         why_choose_us_enabled: whyChooseEnabled,
+        best_sellers_title: bestSellersTitle,
+        best_sellers_subtitle: bestSellersSubtitle,
+        best_sellers_count: bestSellersCount,
+        best_sellers_enabled: bestSellersEnabled,
       })
       .eq("id", 1);
 
@@ -163,6 +175,56 @@ export default function AdminHomepagePage() {
                   />
 
                   Enable Why Choose Us
+
+                </label>
+
+              </div>
+
+            </div>
+
+                        <div className="mt-10 rounded-2xl border bg-white p-8">
+
+              <h2 className="text-2xl font-semibold">
+                Best Sellers
+              </h2>
+
+              <div className="mt-6 space-y-4">
+
+                <input
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Section Title"
+                  value={bestSellersTitle}
+                  onChange={(e)=>setBestSellersTitle(e.target.value)}
+                />
+
+                <textarea
+                  rows={3}
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Subtitle"
+                  value={bestSellersSubtitle}
+                  onChange={(e)=>setBestSellersSubtitle(e.target.value)}
+                />
+
+                <input
+                  type="number"
+                  className="w-full rounded-lg border p-3"
+                  value={bestSellersCount}
+                  onChange={(e)=>
+                    setBestSellersCount(Number(e.target.value))
+                  }
+                />
+
+                <label className="flex items-center gap-3">
+
+                  <input
+                    type="checkbox"
+                    checked={bestSellersEnabled}
+                    onChange={(e)=>
+                      setBestSellersEnabled(e.target.checked)
+                    }
+                  />
+
+                  Enable Best Sellers
 
                 </label>
 
