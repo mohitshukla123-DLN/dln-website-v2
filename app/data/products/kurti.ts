@@ -29,7 +29,16 @@ export const kurtiProducts: Product[] = [
     description:
       "Des1: Premium handcrafted Chikankari kurta made with luxurious cotton fabric and traditional Lucknow embroidery.",
 
-    sizes: ["S", "M", "L", "XL", "XXL"],
+    sizes: {
+  "32": 5,
+  "34": 5,
+  "36": 5,
+  "38": 5,
+  "40": 5,
+  "42": 5,
+  "44": 5,
+  "46": 5,
+},
     specifications: {
         fabric: "Premium Cotton",
         embroidery: "Handcrafted Lucknow Chikankari",
@@ -64,7 +73,16 @@ export const kurtiProducts: Product[] = [
     description:
       "Des2: Premium handcrafted green Chikankari kurta made with fine cotton fabric and authentic Lucknow embroidery.",
 
-    sizes: ["XL", "XXL"],
+    sizes: {
+  "32": 5,
+  "34": 5,
+  "36": 5,
+  "38": 5,
+  "40": 5,
+  "42": 5,
+  "44": 5,
+  "46": 5,
+},
     specifications: {
         fabric: "Premium Cotton",
         embroidery: "Traditional Chikankari",
@@ -99,7 +117,16 @@ export const kurtiProducts: Product[] = [
     description:
       "Des3: Elegant white Chikankari kurta crafted with premium cotton and timeless handcrafted embroidery.",
 
-    sizes: ["S", "M", "L"],
+    sizes: {
+  "32": 5,
+  "34": 5,
+  "36": 5,
+  "38": 5,
+  "40": 5,
+  "42": 5,
+  "44": 5,
+  "46": 5,
+},
     specifications: {
         fabric: "Premium Cotton",
         embroidery: "Handcrafted Chikankari",

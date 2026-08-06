@@ -59,7 +59,7 @@ badge?:
 
 stock?: number;
 
-  sizes: string[];
+  sizes: Record<string, number>;
 
   specifications: {
     fabric: string;

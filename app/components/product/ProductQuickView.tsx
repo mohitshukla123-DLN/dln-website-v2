@@ -63,7 +63,7 @@ export default function ProductQuickView({
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              {product.sizes.map((size) => (
+              {Object.keys(product.sizes ?? {}).map((size) => (
                 <span
                   key={size}
                   className="rounded-xl border px-4 py-2"
