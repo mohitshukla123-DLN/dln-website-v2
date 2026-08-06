@@ -44,9 +44,9 @@ export default function AdminDashboardPage() {
       link: "#",
     },
     {
-      title: "Settings",
-      description: "Coming Soon",
-      link: "#",
+    title: "Site Settings",
+    description: "Logo, Footer, Contact, SEO",
+    link: "/admin/site-settings",
     },
   ];
 
