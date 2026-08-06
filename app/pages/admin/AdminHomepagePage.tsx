@@ -30,6 +30,9 @@ export default function AdminHomepagePage() {
   const [testimonialsTitle, setTestimonialsTitle] = useState("");
   const [testimonialsSubtitle, setTestimonialsSubtitle] = useState("");
   const [testimonialsEnabled, setTestimonialsEnabled] = useState(true);
+  const [newsletterTitle, setNewsletterTitle] = useState("");
+  const [newsletterSubtitle, setNewsletterSubtitle] = useState("");
+  const [newsletterEnabled, setNewsletterEnabled] = useState(true);
 
   async function loadSettings() {
     const { data } = await supabase
@@ -52,6 +55,9 @@ export default function AdminHomepagePage() {
       setTestimonialsTitle(data.testimonials_title ?? "");
       setTestimonialsSubtitle(data.testimonials_subtitle ?? "");
       setTestimonialsEnabled(data.testimonials_enabled ?? true);
+      setNewsletterTitle(data.newsletter_title ?? "");
+      setNewsletterSubtitle(data.newsletter_subtitle ?? "");
+      setNewsletterEnabled(data.newsletter_enabled ?? true);
           
 
     if (!data) return;
@@ -103,6 +109,9 @@ export default function AdminHomepagePage() {
         testimonials_title: testimonialsTitle,
         testimonials_subtitle: testimonialsSubtitle,
         testimonials_enabled: testimonialsEnabled,
+        newsletter_title: newsletterTitle,
+        newsletter_subtitle: newsletterSubtitle,
+        newsletter_enabled: newsletterEnabled,
       })
       .eq("id", 1);
 
@@ -275,6 +284,47 @@ export default function AdminHomepagePage() {
                   />
 
                   Enable Testimonials
+
+                </label>
+
+              </div>
+
+            </div>
+
+            <div className="mt-10 rounded-2xl border bg-white p-8">
+
+              <h2 className="text-2xl font-semibold">
+                Newsletter
+              </h2>
+
+              <div className="mt-6 space-y-4">
+
+                <input
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Section Title"
+                  value={newsletterTitle}
+                  onChange={(e)=>setNewsletterTitle(e.target.value)}
+                />
+
+                <textarea
+                  rows={3}
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Subtitle"
+                  value={newsletterSubtitle}
+                  onChange={(e)=>setNewsletterSubtitle(e.target.value)}
+                />
+
+                <label className="flex items-center gap-3">
+
+                  <input
+                    type="checkbox"
+                    checked={newsletterEnabled}
+                    onChange={(e)=>
+                      setNewsletterEnabled(e.target.checked)
+                    }
+                  />
+
+                  Enable Newsletter
 
                 </label>
 
