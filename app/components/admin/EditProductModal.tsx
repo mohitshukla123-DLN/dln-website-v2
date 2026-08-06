@@ -22,7 +22,16 @@ export default function EditProductModal({
   const [subcategory, setSubcategory] = useState("");
 
   const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
+  const [sizes, setSizes] = useState({
+  "32": "",
+  "34": "",
+  "36": "",
+  "38": "",
+  "40": "",
+  "42": "",
+  "44": "",
+  "46": "",
+});
 
   const [description, setDescription] = useState("");
 
@@ -53,7 +62,16 @@ export default function EditProductModal({
       setSubcategory(product.subcategory ?? "");
 
       setPrice(product.price.toString());
-      setStock((product.stock ?? 0).toString());
+      setSizes({
+          "32": product.sizes?.["32"] ?? "",
+          "34": product.sizes?.["34"] ?? "",
+          "36": product.sizes?.["36"] ?? "",
+          "38": product.sizes?.["38"] ?? "",
+          "40": product.sizes?.["40"] ?? "",
+          "42": product.sizes?.["42"] ?? "",
+          "44": product.sizes?.["44"] ?? "",
+          "46": product.sizes?.["46"] ?? "",
+        });
 
       setDescription(product.description ?? "");
 
@@ -108,7 +126,11 @@ export default function EditProductModal({
           subcategory,
 
           price: Number(price),
-          stock: Number(stock),
+          stock: Object.values(sizes).reduce(
+            (sum, value) => sum + Number(value || 0),
+            0),
+
+          sizes,
           image,
 
           description,
@@ -180,13 +202,28 @@ export default function EditProductModal({
           }
         />
 
-        <input
-          className="mb-4 w-full rounded-lg border p-3"
-          value={stock}
-          onChange={(e) =>
-            setStock(e.target.value)
-          }
-        />
+        <div className="mb-4 grid grid-cols-4 gap-3">
+          {Object.entries(sizes).map(([size, qty]) => (
+            <div key={size}>
+              <label className="mb-1 block text-sm font-medium">
+                {size}
+              </label>
+
+              <input
+                type="number"
+                min="0"
+                value={qty}
+                onChange={(e) =>
+                  setSizes({
+                    ...sizes,
+                    [size]: e.target.value,
+                  })
+                }
+                className="w-full rounded-lg border p-2"
+              />
+            </div>
+          ))}
+        </div>
 
         <label className="mb-2 block font-medium">
             Product Image

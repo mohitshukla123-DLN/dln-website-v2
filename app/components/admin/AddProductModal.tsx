@@ -35,7 +35,16 @@ export default function AddProductModal({
   const [subcategory, setSubcategory] = useState("");
 
   const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
+  const [sizes, setSizes] = useState({
+  "32": "",
+  "34": "",
+  "36": "",
+  "38": "",
+  "40": "",
+  "42": "",
+  "44": "",
+  "46": "",
+});
 
   const [description, setDescription] = useState("");
 
@@ -96,7 +105,12 @@ export default function AddProductModal({
       subcategory: null,
 
       price: Number(price),
-      stock: Number(stock),
+      stock: Object.values(sizes).reduce(
+        (total, value) => total + Number(value || 0),
+        0
+      ),
+
+      sizes,
 
       featured: false,
       bestseller: false,
@@ -113,8 +127,6 @@ export default function AddProductModal({
       fit: null,
       occasion: null,
       care: null,
-
-      sizes: [],
 
       image: uploadedImages[0] ?? null,
       images: uploadedImages,
@@ -177,12 +189,29 @@ export default function AddProductModal({
             onChange={(e) => setPrice(e.target.value)}
           />
 
-          <input
-            className="rounded-lg border p-3"
-            placeholder="Stock"
-            value={stock}
-            onChange={(e) => setStock(e.target.value)}
-          />
+          <div className="grid grid-cols-4 gap-3 mb-4">
+            {Object.entries(sizes).map(([size, qty]) => (
+              <div key={size}>
+                <label className="mb-1 block text-sm font-medium">
+                  {size}
+                </label>
+
+                <input
+                  type="number"
+                  min="0"
+                  value={qty}
+                  onChange={(e) =>
+                    setSizes({
+                      ...sizes,
+                      [size]: e.target.value,
+                    })
+                  }
+                  className="w-full rounded-lg border p-2"
+                />
+              </div>
+            ))}
+          </div>
+
         </div>
 
         <textarea
