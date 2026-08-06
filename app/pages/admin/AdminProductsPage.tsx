@@ -20,6 +20,9 @@ export default function AdminProductsPage() {
   const [loading, setLoading] = useState(true);
 
   const [products, setProducts] = useState<AdminProduct[]>([]);
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("Newest");
 
   async function loadProducts() {
     setLoading(true);
@@ -86,6 +89,43 @@ export default function AdminProductsPage() {
     loadProducts();
   }, []);
 
+  const filteredProducts = [...products]
+  .filter((product) => {
+  const matchesSearch =
+    product.name.toLowerCase().includes(search.toLowerCase()) ||
+    product.category.toLowerCase().includes(search.toLowerCase()) ||
+    (product.sku ?? "")
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+  const matchesCategory =
+    categoryFilter === "All" ||
+    product.category === categoryFilter;
+
+  return matchesSearch && matchesCategory;
+})
+.sort((a, b) => {
+  switch (sortBy) {
+    case "Price Low":
+      return a.price - b.price;
+
+    case "Price High":
+      return b.price - a.price;
+
+    case "Stock":
+      return b.stock - a.stock;
+
+    case "Name":
+      return a.name.localeCompare(b.name);
+
+    default:
+      return (
+        new Date(b.created_at ?? 0).getTime() -
+        new Date(a.created_at ?? 0).getTime()
+      );
+  }
+});
+
   return (
     <Container>
       <section className="py-16">
@@ -106,6 +146,46 @@ export default function AdminProductsPage() {
           >
             + Add Product
           </button>
+        </div>
+
+        <div className="mb-6 flex gap-4">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 rounded-xl border p-3"
+          />
+
+          <select
+            value={categoryFilter}
+            onChange={(e) =>
+              setCategoryFilter(e.target.value)
+            }
+            className="rounded-xl border p-3"
+          >
+            <option>All</option>
+            <option>Kurti</option>
+            <option>Saree</option>
+            <option>Sharara</option>
+            <option>Co-ord Set</option>
+            <option>Lehenga</option>
+            <option>Gown</option>
+            <option>Jacket</option>
+          </select>
+
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="rounded-xl border p-3"
+          >
+            <option>Newest</option>
+            <option>Name</option>
+            <option>Price Low</option>
+            <option>Price High</option>
+            <option>Stock</option>
+          </select>
+
         </div>
 
         <div className="overflow-hidden rounded-2xl border bg-white">
@@ -135,8 +215,9 @@ export default function AdminProductsPage() {
                 <th className="p-4 text-left">
                   Featured
                 </th>
+
                 <th className="p-4 text-left">
-                  Description
+                  Status
                 </th>
 
                 <th className="p-4 text-left">
@@ -169,7 +250,7 @@ export default function AdminProductsPage() {
                   </tr>
                 )}
 
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <tr
                   key={product.id}
                   className="border-t"
@@ -208,8 +289,33 @@ export default function AdminProductsPage() {
                       ? "✅"
                       : "—"}
                   </td>
+                  
                   <td className="p-4">
-                    {product.description}
+                    <div className="space-y-1 text-sm">
+                      {product.featured && (
+                        <div className="rounded bg-green-100 px-2 py-1 text-green-700">
+                          Featured
+                        </div>
+                      )}
+
+                      {product.bestseller && (
+                        <div className="rounded bg-blue-100 px-2 py-1 text-blue-700">
+                          Bestseller
+                        </div>
+                      )}
+
+                      {product.new_arrival && (
+                        <div className="rounded bg-purple-100 px-2 py-1 text-purple-700">
+                          New Arrival
+                        </div>
+                      )}
+
+                      {!product.featured &&
+                        !product.bestseller &&
+                        !product.new_arrival && (
+                          <span className="text-gray-400">—</span>
+                        )}
+                    </div>
                   </td>
 
                   <td className="space-x-2 p-4">
