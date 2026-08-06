@@ -17,6 +17,9 @@ export default function AdminHomepagePage() {
   const [newArrivalsSubtitle, setNewArrivalsSubtitle] = useState("");
   const [newArrivalsCount, setNewArrivalsCount] = useState(8);
   const [newArrivalsEnabled, setNewArrivalsEnabled] = useState(true);
+  const [featuredCollectionsTitle, setFeaturedCollectionsTitle] = useState("");
+  const [featuredCollectionsSubtitle, setFeaturedCollectionsSubtitle] = useState("");
+  const [featuredCollectionsEnabled, setFeaturedCollectionsEnabled] = useState(true);
 
   async function loadSettings() {
     const { data } = await supabase
@@ -29,6 +32,9 @@ export default function AdminHomepagePage() {
       setNewArrivalsSubtitle(data.new_arrivals_subtitle ?? "");
       setNewArrivalsCount(data.new_arrivals_count ?? 8);
       setNewArrivalsEnabled(data.new_arrivals_enabled ?? true);
+      setFeaturedCollectionsTitle(data.featured_collections_title ?? "");
+      setFeaturedCollectionsSubtitle(data.featured_collections_subtitle ?? "");
+      setFeaturedCollectionsEnabled(data.featured_collections_enabled ?? true);
           
 
     if (!data) return;
@@ -64,6 +70,9 @@ export default function AdminHomepagePage() {
         new_arrivals_subtitle: newArrivalsSubtitle,
         new_arrivals_count: newArrivalsCount,
         new_arrivals_enabled: newArrivalsEnabled,
+        featured_collections_title: featuredCollectionsTitle,
+        featured_collections_subtitle: featuredCollectionsSubtitle,
+        featured_collections_enabled: featuredCollectionsEnabled,
       })
       .eq("id", 1);
 
@@ -106,6 +115,47 @@ export default function AdminHomepagePage() {
             <h2 className="text-2xl font-semibold">
               New Arrivals
             </h2>
+
+            <div className="mt-10 rounded-2xl border bg-white p-8">
+
+            <h2 className="text-2xl font-semibold">
+              Featured Collections
+            </h2>
+
+            <div className="mt-6 space-y-4">
+
+              <input
+                className="w-full rounded-lg border p-3"
+                placeholder="Section Title"
+                value={featuredCollectionsTitle}
+                onChange={(e)=>setFeaturedCollectionsTitle(e.target.value)}
+              />
+
+              <textarea
+                rows={3}
+                className="w-full rounded-lg border p-3"
+                placeholder="Subtitle"
+                value={featuredCollectionsSubtitle}
+                onChange={(e)=>setFeaturedCollectionsSubtitle(e.target.value)}
+              />
+
+              <label className="flex items-center gap-3">
+
+                <input
+                  type="checkbox"
+                  checked={featuredCollectionsEnabled}
+                  onChange={(e)=>
+                    setFeaturedCollectionsEnabled(e.target.checked)
+                  }
+                />
+
+                Enable Featured Collections
+
+              </label>
+
+            </div>
+
+          </div>
 
             <div className="mt-6 space-y-4">
 
