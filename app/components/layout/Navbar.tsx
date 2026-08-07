@@ -19,54 +19,57 @@ export default function Navbar() {
   const [logoUrl, setLogoUrl] = useState("");
 
   useEffect(() => {
-  async function loadLogo() {
-    const { data, error } = await supabase
-      .from("site_settings")
-      .select("logo_url")
-      .limit(1)
-      .single();
+    async function loadLogo() {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("logo_url")
+        .limit(1)
+        .single();
 
-    console.log("Navbar site_settings:", data);
-    console.log("Navbar error:", error);
+      console.log("Navbar site_settings:", data);
+      console.log("Navbar error:", error);
 
-    if (data?.logo_url) {
+      if (data?.logo_url) {
         console.log("Using CMS logo:", data.logo_url);
 
         setLogoUrl(data.logo_url);
       } else {
         console.log("Using local logo");
       }
-  }
+    }
 
-  loadLogo();
+    loadLogo();
 
-  const updateWishlist = () => {
-    setWishlistCount(getWishlist().length);
-  };
+    const updateWishlist = () => {
+      setWishlistCount(getWishlist().length);
+    };
 
-  updateWishlist();
+    updateWishlist();
 
-  window.addEventListener("storage", updateWishlist);
-  window.addEventListener("wishlistUpdated", updateWishlist);
+    window.addEventListener("storage", updateWishlist);
+    window.addEventListener("wishlistUpdated", updateWishlist);
 
-  return () => {
-    window.removeEventListener("storage", updateWishlist);
-    window.removeEventListener("wishlistUpdated", updateWishlist);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("storage", updateWishlist);
+      window.removeEventListener("wishlistUpdated", updateWishlist);
+    };
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-[var(--background)]/95 backdrop-blur">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-black/5">
       <Container className="flex h-20 items-center justify-between">
 
         <Link to="/">
           <img
-            src={logoUrl !== "" ? logoUrl : logo}
+            src={
+              logoUrl
+                ? `${logoUrl}?v=${Date.now()}`
+                : logo
+            }
             alt="Dress Like Nawaabs"
             className="h-14 w-14 rounded-full object-cover"
             onError={(e) => {
               console.log("Navbar logo failed:", logoUrl);
-
               (e.currentTarget as HTMLImageElement).src = logo;
             }}
           />
@@ -102,7 +105,6 @@ export default function Navbar() {
                 {wishlistCount}
               </span>
             )}
-
           </NavLink>
 
           <Link
