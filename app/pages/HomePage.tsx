@@ -13,107 +13,100 @@ import Newsletter from "../components/homepage/Newsletter";
 import CategoryGrid from "../components/homepage/CategoryGrid";
 import NewArrivals from "../components/homepage/NewArrivals";
 import SEO from "../components/common/SEO";
+import heroLogo from "../assets/logos/logo-home.png";
 
 export default function HomePage() {
   const navigate = useNavigate();
 
-const [settings, setSettings] = useState<any>(null);
-const [logoUrl, setLogoUrl] = useState("");
+  const [settings, setSettings] = useState<any>(null);
 
-useEffect(() => {
-  async function loadHomepage() {
-    const { data } = await supabase
-      .from("homepage_settings")
-      .select("*")
-      .limit(1)
-      .single();
+  useEffect(() => {
+    async function loadHomepage() {
+      const { data } = await supabase
+        .from("homepage_settings")
+        .select("*")
+        .limit(1)
+        .single();
 
-    setSettings(data);
-
-    const { data: site } = await supabase
-      .from("site_settings")
-      .select("logo_url")
-      .limit(1)
-      .single();
-
-    if (site?.logo_url) {
-      setLogoUrl(site.logo_url);
+      setSettings(data);
     }
-  }
 
-  loadHomepage();
-}, []);
+    loadHomepage();
+  }, []);
 
   return (
     <>
-      <SEO
-        title="Home"
-        description="Dress Like Nawaabs offers handcrafted luxury ethnic wear inspired by royal heritage. Discover premium kurtis, sarees, jackets and festive collections."
-        canonical="https://dresslikenawaabs.pages.dev/"
-        keywords="Lucknow Chikankari, Luxury Kurti, Ethnic Wear, Designer Sarees, Women's Fashion, Dress Like Nawaabs"
-      />
       {/* Hero Section */}
       {settings?.hero_enabled !== false && (
-        <section className="py-24">
-        <Container>
-          <div className="grid items-center gap-16 lg:grid-cols-2">
-            <div>
-              <p className="mb-4 uppercase tracking-[0.3em] text-[var(--teal)]">
-                {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
-              </p>
+        <section className="py-16">
+          <Container>
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+              <div>
+                <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-[var(--teal)]">
+                  {settings?.hero_subtitle ||
+                    "Luxury Indian Ethnic Wear"}
+                </p>
 
-              <h1 className="text-5xl font-bold leading-tight lg:text-7xl">
-                {settings?.hero_title || "Dress Like Nawaabs"}
-              </h1>
+                <h1 className="text-5xl font-bold leading-tight lg:text-7xl">
+                  {settings?.hero_title || "Dress Like Nawaabs"}
+                </h1>
 
-              <p className="mt-8 max-w-xl text-lg text-[var(--muted)]">
-                {settings?.hero_subtitle ||
-                "Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions."}
-              </p>
+                <p className="mt-8 max-w-xl text-lg text-[var(--muted)]">
+                  {settings?.hero_subtitle ||
+                    "Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions."}
+                </p>
 
-              <div className="mt-10">
-                <Button
-                  onClick={() =>
-                    navigate(
-                      settings?.hero_button_url || "/shop"
-                    )
-                  }
-                >
-                  {settings?.hero_button_text ||
-                    "Explore Collection"}
-                </Button>
+                <div className="mt-10">
+                  <Button
+                    onClick={() =>
+                      navigate(
+                        settings?.hero_button_url || "/shop"
+                      )
+                    }
+                  >
+                    {settings?.hero_button_text ||
+                      "Explore Collection"}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="flex justify-center">
+                <img
+                  src={heroLogo}
+                  alt="Dress Like Nawaabs"
+                  className="w-full max-w-md rounded-full shadow-2xl"
+                  loading="eager"
+                  decoding="sync"
+                  style={{
+                    imageRendering: "auto",
+                    transform: "translateZ(0)",
+                  }}
+                />
               </div>
             </div>
-
-            <div className="flex justify-center">
-              <img
-              src={logoUrl}
-              alt="Dress Like Nawaabs"
-              className="w-full max-w-md rounded-full shadow-2xl"
-              loading="eager"
-              decoding="sync"
-              style={{
-                imageRendering: "auto",
-                transform: "translateZ(0)",
-              }}
-            />
-            </div>
-          </div>
-        </Container>
-      </section>
-)}
+          </Container>
+        </section>
+      )}
 
       <CategoryGrid />
 
-    <NewArrivals />
+      <NewArrivals />
 
-    {/* Featured Collections */}
-    <FeaturedCollections />
+      {/* Featured Collections */}
+      <FeaturedCollections />
 
-<WhyChooseUs />
-<BestSellers />
-<Testimonials />
-<Newsletter />
+      <WhyChooseUs />
+
+      <BestSellers />
+
+      <Testimonials />
+
+      <Newsletter />
+
+      <SEO
+        title="Dress Like Nawaabs"
+        description="Discover handcrafted Indian ethnic wear inspired by royal heritage, designed for weddings, celebrations and unforgettable occasions."
+      />
     </>
   );
 }

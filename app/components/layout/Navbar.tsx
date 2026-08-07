@@ -19,22 +19,20 @@ export default function Navbar() {
   const [logoUrl, setLogoUrl] = useState("");
 
   useEffect(() => {
-    async function loadLogo() {
+      async function loadLogo() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("logo_url")
-        .limit(1)
-        .single();
+        .limit(1);
 
-      console.log("Navbar site_settings:", data);
+      console.log("Navbar data:", data);
       console.log("Navbar error:", error);
 
-      if (data?.logo_url) {
-        console.log("Using CMS logo:", data.logo_url);
-
-        setLogoUrl(data.logo_url);
+      if (data && data.length > 0 && data[0].logo_url) {
+        console.log("Setting logo:", data[0].logo_url);
+        setLogoUrl(data[0].logo_url);
       } else {
-        console.log("Using local logo");
+        console.log("No logo found.");
       }
     }
 
