@@ -30,8 +30,12 @@ export default function Navbar() {
     console.log("Navbar error:", error);
 
     if (data?.logo_url) {
-      setLogoUrl(data.logo_url);
-    }
+        console.log("Using CMS logo:", data.logo_url);
+
+        setLogoUrl(data.logo_url);
+      } else {
+        console.log("Using local logo");
+      }
   }
 
   loadLogo();
@@ -57,9 +61,14 @@ export default function Navbar() {
 
         <Link to="/">
           <img
-            src={logoUrl || logo}
+            src={logoUrl !== "" ? logoUrl : logo}
             alt="Dress Like Nawaabs"
             className="h-14 w-14 rounded-full object-cover"
+            onError={(e) => {
+              console.log("Navbar logo failed:", logoUrl);
+
+              (e.currentTarget as HTMLImageElement).src = logo;
+            }}
           />
         </Link>
 
