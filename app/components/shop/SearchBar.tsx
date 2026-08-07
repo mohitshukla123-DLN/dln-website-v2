@@ -1,6 +1,8 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { products } from "../../data/products";
+import { getProducts } from "../../lib/products";
+import type { Product } from "../../types/product";
 
 interface Props {
   value: string;
@@ -11,20 +13,31 @@ export default function SearchBar({
   value,
   onChange,
 }: Props) {
-  const suggestions =
-    value.trim() === ""
-      ? []
-      : products
-          .filter((product) =>
-            product.name
-              .toLowerCase()
-              .includes(value.toLowerCase())
-          )
-          .slice(0, 5);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      const data = await getProducts();
+      setProducts(data);
+    }
+
+    load();
+  }, []);
+
+  const suggestions = useMemo(() => {
+    if (value.trim() === "") return [];
+
+    return products
+      .filter((product) =>
+        product.name
+          .toLowerCase()
+          .includes(value.toLowerCase())
+      )
+      .slice(0, 5);
+  }, [products, value]);
 
   return (
     <div className="relative mb-8">
-
       <input
         type="text"
         value={value}
@@ -35,7 +48,6 @@ export default function SearchBar({
 
       {suggestions.length > 0 && (
         <div className="absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border border-black/10 bg-white shadow-xl">
-
           {suggestions.map((product) => (
             <Link
               key={product.id}
@@ -60,10 +72,8 @@ export default function SearchBar({
               </div>
             </Link>
           ))}
-
         </div>
       )}
-
     </div>
   );
 }

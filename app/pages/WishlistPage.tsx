@@ -1,10 +1,23 @@
-import { products } from "../data/products";
+import { useEffect, useState } from "react";
+import { getProducts } from "../lib/products";
+import type { Product } from "../types/product";
 import { getWishlist } from "../lib/wishlist";
 
 import Container from "../components/ui/Container";
 import ProductGrid from "../components/shop/ProductGrid";
 
 export default function WishlistPage() {
+
+  const [products, setProducts] = useState<Product[]>([]);
+    useEffect(() => {
+      async function load() {
+        const data = await getProducts();
+        setProducts(data);
+      }
+
+      load();
+    }, []);
+    
   const wishlist = getWishlist();
 
   const wishlistProducts = products.filter((product) =>

@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import Container from "../components/ui/Container";
 import ProductGrid from "../components/shop/ProductGrid";
 
-import { products } from "../data/products";
+import { useEffect, useState } from "react";
+import { getProducts } from "../lib/products";
+import type { Product } from "../types/product";
 import { categories } from "../data/categories";
 import SEO from "../components/common/SEO";
 
@@ -28,7 +30,17 @@ export default function CategoryPage() {
     );
   }
 
-  const categoryProducts = products.filter(
+  const [products, setProducts] = useState<Product[]>([]);
+      useEffect(() => {
+        async function load() {
+          const data = await getProducts();
+          setProducts(data);
+        }
+
+        load();
+      }, []);
+
+const categoryProducts = products.filter(
     (product) =>
       product.category.toLowerCase() ===
       category.name.toLowerCase()

@@ -1,6 +1,8 @@
+import { useEffect, useState } from "react";
+
 import ProductGrid from "../shop/ProductGrid";
 
-import { products } from "../../data/products";
+import { getProducts } from "../../lib/products";
 import type { Product } from "../../types/product";
 
 interface Props {
@@ -10,6 +12,19 @@ interface Props {
 export default function RelatedProducts({
   currentProduct,
 }: Props) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const data = await getProducts();
+      setProducts(data);
+      setLoading(false);
+    }
+
+    load();
+  }, []);
+
   const relatedProducts = products
     .filter(
       (product) =>
@@ -18,13 +33,17 @@ export default function RelatedProducts({
     )
     .slice(0, 4);
 
+  if (loading) {
+    return null;
+  }
+
   if (relatedProducts.length === 0) {
     return null;
   }
 
   return (
     <section className="mt-24">
-      <h2 className="mb-8 text-3xl font-bold">
+      <h2 className="mb-10 text-4xl font-bold">
         You May Also Like
       </h2>
 

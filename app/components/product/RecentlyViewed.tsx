@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
-import { products } from "../../data/products";
+import { useEffect, useState } from "react";
+import { getProducts } from "../../lib/products";
+import type { Product } from "../../types/product";
 
 interface Props {
   currentSlug: string;
@@ -12,6 +14,16 @@ export default function RecentlyViewed({
   const viewed = JSON.parse(
     localStorage.getItem("recentlyViewed") || "[]"
   ) as string[];
+
+  const [products, setProducts] = useState<Product[]>([]);
+    useEffect(() => {
+      async function load() {
+        const data = await getProducts();
+        setProducts(data);
+      }
+
+      load();
+    }, []);
 
   const recentProducts = viewed
     .filter((slug) => slug !== currentSlug)

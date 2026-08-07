@@ -1,34 +1,19 @@
 import { useEffect, useState } from "react";
+
 import { supabase } from "../../lib/supabase";
+import { getFeaturedProducts } from "../../lib/products";
 
 import Container from "../ui/Container";
+import ProductCard from "../product/ProductCard";
 
-const collections = [
-  {
-    title: "Sherwanis",
-    description:
-      "Royal wedding attire handcrafted with timeless elegance.",
-    icon: "👑",
-  },
-  {
-    title: "Kurta Sets",
-    description:
-      "Sophisticated festive wear designed for every celebration.",
-    icon: "✨",
-  },
-  {
-    title: "Indo-Western",
-    description:
-      "Modern silhouettes with timeless Indian craftsmanship.",
-    icon: "🧵",
-  },
-];
+import type { Product } from "../../types/product";
 
 export default function FeaturedCollections() {
   const [settings, setSettings] = useState<any>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    async function loadSettings() {
+    async function load() {
       const { data } = await supabase
         .from("homepage_settings")
         .select(`
@@ -36,60 +21,56 @@ export default function FeaturedCollections() {
           featured_collections_subtitle,
           featured_collections_enabled
         `)
-        .limit(1)
         .single();
 
       setSettings(data);
+
+      const items = await getFeaturedProducts();
+      setProducts(items);
     }
 
-    loadSettings();
+    load();
   }, []);
 
   if (settings?.featured_collections_enabled === false) {
     return null;
   }
 
+  if (products.length === 0) {
+    return null;
+  }
+
   return (
-    <section className="bg-white py-24">
+    <section className="py-24">
       <Container>
 
         <div className="mb-14 text-center">
 
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
-            Collections
+            Featured
           </p>
 
           <h2 className="mt-4 text-4xl font-bold">
             {settings?.featured_collections_title ??
-              "Featured Collections"}
+              "Featured Products"}
           </h2>
 
           <p className="mx-auto mt-5 max-w-2xl text-[var(--muted)]">
             {settings?.featured_collections_subtitle ??
-              "Explore handcrafted ensembles inspired by India's royal heritage and contemporary luxury."}
+              "Handpicked styles selected especially for you."}
           </p>
 
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
-          {collections.map((item) => (
-            <article
-              key={item.title}
-              className="rounded-3xl border border-black/5 bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
-            >
-              <div className="text-5xl">
-                {item.icon}
-              </div>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
-              <h3 className="mt-8 text-2xl font-semibold">
-                {item.title}
-              </h3>
-
-              <p className="mt-4 text-[var(--muted)]">
-                {item.description}
-              </p>
-            </article>
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+            />
           ))}
+
         </div>
 
       </Container>

@@ -2,18 +2,20 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { supabase } from "../../lib/supabase";
+import { getNewArrivals } from "../../lib/products";
 
 import Button from "../ui/Button";
 import Container from "../ui/Container";
 import ProductGrid from "../shop/ProductGrid";
 
-import { products } from "../../data/products";
+import type { Product } from "../../types/product";
 
 export default function NewArrivals() {
   const [settings, setSettings] = useState<any>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    async function loadSettings() {
+    async function load() {
       const { data } = await supabase
         .from("homepage_settings")
         .select(`
@@ -22,14 +24,15 @@ export default function NewArrivals() {
           new_arrivals_enabled,
           new_arrivals_count
         `)
-        .limit(1)
         .single();
 
       setSettings(data);
-      console.log("Homepage settings", data);
+
+      const items = await getNewArrivals();
+      setProducts(items);
     }
 
-    loadSettings();
+    load();
   }, []);
 
   if (settings?.new_arrivals_enabled === false) {
@@ -38,9 +41,7 @@ export default function NewArrivals() {
 
   const count = settings?.new_arrivals_count ?? 3;
 
-  const newProducts = products
-    .filter((product) => product.badge === "NEW")
-    .slice(0, count);
+  const newProducts = products.slice(0, count);
 
   if (newProducts.length === 0) {
     return null;

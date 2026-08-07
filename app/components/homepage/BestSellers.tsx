@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
+
 import { supabase } from "../../lib/supabase";
+import { getBestSellers } from "../../lib/products";
 
 import Container from "../ui/Container";
 import ProductCard from "../product/ProductCard";
-import { products } from "../../data/products";
+
+import type { Product } from "../../types/product";
 
 export default function BestSellers() {
   const [settings, setSettings] = useState<any>(null);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    async function loadSettings() {
+    async function load() {
       const { data } = await supabase
         .from("homepage_settings")
         .select(`
@@ -18,13 +22,15 @@ export default function BestSellers() {
           best_sellers_enabled,
           best_sellers_count
         `)
-        .limit(1)
         .single();
 
       setSettings(data);
+
+      const items = await getBestSellers();
+      setProducts(items);
     }
 
-    loadSettings();
+    load();
   }, []);
 
   if (settings?.best_sellers_enabled === false) {
@@ -33,16 +39,14 @@ export default function BestSellers() {
 
   const count = settings?.best_sellers_count ?? 4;
 
-  const bestSellers = products
-    .filter((product) => product.bestseller)
-    .slice(0, count);
+  const bestSellers = products.slice(0, count);
 
   if (bestSellers.length === 0) {
     return null;
   }
 
   return (
-    <section className="bg-white py-24">
+    <section className="py-24">
       <Container>
 
         <div className="mb-14 text-center">

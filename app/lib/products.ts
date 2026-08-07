@@ -98,14 +98,24 @@ export async function getFeaturedProducts(): Promise<Product[]> {
   return (data ?? []).map(mapProduct);
 }
 
+export async function getBestSellers(): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("bestseller", true)
+    .order("created_at", { ascending: false });
+
+  if (error) return [];
+
+  return (data ?? []).map(mapProduct);
+}
+
 export async function getNewArrivals(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
     .select("*")
-    .order("created_at", {
-      ascending: false,
-    })
-    .limit(8);
+    .eq("new_arrival", true)
+    .order("created_at", { ascending: false });
 
   if (error) return [];
 
