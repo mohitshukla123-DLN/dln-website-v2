@@ -5,9 +5,6 @@ import { supabase } from "../lib/supabase";
 import Button from "../components/ui/Button";
 import Container from "../components/ui/Container";
 import FeaturedCollections from "../components/homepage/FeaturedCollections";
-
-import logo from "../assets/logos/logo-home.png";
-
 import WhyChooseUs from "../components/homepage/WhyChooseUs";
 import BestSellers from "../components/homepage/BestSellers";
 import Testimonials from "../components/homepage/Testimonials";
@@ -21,6 +18,7 @@ export default function HomePage() {
   const navigate = useNavigate();
 
 const [settings, setSettings] = useState<any>(null);
+const [logoUrl, setLogoUrl] = useState("");
 
 useEffect(() => {
   async function loadHomepage() {
@@ -31,6 +29,16 @@ useEffect(() => {
       .single();
 
     setSettings(data);
+
+    const { data: site } = await supabase
+      .from("site_settings")
+      .select("logo_url")
+      .limit(1)
+      .single();
+
+    if (site?.logo_url) {
+      setLogoUrl(site.logo_url);
+    }
   }
 
   loadHomepage();
@@ -79,7 +87,7 @@ useEffect(() => {
 
             <div className="flex justify-center">
               <img
-              src={logo}
+              src={logoUrl}
               alt="Dress Like Nawaabs"
               className="w-full max-w-md rounded-full shadow-2xl"
               loading="eager"

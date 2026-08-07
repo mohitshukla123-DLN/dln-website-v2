@@ -19,34 +19,37 @@ export default function Navbar() {
   const [logoUrl, setLogoUrl] = useState("");
 
   useEffect(() => {
-    async function loadLogo() {
-      const { data } = await supabase
-        .from("site_settings")
-        .select("logo_url")
-        .limit(1)
-        .single();
+  async function loadLogo() {
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select("logo_url")
+      .limit(1)
+      .single();
 
-      if (data?.logo_url) {
-        setLogoUrl(data.logo_url);
-      }
+    console.log("Navbar site_settings:", data);
+    console.log("Navbar error:", error);
+
+    if (data?.logo_url) {
+      setLogoUrl(data.logo_url);
     }
+  }
 
-    loadLogo();
+  loadLogo();
 
-    const updateWishlist = () => {
-      setWishlistCount(getWishlist().length);
-    };
+  const updateWishlist = () => {
+    setWishlistCount(getWishlist().length);
+  };
 
-    updateWishlist();
+  updateWishlist();
 
-    window.addEventListener("storage", updateWishlist);
-    window.addEventListener("wishlistUpdated", updateWishlist);
+  window.addEventListener("storage", updateWishlist);
+  window.addEventListener("wishlistUpdated", updateWishlist);
 
-    return () => {
-      window.removeEventListener("storage", updateWishlist);
-      window.removeEventListener("wishlistUpdated", updateWishlist);
-    };
-  }, []);
+  return () => {
+    window.removeEventListener("storage", updateWishlist);
+    window.removeEventListener("wishlistUpdated", updateWishlist);
+  };
+}, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-black/5 bg-[var(--background)]/95 backdrop-blur">

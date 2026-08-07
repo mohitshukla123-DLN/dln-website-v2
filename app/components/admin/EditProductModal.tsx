@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import type { AdminProduct } from "../../types/adminProduct";
+import { categories } from "../../data/categories";
+import { subcategories } from "../../data/subcategories";
 
 interface Props {
   open: boolean;
@@ -111,6 +113,10 @@ export default function EditProductModal({
     );
   }
 
+  const categoryKey = category
+  .toLowerCase()
+  .replace(/\s+/g, "-");
+
   if (!open || !product) return null;
 
     async function saveChanges() {
@@ -180,18 +186,51 @@ export default function EditProductModal({
           }
         />
 
-        <select
+      <select
+        className="mb-4 w-full rounded-lg border p-3"
+        value={category}
+        onChange={(e) => {
+          setCategory(e.target.value);
+          setSubcategory("");
+        }}
+      >
+        <option value="">Select Category</option>
+
+        {categories.map((item) => (
+          <option
+            key={item.slug}
+            value={item.name}
+          >
+            {item.name}
+          </option>
+        ))}
+      </select>
+
+      <select
           className="mb-4 w-full rounded-lg border p-3"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          value={subcategory}
+          onChange={(e) => setSubcategory(e.target.value)}
+          disabled={!category}
         >
-          <option value="Kurti">Kurti</option>
-          <option value="Saree">Saree</option>
-          <option value="Sharara">Sharara</option>
-          <option value="Co-ord Set">Co-ord Set</option>
-          <option value="Lehenga">Lehenga</option>
-          <option value="Gown">Gown</option>
-          <option value="Jacket">Jacket</option>
+          <option value="">
+            {category
+              ? "Select Subcategory"
+              : "Select Category First"}
+          </option>
+
+          {category &&
+            subcategories[
+              category
+                .toLowerCase()
+                .replace(/\s+/g, "-") as keyof typeof subcategories
+            ]?.map((item) => (
+              <option
+                key={item}
+                value={item}
+              >
+                {item}
+              </option>
+            ))}
         </select>
 
         <input

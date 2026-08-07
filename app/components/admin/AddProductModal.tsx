@@ -1,6 +1,8 @@
 import { ChangeEvent, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { uploadProductImage } from "../../lib/storage";
+import { categories } from "../../data/categories";
+import { subcategories } from "../../data/subcategories";
 
 interface Props {
   open: boolean;
@@ -75,6 +77,10 @@ export default function AddProductModal({
 
   if (!open) return null;
 
+  const categoryKey = category
+  .toLowerCase()
+  .replace(/\s+/g, "-");
+
   async function saveProduct() {
   const {
     data: { session },
@@ -102,7 +108,7 @@ export default function AddProductModal({
       sku: generateSKU(),
 
       category,
-      subcategory: null,
+      subcategory: subcategory || null,
 
       price: Number(price),
       stock: Object.values(sizes).reduce(
@@ -156,29 +162,50 @@ export default function AddProductModal({
           onChange={(e) => setName(e.target.value)}
         />
 
+      <select
+        className="mb-4 w-full rounded-lg border p-3"
+        value={category}
+        onChange={(e) => {
+          setCategory(e.target.value);
+          setSubcategory("");
+        }}
+      >
+        <option value="">Select Category</option>
+
+        {categories.map((item) => (
+          <option
+            key={item.slug}
+            value={item.name}
+          >
+            {item.name}
+          </option>
+        ))}
+      </select>
+
         <select
           className="mb-4 w-full rounded-lg border p-3"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          <option value="">Select Category</option>
-          <option value="Kurti">Kurti</option>
-          <option value="Saree">Saree</option>
-          <option value="Sharara">Sharara</option>
-          <option value="Co-ord Set">Co-ord Set</option>
-          <option value="Lehenga">Lehenga</option>
-          <option value="Gown">Gown</option>
-          <option value="Jacket">Jacket</option>
-        </select>
-
-        <input
-          className="mb-4 w-full rounded-lg border p-3"
-          placeholder="Sub Category"
           value={subcategory}
-          onChange={(e) =>
-            setSubcategory(e.target.value)
-          }
-        />
+          onChange={(e) => setSubcategory(e.target.value)}
+          disabled={!category}
+        >
+          <option value="">
+            {category
+              ? "Select Subcategory"
+              : "Select Category First"}
+          </option>
+
+          {category &&
+            subcategories[
+            categoryKey as keyof typeof subcategories
+          ]?.map((item) => (
+              <option
+                key={item}
+                value={item}
+              >
+                {item}
+              </option>
+            ))}
+        </select>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
           <input
