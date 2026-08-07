@@ -4,6 +4,7 @@ import {
   lazy,
   Suspense,
 } from "react";
+
 import { Link, useParams } from "react-router-dom";
 
 import Container from "../components/ui/Container";
@@ -18,10 +19,19 @@ import ProductReviews from "../components/product/ProductReviews";
 import ProductFAQ from "../components/product/ProductFAQ";
 import ProductCard from "../components/product/ProductCard";
 import ProductShare from "../components/product/ProductShare";
+
 import SEO from "../components/common/SEO";
 import ProductSchema from "../components/common/ProductSchema";
+
 import ReviewForm from "../components/product/ReviewForm";
-import { products } from "../data/products";
+
+import {
+  getProductBySlug,
+  getProducts,
+} from "../lib/products";
+
+import type { Product } from "../types/product";
+
 import {
   getReviews,
   type Review,
@@ -51,9 +61,119 @@ const EnquiryDrawer = lazy(
 export default function ProductPage() {
   const { slug } = useParams();
 
-  const product = products.find(
-    (item) => item.slug === slug
-  );
+  const [product, setProduct] =
+    useState<Product | null>(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [relatedProducts, setRelatedProducts] =
+    useState<Product[]>([]);
+
+  const [selectedSize, setSelectedSize] =
+    useState("");
+
+  const [drawerOpen, setDrawerOpen] =
+    useState(false);
+
+  const [activeImage, setActiveImage] =
+    useState("");
+
+  const [lightboxOpen, setLightboxOpen] =
+    useState(false);
+
+  const [reviews, setReviews] =
+    useState<Review[]>([]);
+
+  useEffect(() => {
+    async function loadProduct() {
+      if (!slug) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+
+      const data =
+        await getProductBySlug(slug);
+
+      if (!data) {
+        setProduct(null);
+        setLoading(false);
+        return;
+      }
+
+      setProduct(data);
+
+      setActiveImage(
+        data.images?.[0] ?? data.image
+      );
+
+      const allProducts =
+        await getProducts();
+
+      setRelatedProducts(
+        allProducts
+          .filter(
+            (item) =>
+              item.category === data.category &&
+              item.id !== data.id
+          )
+          .slice(0, 3)
+      );
+
+      setLoading(false);
+    }
+
+    loadProduct();
+  }, [slug]);
+    useEffect(() => {
+    async function loadReviews() {
+      if (!product) return;
+
+      const data = await getReviews(
+        product.slug
+      );
+
+      setReviews(data);
+    }
+
+    loadReviews();
+  }, [product]);
+
+  useEffect(() => {
+    if (!product) return;
+
+    const viewed: string[] = JSON.parse(
+      localStorage.getItem(
+        "recentlyViewed"
+      ) || "[]"
+    );
+
+    const updated = [
+      product.slug,
+      ...viewed.filter(
+        (item) => item !== product.slug
+      ),
+    ].slice(0, 8);
+
+    localStorage.setItem(
+      "recentlyViewed",
+      JSON.stringify(updated)
+    );
+  }, [product]);
+
+  if (loading) {
+    return (
+      <Container>
+        <section className="py-24 text-center">
+          <h2 className="text-2xl font-semibold">
+            Loading product...
+          </h2>
+        </section>
+      </Container>
+    );
+  }
 
   if (!product) {
     return (
@@ -64,65 +184,13 @@ export default function ProductPage() {
           </h1>
 
           <p className="mt-4 text-[var(--muted)]">
-            The product you are looking for does not exist.
+            The product you are looking
+            for does not exist.
           </p>
         </section>
       </Container>
     );
   }
-
-  const [selectedSize, setSelectedSize] = useState("");
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const [activeImage, setActiveImage] = useState(
-    product.images[0]
-  );
-
-  const [lightboxOpen, setLightboxOpen] =
-    useState(false);
-
-  const [reviews, setReviews] = useState<
-    Review[]
-  >([]);
-
-  async function loadReviews() {
-  if (!product) return;
-
-  const data = await getReviews(product.slug);
-  setReviews(data);
-}
-
-useEffect(() => {
-  loadReviews();
-}, [product]);
-
-
-  useEffect(() => {
-    const viewed: string[] = JSON.parse(
-      localStorage.getItem("recentlyViewed") ||
-        "[]"
-    );
-
-    const updated = [
-      product.slug,
-      ...viewed.filter(
-        (slug) => slug !== product.slug
-      ),
-    ].slice(0, 8);
-
-    localStorage.setItem(
-      "recentlyViewed",
-      JSON.stringify(updated)
-    );
-  }, [product.slug]);
-
-  const relatedProducts = products
-    .filter(
-      (item) =>
-        item.category === product.category &&
-        item.id !== product.id
-    )
-    .slice(0, 3);
 
   return (
     <>
@@ -145,6 +213,7 @@ useEffect(() => {
 
       <section className="py-20">
         <Container>
+
           <div className="mb-10 text-sm text-[var(--muted)]">
             <Link
               to="/"
@@ -170,6 +239,7 @@ useEffect(() => {
           </div>
 
           <div className="grid gap-16 lg:grid-cols-2">
+
             <ProductGallery
               product={product}
               activeImage={activeImage}
@@ -180,6 +250,7 @@ useEffect(() => {
             />
 
             <div>
+
               <ProductInfo
                 category={product.category}
                 name={product.name}
@@ -228,21 +299,26 @@ useEffect(() => {
               <ReviewForm
                 productSlug={product.slug}
                 onReviewAdded={async () => {
-                  const data = await getReviews(
-                    product.slug
-                  );
+                  const data =
+                    await getReviews(
+                      product.slug
+                    );
+
                   setReviews(data);
                 }}
               />
 
               <ProductFAQ />
+
             </div>
+
           </div>
-        </Container>
+                  </Container>
 
         {relatedProducts.length > 0 && (
           <section className="mt-24">
             <Container>
+
               <h2 className="mb-10 text-4xl font-bold">
                 You May Also Like
               </h2>
@@ -255,6 +331,7 @@ useEffect(() => {
                   />
                 ))}
               </div>
+
             </Container>
           </section>
         )}
@@ -287,6 +364,7 @@ useEffect(() => {
             onImageChange={setActiveImage}
           />
         </Suspense>
+
       </section>
     </>
   );

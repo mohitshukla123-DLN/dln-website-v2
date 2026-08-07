@@ -112,24 +112,23 @@ export default function AddProductModal({
 
       sizes,
 
-      featured: false,
-      bestseller: false,
-      new_arrival: false,
+      featured,
+      bestseller,
+      new_arrival: newArrival,
 
-      badge: null,
+      badge: badge || null,
 
-      availability: "In Stock",
+      availability,
 
-      description: null,
+      description,
 
-      fabric: null,
-      embroidery: null,
-      fit: null,
-      occasion: null,
-      care: null,
+      fabric,
+      embroidery,
+      fit,
+      occasion,
+      care,
 
       image: uploadedImages[0] ?? null,
-      images: uploadedImages,
     });
 
   setLoading(false);
@@ -213,38 +212,6 @@ export default function AddProductModal({
           </div>
 
         </div>
-
-        <textarea
-          className="mb-4 w-full rounded-lg border p-3"
-          rows={4}
-          placeholder="Description"
-        />
-
-        <input
-          className="mb-4 w-full rounded-lg border p-3"
-          placeholder="Fabric"
-        />
-
-        <input
-          className="mb-4 w-full rounded-lg border p-3"
-          placeholder="Embroidery"
-        />
-
-        <input
-          className="mb-4 w-full rounded-lg border p-3"
-          placeholder="Fit"
-        />
-
-        <input
-          className="mb-4 w-full rounded-lg border p-3"
-          placeholder="Occasion"
-        />
-
-        <textarea
-          className="mb-4 w-full rounded-lg border p-3"
-          rows={2}
-          placeholder="Care Instructions"
-        />
 
         <div className="mb-6">
           <label className="mb-2 block font-medium">

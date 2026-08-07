@@ -41,6 +41,9 @@ export default function ShopPage() {
   useEffect(() => {
     async function loadProducts() {
       const data = await getProducts();
+
+      console.log("Products from Supabase:", data);
+
       setProducts(data);
     }
 
@@ -78,6 +81,14 @@ export default function ShopPage() {
         (priceRange === "above-10000" &&
           product.price > 10000);
 
+      console.log({
+        name: product.name,
+        matchesSearch,
+        matchesCategory,
+        matchesSubcategory,
+        matchesPrice,
+      });
+
       return (
         matchesSearch &&
         matchesCategory &&
@@ -106,17 +117,28 @@ export default function ShopPage() {
         return result;
     }
       }, [
-      search,
-      category,
-      subcategory,
-      sort,
-      priceRange,
-    ]);
+        products,
+        search,
+        category,
+        subcategory,
+        sort,
+        priceRange,
+      ]);
 
   function handleCategory(categoryName: string) {
     setCategory(categoryName);
     setSubcategory("All");
   }
+
+  console.log({
+  totalProducts: products.length,
+  filteredProducts: filteredProducts.length,
+  category,
+  subcategory,
+  search,
+  priceRange,
+  sort,
+});
 
   return (
 
