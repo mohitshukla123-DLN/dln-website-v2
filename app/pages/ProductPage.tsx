@@ -103,11 +103,22 @@ export default function ProductPage() {
         return;
       }
 
-      setProduct(data);
+      const normalizedProduct: Product = {
+          ...data,
+          images: Array.isArray(data.images)
+            ? data.images
+            : data.image
+              ? [data.image]
+              : [],
+          sizes: data.sizes ?? {},
+          specifications: data.specifications ?? {},
+        };
 
-      setActiveImage(
-        data.images?.[0] ?? data.image
-      );
+        setProduct(normalizedProduct);
+
+        setActiveImage(
+          normalizedProduct.images[0] ?? ""
+        );
 
       const allProducts =
         await getProducts();
@@ -200,7 +211,7 @@ export default function ProductPage() {
         title={product.name}
         description={product.description}
         canonical={`https://dresslikenawaabs.pages.dev/products/${product.slug}`}
-        image={product.images[0]}
+        image={product.images[0] ?? product.image}
         keywords={[
           product.category,
           product.subcategory,
