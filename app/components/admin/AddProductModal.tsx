@@ -81,7 +81,7 @@ export default function AddProductModal({
   .toLowerCase()
   .replace(/\s+/g, "-");
 
-  async function saveProduct() {
+async function saveProduct() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -91,61 +91,110 @@ export default function AddProductModal({
     return;
   }
 
-  setLoading(true);
+  const trimmedName = name.trim();
+  const numericPrice = Number(price);
 
-  const uploadedImages: string[] = [];
-
-  for (const image of images) {
-    const uploaded = await uploadProductImage(image);
-    uploadedImages.push(uploaded.url);
-  }
-
-  const { error } = await supabase
-    .from("products")
-    .insert({
-      name,
-      slug: slugify(name),
-      sku: generateSKU(),
-
-      category,
-      subcategory: subcategory || null,
-
-      price: Number(price),
-      stock: Object.values(sizes).reduce(
-        (total, value) => total + Number(value || 0),
-        0
-      ),
-
-      sizes,
-
-      featured,
-      bestseller,
-      new_arrival: newArrival,
-
-      badge: badge || null,
-
-      availability,
-
-      description,
-
-      fabric,
-      embroidery,
-      fit,
-      occasion,
-      care,
-
-      image: uploadedImages[0] ?? null,
-    });
-
-  setLoading(false);
-
-  if (error) {
-    alert(error.message);
+  if (!trimmedName) {
+    alert("Product name is required.");
     return;
   }
 
-  onClose();
-  window.location.reload();
+  if (!category) {
+    alert("Please select a category.");
+    return;
+  }
+
+  if (category && subcategories[
+    categoryKey as keyof typeof subcategories
+  ]?.length > 0 && !subcategory) {
+    alert("Please select a subcategory.");
+    return;
+  }
+
+  if (!price || !Number.isFinite(numericPrice) || numericPrice <= 0) {
+    alert("Please enter a valid price greater than 0.");
+    return;
+  }
+
+  if (images.length === 0) {
+    alert("Please upload at least one product image.");
+    return;
+  }
+
+  const stock = Object.values(sizes).reduce(
+    (total, value) => total + Number(value || 0),
+    0
+  );
+
+  if (stock <= 0) {
+    alert("Please enter stock quantity for at least one size.");
+    return;
+  }
+
+  if (!description.trim()) {
+    alert("Product description is required.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const uploadedImages: string[] = [];
+
+    for (const image of images) {
+      const uploaded = await uploadProductImage(image, trimmedName);
+      uploadedImages.push(uploaded.url);
+    }
+
+    const { error } = await supabase
+      .from("products")
+      .insert({
+        name: trimmedName,
+        slug: slugify(trimmedName),
+        sku: generateSKU(),
+
+        category,
+        subcategory: subcategory || null,
+
+        price: numericPrice,
+        stock,
+
+        sizes,
+
+        featured,
+        bestseller,
+        new_arrival: newArrival,
+
+        badge: badge || null,
+
+        availability,
+
+        description: description.trim(),
+
+        fabric: fabric.trim(),
+        embroidery: embroidery.trim(),
+        fit: fit.trim(),
+        occasion: occasion.trim(),
+        care: care.trim(),
+
+        image: uploadedImages[0] ?? null,
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    onClose();
+    window.location.reload();
+  } catch (error) {
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Failed to save product."
+    );
+  } finally {
+    setLoading(false);
+  }
 }
 
   return (
@@ -162,50 +211,50 @@ export default function AddProductModal({
           onChange={(e) => setName(e.target.value)}
         />
 
-      <select
-        className="mb-4 w-full rounded-lg border p-3"
-        value={category}
-        onChange={(e) => {
-          setCategory(e.target.value);
-          setSubcategory("");
-        }}
-      >
-        <option value="">Select Category</option>
-
-        {categories.map((item) => (
-          <option
-            key={item.slug}
-            value={item.name}
-          >
-            {item.name}
-          </option>
-        ))}
-      </select>
-
         <select
-          className="mb-4 w-full rounded-lg border p-3"
-          value={subcategory}
-          onChange={(e) => setSubcategory(e.target.value)}
-          disabled={!category}
-        >
-          <option value="">
-            {category
-              ? "Select Subcategory"
-              : "Select Category First"}
-          </option>
+    className="mb-4 w-full rounded-lg border p-3"
+    value={category}
+    onChange={(e) => {
+      const selectedCategory = e.target.value;
 
-          {category &&
-            subcategories[
-            categoryKey as keyof typeof subcategories
-          ]?.map((item) => (
-              <option
-                key={item}
-                value={item}
-              >
-                {item}
-              </option>
-            ))}
-        </select>
+      setCategory(selectedCategory);
+      setSubcategory("");
+    }}
+  >
+    <option value="">Select Category</option>
+
+    {categories.map((item) => (
+      <option key={item.slug} value={item.name}>
+        {item.name}
+      </option>
+    ))}
+  </select>
+
+  <select
+    className="mb-4 w-full rounded-lg border p-3 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
+    value={subcategory}
+    onChange={(e) => setSubcategory(e.target.value)}
+    disabled={!category}
+  >
+    <option value="">
+      {!category
+        ? "Select Category First"
+        : subcategories[
+              categoryKey as keyof typeof subcategories
+          ]?.length
+          ? "Select Subcategory"
+          : "No Subcategories Available"}
+    </option>
+
+    {category &&
+      subcategories[
+        categoryKey as keyof typeof subcategories
+      ]?.map((item) => (
+        <option key={item} value={item}>
+          {item}
+        </option>
+      ))}
+  </select>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
           <input
@@ -245,11 +294,20 @@ export default function AddProductModal({
             Product Images
           </label>
 
+          <label
+            htmlFor="product-images"
+            className="inline-flex cursor-pointer items-center rounded-lg bg-[var(--teal)] px-5 py-3 font-medium text-white transition hover:opacity-90"
+          >
+            Upload Product Images
+          </label>
+
           <input
+            id="product-images"
             type="file"
             multiple
             accept="image/*"
             onChange={handleImages}
+            className="hidden"
           />
 
           {images.length > 0 && (

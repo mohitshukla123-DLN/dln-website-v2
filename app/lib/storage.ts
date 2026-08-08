@@ -1,10 +1,26 @@
 import { supabase } from "./supabase";
 
-export async function uploadProductImage(file: File) {
-  const extension = file.name.split(".").pop();
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
 
-  const fileName =
-    crypto.randomUUID() + "." + extension;
+export async function uploadProductImage(
+  file: File,
+  productName?: string
+) {
+  const extension =
+    file.name.split(".").pop()?.toLowerCase() || "jpg";
+
+  const baseName = productName
+    ? slugify(productName)
+    : "product-image";
+
+  const randomSuffix = crypto.randomUUID().split("-")[0];
+
+  const fileName = `${baseName}-${randomSuffix}.${extension}`;
 
   const filePath = `products/${fileName}`;
 
