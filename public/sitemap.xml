@@ -1,25 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
   <url>
     <loc>https://dresslikenawaabs.pages.dev/</loc>
   </url>
-
   <url>
     <loc>https://dresslikenawaabs.pages.dev/shop</loc>
   </url>
-
   <url>
     <loc>https://dresslikenawaabs.pages.dev/new-arrivals</loc>
   </url>
-
   <url>
     <loc>https://dresslikenawaabs.pages.dev/about</loc>
   </url>
-
   <url>
     <loc>https://dresslikenawaabs.pages.dev/contact</loc>
   </url>
-
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/size-guide</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/policies</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/kurti</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/short-kurti</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/saree</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/legging</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/suit-piece</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/pants</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/plazo</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/sharara</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/garara</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/jacket</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/kurti-set</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/coord-set</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/category/gown</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/collections/new-arrivals</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/collections/best-sellers</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/collections/sale</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/products/blue-kurti</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/products/white-kuri</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/products/new-saaree</loc>
+  </url>
 </urlset>
