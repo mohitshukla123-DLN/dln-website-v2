@@ -212,56 +212,56 @@ if (existingSKU) {
 
   setLoading(true);
 
-  try {
-    const uploadedImages: string[] = [];
+try {
+  const uploadedImages: string[] = [];
 
-    for (let index = 0; index < images.length; index++) {
-  const image = images[index];
+  // Upload images
+  for (let index = 0; index < images.length; index++) {
+    const image = images[index];
 
-  console.log("Uploading image:", {
-    index,
-    name: image.name,
-    size: image.size,
-    type: image.type,
-  });
-
-  let uploaded;
-
-  try {
-    uploaded = await uploadProductImage({
-      file: image,
-      category,
-      productName: trimmedName,
-      color,
-      view: imageViews[index] || "front",
-      sku: sku.trim(),
+    console.log("Uploading image:", {
+      index,
+      name: image.name,
+      type: image.type,
+      size: image.size,
     });
 
-    console.log("Image uploaded successfully:", uploaded);
-  } catch (error) {
-    console.error("IMAGE UPLOAD FAILED:", error);
+    try {
+      const uploaded = await uploadProductImage({
+        file: image,
+        category,
+        productName: trimmedName,
+        color,
+        view: imageViews[index] || "front",
+        sku: sku.trim(),
+      });
 
-    throw new Error(
-      `Image upload failed for "${image.name}": ${
-        error instanceof Error
-          ? error.message
-          : "Unknown storage error"
-      }`
-    );
+      console.log("Image uploaded:", uploaded);
+
+      uploadedImages.push(uploaded.url);
+    } catch (uploadError) {
+      console.error("IMAGE UPLOAD FAILED:", uploadError);
+
+      throw new Error(
+        `Image upload failed: ${
+          uploadError instanceof Error
+            ? uploadError.message
+            : JSON.stringify(uploadError)
+        }`
+      );
+    }
   }
 
-  uploadedImages.push(uploaded.url);
-}
+  console.log("All images uploaded:", uploadedImages);
 
-    console.log("Uploaded image URLs:", uploadedImages);
-
+  // Insert product
+  try {
     const { error } = await supabase
       .from("products")
       .insert({
         name: trimmedName,
         slug: slugify(trimmedName),
-
-        sku: trimmedSKU,
+        sku: sku.trim(),
 
         category,
         subcategory: subcategory || null,
@@ -292,15 +292,24 @@ if (existingSKU) {
       });
 
     if (error) {
-  console.error("PRODUCT INSERT FAILED:", error);
+      console.error("PRODUCT INSERT FAILED:", error);
 
-  throw new Error(
-    `Product database insert failed: ${error.message}`
-  );
-}
+      throw new Error(
+        `Product save failed: ${error.message} (${error.code ?? "no-code"})`
+      );
+    }
+  } catch (insertError) {
+    console.error("PRODUCT INSERT EXCEPTION:", insertError);
 
-    onClose();
-    window.location.reload();
+    throw insertError;
+  }
+
+  console.log("PRODUCT SAVED SUCCESSFULLY");
+
+  onClose();
+  window.location.reload();
+
+
   } catch (error) {
     alert(
       error instanceof Error
