@@ -36,7 +36,9 @@ export default function FeaturedCollections() {
     return null;
   }
 
-  if (products.length === 0) {
+  const featuredProducts = products.slice(0, 6);
+
+  if (featuredProducts.length === 0) {
     return null;
   }
 
@@ -64,7 +66,7 @@ export default function FeaturedCollections() {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 
-          {products.map((product) => (
+          {featuredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
