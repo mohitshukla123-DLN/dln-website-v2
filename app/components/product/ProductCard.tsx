@@ -18,11 +18,16 @@ export default function ProductCard({
 
   const intervalRef = useRef<number | null>(null);
 
-  const images = Array.isArray(product.images)
-    ? product.images
-    : product.image
-    ? [product.image]
-    : [];
+  const images = Array.from(
+      new Set(
+        (Array.isArray(product.images)
+          ? product.images
+          : product.image
+          ? [product.image]
+          : []
+        ).filter(Boolean)
+      )
+    );
 
   useEffect(() => {
     setCurrentImage(0);
