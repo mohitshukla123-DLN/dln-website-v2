@@ -35,24 +35,28 @@ export async function uploadProductImage({
     `${slugify(view)}-` +
     `${slugify(sku)}`;
 
-  const uniqueSuffix = crypto.randomUUID()
-    .split("-")[0];
+  const uniqueSuffix =
+    `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
   const fileName =
     `${baseFileName}-${uniqueSuffix}.${extension}`;
 
   const filePath = `products/${fileName}`;
 
+  console.log("Uploading product image:", filePath);
+
   const { error } = await supabase.storage
     .from("products")
     .upload(filePath, file, {
-      upsert: false,
+      upsert: true,
       contentType: file.type,
       cacheControl: "3600",
     });
 
   if (error) {
-    throw error;
+    throw new Error(
+      `Image upload failed for "${file.name}". Storage path: ${filePath}. ${error.message}`
+    );
   }
 
   const { data } = supabase.storage
