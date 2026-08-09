@@ -35,24 +35,13 @@ export async function uploadProductImage({
     `${slugify(view)}-` +
     `${slugify(sku)}`;
 
-  let fileName = `${baseFileName}.${extension}`;
-  let filePath = `products/${fileName}`;
+  const uniqueSuffix = crypto.randomUUID()
+  .split("-")[0];
 
-  const { data: existing } = await supabase.storage
-    .from("products")
-    .list("products", {
-      search: fileName,
-      limit: 1,
-    });
+  const fileName =
+    `${baseFileName}-${uniqueSuffix}.${extension}`;
 
-  if (existing && existing.length > 0) {
-    const uniqueSuffix = crypto.randomUUID().split("-")[0];
-
-    fileName =
-      `${baseFileName}-${uniqueSuffix}.${extension}`;
-
-    filePath = `products/${fileName}`;
-  }
+  const filePath = `products/${fileName}`;
 
   const { error } = await supabase.storage
   .from("products")

@@ -18,11 +18,18 @@ function slugify(text: string) {
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 
-        const ALLOWED_IMAGE_TYPES = [
+const ALLOWED_IMAGE_TYPES = [
           "image/jpeg",
           "image/png",
           "image/webp",
         ];
+
+const IMAGE_VIEW_OPTIONS = [
+  "front",
+  "back",
+  "side",
+  "detail",
+];
 
 export default function AddProductModal({
   open,
@@ -69,18 +76,18 @@ export default function AddProductModal({
   const [imageViews, setImageViews] = useState<string[]>([]);
 
   function handleImages(e: ChangeEvent<HTMLInputElement>) {
-    if (!e.target.files) return;
+  if (!e.target.files) return;
 
-    const selectedImages = Array.from(e.target.files);
+  const selectedImages = Array.from(e.target.files);
 
-    setImages(selectedImages);
+  setImages(selectedImages);
 
-    setImageViews(
-      selectedImages.map((_, index) =>
-        index === 0 ? "front" : "back"
-      )
-    );
-  }
+  setImageViews(
+    selectedImages.map((_, index) =>
+      index === 0 ? "front" : "back"
+    )
+  );
+}
 
   if (!open) return null;
 
@@ -420,8 +427,8 @@ if (existingSKU) {
   />
 
   {images.length > 0 && (
-  <div className="mt-4 space-y-3">
-    <p className="text-sm font-semibold text-[var(--foreground)]">
+  <div className="mt-4 space-y-3 rounded-xl border p-4">
+    <p className="font-semibold">
       Selected Images ({images.length})
     </p>
 
@@ -430,7 +437,7 @@ if (existingSKU) {
         key={`${file.name}-${index}`}
         className="flex items-center gap-3 rounded-lg bg-[var(--background)] p-3"
       >
-        <span className="text-sm text-[var(--teal)]">
+        <span className="text-[var(--teal)]">
           ✓
         </span>
 
@@ -447,17 +454,17 @@ if (existingSKU) {
           }}
           className="rounded-lg border p-2 text-sm"
         >
-          <option value="front">Front</option>
-          <option value="back">Back</option>
-          <option value="side">Side</option>
-          <option value="detail">Detail</option>
-          <option value="closeup">Close-up</option>
-          <option value="model">Model</option>
+          {IMAGE_VIEW_OPTIONS.map((view) => (
+            <option key={view} value={view}>
+              {view.charAt(0).toUpperCase() + view.slice(1)}
+            </option>
+          ))}
         </select>
       </div>
     ))}
   </div>
 )}
+
 </div>
 
         <textarea
