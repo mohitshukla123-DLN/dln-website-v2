@@ -14,14 +14,19 @@ export default function FeaturedCollections() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("homepage_settings")
         .select(`
           featured_collections_title,
           featured_collections_subtitle,
-          featured_collections_enabled
+          featured_collections_enabled,
+          featured_collections_count
         `)
         .single();
+
+      if (error) {
+        console.error("Failed to load featured collection settings:", error);
+      }
 
       setSettings(data);
 
@@ -36,18 +41,18 @@ export default function FeaturedCollections() {
     return null;
   }
 
-  const featuredProducts = products.slice(0, 6);
+  const count = settings?.featured_collections_count ?? 6;
+
+  const featuredProducts = products.slice(0, count);
 
   if (featuredProducts.length === 0) {
     return null;
   }
 
   return (
-    <section className="py-24">
+    <section>
       <Container>
-
         <div className="mb-14 text-center">
-
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
             Featured
           </p>
@@ -61,20 +66,16 @@ export default function FeaturedCollections() {
             {settings?.featured_collections_subtitle ??
               "Handpicked styles selected especially for you."}
           </p>
-
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-
           {featuredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
             />
           ))}
-
         </div>
-
       </Container>
     </section>
   );
