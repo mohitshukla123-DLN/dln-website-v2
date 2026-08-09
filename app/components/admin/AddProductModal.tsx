@@ -465,41 +465,92 @@ try {
   />
 
   {images.length > 0 && (
-  <div className="mt-4 space-y-3 rounded-xl border p-4">
-    <p className="font-semibold">
+  <div className="mt-4">
+    <h3 className="mb-3 font-semibold">
       Selected Images ({images.length})
-    </p>
+    </h3>
 
-    {images.map((file, index) => (
-      <div
-        key={`${file.name}-${index}`}
-        className="flex items-center gap-3 rounded-lg bg-[var(--background)] p-3"
-      >
-        <span className="text-[var(--teal)]">
-          ✓
-        </span>
+    <div className="space-y-2">
+      {images.map((file, index) => (
+        <div
+          key={`${file.name}-${index}`}
+          draggable
+          onDragStart={(e) => {
+            e.dataTransfer.setData(
+              "text/plain",
+              String(index)
+            );
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
 
-        <span className="min-w-0 flex-1 truncate text-sm">
-          {file.name}
-        </span>
+            const fromIndex = Number(
+              e.dataTransfer.getData("text/plain")
+            );
 
-        <select
-          value={imageViews[index] || "front"}
-          onChange={(e) => {
+            if (
+              !Number.isInteger(fromIndex) ||
+              fromIndex === index
+            ) {
+              return;
+            }
+
+            const updatedImages = [...images];
             const updatedViews = [...imageViews];
-            updatedViews[index] = e.target.value;
+
+            const [movedImage] =
+              updatedImages.splice(fromIndex, 1);
+
+            const [movedView] =
+              updatedViews.splice(fromIndex, 1);
+
+            updatedImages.splice(index, 0, movedImage);
+            updatedViews.splice(index, 0, movedView);
+
+            setImages(updatedImages);
             setImageViews(updatedViews);
           }}
-          className="rounded-lg border p-2 text-sm"
+          className="flex cursor-move items-center gap-3 rounded-lg border bg-[var(--background)] p-3"
         >
-          {IMAGE_VIEW_OPTIONS.map((view) => (
-            <option key={view} value={view}>
-              {view.charAt(0).toUpperCase() + view.slice(1)}
-            </option>
-          ))}
-        </select>
-      </div>
-    ))}
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--teal)]/10 text-sm font-semibold text-[var(--teal)]">
+            {index + 1}
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium">
+              {file.name}
+            </p>
+
+            <p className="text-xs text-[var(--muted)]">
+              {index === 0 ? "Primary image" : "Image " + (index + 1)}
+            </p>
+          </div>
+
+          <select
+            value={imageViews[index] || "front"}
+            onChange={(e) => {
+              const updatedViews = [...imageViews];
+              updatedViews[index] = e.target.value;
+              setImageViews(updatedViews);
+            }}
+            className="rounded-lg border p-2 text-sm"
+          >
+            {IMAGE_VIEW_OPTIONS.map((view) => (
+              <option key={view} value={view}>
+                {view.charAt(0).toUpperCase() + view.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
+    </div>
+
+    <p className="mt-2 text-xs text-[var(--muted)]">
+      Drag images to change their order. The first image becomes the primary image.
+    </p>
   </div>
 )}
 
