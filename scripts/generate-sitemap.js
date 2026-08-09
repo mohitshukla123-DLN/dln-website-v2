@@ -1,5 +1,7 @@
 import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
+import fs from "fs";
+import path from "path";
 
 const BASE_URL = "https://dresslikenawaabs.pages.dev";
 
@@ -43,13 +45,19 @@ async function generateSitemap() {
   const { data: products, error } = await supabase
     .from("products")
     .select("slug")
-    .not("slug", "is", null);
+    .not("slug", "is", null)
+    .neq("slug", "");
 
   if (error) {
     throw new Error(
       `Failed to fetch products from Supabase: ${error.message}`
     );
   }
+
+  const productUrls = (products || [])
+    .map((product) => product.slug?.trim())
+    .filter(Boolean)
+    .map((slug) => `/products/${encodeURIComponent(slug)}`);
 
   const urls = [
     "/",
@@ -68,9 +76,7 @@ async function generateSitemap() {
       (slug) => `/collections/${slug}`
     ),
 
-    ...(products || []).map(
-      (product) => `/products/${product.slug}`
-    ),
+    ...productUrls,
   ];
 
   const uniqueUrls = [...new Set(urls)];
@@ -87,9 +93,6 @@ ${uniqueUrls
 </urlset>
 `;
 
-  const fs = await import("fs");
-  const path = await import("path");
-
   const outputPath = path.resolve(
     "public/sitemap.xml"
   );
@@ -105,7 +108,11 @@ ${uniqueUrls
   );
 
   console.log(
-    `Products included: ${(products || []).length}`
+    `Products included: ${productUrls.length}`
+  );
+
+  console.log(
+    `Output: ${outputPath}`
   );
 }
 
