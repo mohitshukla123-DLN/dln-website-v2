@@ -216,19 +216,44 @@ if (existingSKU) {
     const uploadedImages: string[] = [];
 
     for (let index = 0; index < images.length; index++) {
-      const image = images[index];
+  const image = images[index];
 
-      const uploaded = await uploadProductImage({
-        file: image,
-        category,
-        productName: trimmedName,
-        color,
-        view: imageViews[index] || "front",
-        sku: trimmedSKU,
-      });
+  console.log("Uploading image:", {
+    index,
+    name: image.name,
+    size: image.size,
+    type: image.type,
+  });
 
-      uploadedImages.push(uploaded.url);
-    }
+  let uploaded;
+
+  try {
+    uploaded = await uploadProductImage({
+      file: image,
+      category,
+      productName: trimmedName,
+      color,
+      view: imageViews[index] || "front",
+      sku: sku.trim(),
+    });
+
+    console.log("Image uploaded successfully:", uploaded);
+  } catch (error) {
+    console.error("IMAGE UPLOAD FAILED:", error);
+
+    throw new Error(
+      `Image upload failed for "${image.name}": ${
+        error instanceof Error
+          ? error.message
+          : "Unknown storage error"
+      }`
+    );
+  }
+
+  uploadedImages.push(uploaded.url);
+}
+
+    console.log("Uploaded image URLs:", uploadedImages);
 
     const { error } = await supabase
       .from("products")
@@ -267,8 +292,12 @@ if (existingSKU) {
       });
 
     if (error) {
-      throw error;
-    }
+  console.error("PRODUCT INSERT FAILED:", error);
+
+  throw new Error(
+    `Product database insert failed: ${error.message}`
+  );
+}
 
     onClose();
     window.location.reload();
