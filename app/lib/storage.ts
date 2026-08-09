@@ -28,18 +28,39 @@ export async function uploadProductImage({
   const extension =
     file.name.split(".").pop()?.toLowerCase() || "jpg";
 
-  const fileName =
+  const baseFileName =
     `${slugify(category)}-` +
     `${slugify(productName)}-` +
     `${slugify(color)}-` +
     `${slugify(view)}-` +
-    `${slugify(sku)}.${extension}`;
+    `${slugify(sku)}`;
 
-  const filePath = `products/${fileName}`;
+  let fileName = `${baseFileName}.${extension}`;
+  let filePath = `products/${fileName}`;
+
+  const { data: existing } = await supabase.storage
+    .from("products")
+    .list("products", {
+      search: fileName,
+      limit: 1,
+    });
+
+  if (existing && existing.length > 0) {
+    const uniqueSuffix = crypto.randomUUID().split("-")[0];
+
+    fileName =
+      `${baseFileName}-${uniqueSuffix}.${extension}`;
+
+    filePath = `products/${fileName}`;
+  }
 
   const { error } = await supabase.storage
-    .from("products")
-    .upload(filePath, file);
+  .from("products")
+  .upload(filePath, file, {
+    upsert: true,
+    contentType: file.type,
+    cacheControl: "3600",
+  });
 
   if (error) {
     throw error;
