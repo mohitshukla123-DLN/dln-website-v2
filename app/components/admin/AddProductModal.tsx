@@ -35,6 +35,8 @@ export default function AddProductModal({
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [subcategory, setSubcategory] = useState("");
+  const [color, setColor] = useState("");
+  const [sku, setSku] = useState("");
 
   const [price, setPrice] = useState("");
   const [sizes, setSizes] = useState({
@@ -66,14 +68,20 @@ export default function AddProductModal({
   const [newArrival, setNewArrival] = useState(false);
 
   const [images, setImages] = useState<File[]>([]);
+  const [imageViews, setImageViews] = useState<string[]>([]);
 
-  function handleImages(
-    e: ChangeEvent<HTMLInputElement>
-  ) {
-    if (!e.target.files) return;
+  function handleImages(e: ChangeEvent<HTMLInputElement>) {
+  if (!e.target.files) return;
 
-    setImages(Array.from(e.target.files));
-  }
+  const selectedImages = Array.from(e.target.files);
+
+  setImages(selectedImages);
+  setImageViews(
+    selectedImages.map((_, index) =>
+      index === 0 ? "front" : "back"
+    )
+  );
+}
 
   if (!open) return null;
 
@@ -102,6 +110,16 @@ async function saveProduct() {
   if (!category) {
     alert("Please select a category.");
     return;
+  }
+
+  if (!color.trim()) {
+  alert("Please enter the product color.");
+  return;
+  }
+
+  if (!sku.trim()) {
+  alert("Please enter the product SKU.");
+  return;
   }
 
   if (category && subcategories[
@@ -141,8 +159,18 @@ async function saveProduct() {
   try {
     const uploadedImages: string[] = [];
 
-    for (const image of images) {
-      const uploaded = await uploadProductImage(image, trimmedName);
+    for (let index = 0; index < images.length; index++) {
+      const image = images[index];
+
+      const uploaded = await uploadProductImage({
+        file: image,
+        category,
+        productName: trimmedName,
+        color,
+        view: imageViews[index] || "front",
+        sku: sku.trim(),
+      });
+
       uploadedImages.push(uploaded.url);
     }
 
@@ -151,7 +179,7 @@ async function saveProduct() {
       .insert({
         name: trimmedName,
         slug: slugify(trimmedName),
-        sku: generateSKU(),
+        sku: sku.trim(),
 
         category,
         subcategory: subcategory || null,
@@ -209,6 +237,20 @@ async function saveProduct() {
           placeholder="Product Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+        />
+
+        <input
+          className="mb-4 w-full rounded-lg border p-3"
+          placeholder="SKU"
+          value={sku}
+          onChange={(e) => setSku(e.target.value)}
+        />
+
+        <input
+          className="mb-4 w-full rounded-lg border p-3"
+          placeholder="Color"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
         />
 
         <select
@@ -289,37 +331,83 @@ async function saveProduct() {
 
         </div>
 
-        <div className="mb-6">
-          <label className="mb-2 block font-medium">
-            Product Images
-          </label>
+<div className="mb-6">
+  <label className="mb-2 block font-medium">
+    Product Images
+  </label>
 
-          <label
-            htmlFor="product-images"
-            className="inline-flex cursor-pointer items-center rounded-lg bg-[var(--teal)] px-5 py-3 font-medium text-white transition hover:opacity-90"
-          >
-            Upload Product Images
-          </label>
+  <label
+    htmlFor="product-images"
+    className="group flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-[var(--teal)]/40 bg-[var(--background)] px-6 py-8 text-center transition-all duration-300 hover:border-[var(--teal)] hover:bg-[var(--teal)]/5"
+  >
+    <div>
+      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--teal)]/10 text-[var(--teal)] transition group-hover:scale-105">
+        ↑
+      </div>
 
-          <input
-            id="product-images"
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleImages}
-            className="hidden"
-          />
+      <p className="font-semibold text-[var(--foreground)]">
+        Upload Product Images
+      </p>
 
-          {images.length > 0 && (
-            <div className="mt-3 space-y-1 rounded-lg border p-3 text-sm">
-              {images.map((file) => (
-                <div key={file.name}>
-                  • {file.name}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      <p className="mt-1 text-sm text-[var(--muted)]">
+        Click to select one or more images
+      </p>
+
+      <p className="mt-2 text-xs text-[var(--muted)]">
+        JPG, PNG, WEBP
+      </p>
+    </div>
+  </label>
+
+  <input
+    id="product-images"
+    type="file"
+    multiple
+    accept="image/*"
+    onChange={handleImages}
+    className="hidden"
+  />
+
+  {images.length > 0 && (
+  <div className="mt-4 space-y-3">
+    <p className="text-sm font-semibold text-[var(--foreground)]">
+      Selected Images ({images.length})
+    </p>
+
+    {images.map((file, index) => (
+      <div
+        key={`${file.name}-${index}`}
+        className="flex items-center gap-3 rounded-lg bg-[var(--background)] p-3"
+      >
+        <span className="text-sm text-[var(--teal)]">
+          ✓
+        </span>
+
+        <span className="min-w-0 flex-1 truncate text-sm">
+          {file.name}
+        </span>
+
+        <select
+          value={imageViews[index] || "front"}
+          onChange={(e) => {
+            const updatedViews = [...imageViews];
+            updatedViews[index] = e.target.value;
+            setImageViews(updatedViews);
+          }}
+          className="rounded-lg border p-2 text-sm"
+        >
+          <option value="front">Front</option>
+          <option value="back">Back</option>
+          <option value="side">Side</option>
+          <option value="detail">Detail</option>
+          <option value="closeup">Close-up</option>
+          <option value="model">Model</option>
+        </select>
+      </div>
+    ))}
+  </div>
+)}
+</div>
 
         <textarea
           className="mb-4 w-full rounded-lg border p-3"
