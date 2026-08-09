@@ -206,6 +206,7 @@ async function saveProduct() {
         care: care.trim(),
 
         image: uploadedImages[0] ?? null,
+        images: uploadedImages,
       });
 
     if (error) {
