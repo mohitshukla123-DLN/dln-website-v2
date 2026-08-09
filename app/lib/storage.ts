@@ -36,7 +36,7 @@ export async function uploadProductImage({
     `${slugify(sku)}`;
 
   const uniqueSuffix = crypto.randomUUID()
-  .split("-")[0];
+    .split("-")[0];
 
   const fileName =
     `${baseFileName}-${uniqueSuffix}.${extension}`;
@@ -44,12 +44,12 @@ export async function uploadProductImage({
   const filePath = `products/${fileName}`;
 
   const { error } = await supabase.storage
-  .from("products")
-  .upload(filePath, file, {
-    upsert: true,
-    contentType: file.type,
-    cacheControl: "3600",
-  });
+    .from("products")
+    .upload(filePath, file, {
+      upsert: false,
+      contentType: file.type,
+      cacheControl: "3600",
+    });
 
   if (error) {
     throw error;
