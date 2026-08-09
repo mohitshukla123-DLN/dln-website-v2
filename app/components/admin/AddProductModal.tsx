@@ -16,15 +16,13 @@ function slugify(text: string) {
     .replace(/^-|-$/g, "");
 }
 
-function generateSKU() {
-  return (
-    "DLN-" +
-    Math.random()
-      .toString(36)
-      .substring(2, 8)
-      .toUpperCase()
-  );
-}
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+
+        const ALLOWED_IMAGE_TYPES = [
+          "image/jpeg",
+          "image/png",
+          "image/webp",
+        ];
 
 export default function AddProductModal({
   open,
@@ -71,17 +69,18 @@ export default function AddProductModal({
   const [imageViews, setImageViews] = useState<string[]>([]);
 
   function handleImages(e: ChangeEvent<HTMLInputElement>) {
-  if (!e.target.files) return;
+    if (!e.target.files) return;
 
-  const selectedImages = Array.from(e.target.files);
+    const selectedImages = Array.from(e.target.files);
 
-  setImages(selectedImages);
-  setImageViews(
-    selectedImages.map((_, index) =>
-      index === 0 ? "front" : "back"
-    )
-  );
-}
+    setImages(selectedImages);
+
+    setImageViews(
+      selectedImages.map((_, index) =>
+        index === 0 ? "front" : "back"
+      )
+    );
+  }
 
   if (!open) return null;
 
@@ -117,10 +116,19 @@ async function saveProduct() {
   return;
   }
 
-  if (!sku.trim()) {
+  const trimmedSKU = sku.trim().toUpperCase();
+
+if (!trimmedSKU) {
   alert("Please enter the product SKU.");
   return;
-  }
+}
+
+if (!/^[A-Z0-9-]+$/.test(trimmedSKU)) {
+  alert(
+    "SKU may contain only letters, numbers, and hyphens."
+  );
+  return;
+}
 
   if (category && subcategories[
     categoryKey as keyof typeof subcategories
@@ -139,6 +147,26 @@ async function saveProduct() {
     return;
   }
 
+  const invalidImage = images.find(
+        (file) =>
+          !ALLOWED_IMAGE_TYPES.includes(file.type) ||
+          file.size > MAX_IMAGE_SIZE
+      );
+
+      if (invalidImage) {
+        if (!ALLOWED_IMAGE_TYPES.includes(invalidImage.type)) {
+          alert(
+            `${invalidImage.name} is not a supported image type. Use JPG, PNG, or WEBP.`
+          );
+        } else {
+          alert(
+            `${invalidImage.name} is too large. Maximum image size is 10 MB.`
+          );
+        }
+
+        return;
+      }
+
   const stock = Object.values(sizes).reduce(
     (total, value) => total + Number(value || 0),
     0
@@ -154,6 +182,27 @@ async function saveProduct() {
     return;
   }
 
+  const { data: existingSKU, error: skuCheckError } =
+  await supabase
+    .from("products")
+    .select("id")
+    .eq("sku", trimmedSKU)
+    .maybeSingle();
+
+if (skuCheckError) {
+  alert(
+    `Could not verify SKU: ${skuCheckError.message}`
+  );
+  return;
+}
+
+if (existingSKU) {
+  alert(
+    `SKU "${trimmedSKU}" already exists. Please enter a unique SKU.`
+  );
+  return;
+}
+
   setLoading(true);
 
   try {
@@ -168,7 +217,7 @@ async function saveProduct() {
         productName: trimmedName,
         color,
         view: imageViews[index] || "front",
-        sku: sku.trim(),
+        sku: trimmedSKU,
       });
 
       uploadedImages.push(uploaded.url);
@@ -179,7 +228,8 @@ async function saveProduct() {
       .insert({
         name: trimmedName,
         slug: slugify(trimmedName),
-        sku: sku.trim(),
+
+        sku: trimmedSKU,
 
         category,
         subcategory: subcategory || null,
