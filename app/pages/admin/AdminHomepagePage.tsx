@@ -33,6 +33,8 @@ export default function AdminHomepagePage() {
   const [newsletterTitle, setNewsletterTitle] = useState("");
   const [newsletterSubtitle, setNewsletterSubtitle] = useState("");
   const [newsletterEnabled, setNewsletterEnabled] = useState(true);
+  const [featuredCollectionsCount, setFeaturedCollectionsCount] = useState(6);
+  
 
   async function loadSettings() {
     const { data } = await supabase
@@ -47,6 +49,7 @@ export default function AdminHomepagePage() {
       setNewArrivalsEnabled(data.new_arrivals_enabled ?? true);
       setFeaturedCollectionsTitle(data.featured_collections_title ?? "");
       setFeaturedCollectionsSubtitle(data.featured_collections_subtitle ?? "");
+      setFeaturedCollectionsCount(data.featured_collections_count ?? 6);
       setFeaturedCollectionsEnabled(data.featured_collections_enabled ?? true);
       setBestSellersTitle(data.best_sellers_title ?? "");
       setBestSellersSubtitle(data.best_sellers_subtitle ?? "");
@@ -98,6 +101,7 @@ export default function AdminHomepagePage() {
         new_arrivals_enabled: newArrivalsEnabled,
         featured_collections_title: featuredCollectionsTitle,
         featured_collections_subtitle: featuredCollectionsSubtitle,
+        featured_collections_count: featuredCollectionsCount,
         featured_collections_enabled: featuredCollectionsEnabled,
         why_choose_us_title: whyChooseTitle,
         why_choose_us_subtitle: whyChooseSubtitle,
@@ -349,8 +353,30 @@ export default function AdminHomepagePage() {
                 onChange={(e)=>setFeaturedCollectionsSubtitle(e.target.value)}
               />
 
-              <label className="flex items-center gap-3">
+              <div>
+                <label className="mb-2 block text-sm font-medium">
+                  Number of Featured Collections
+                </label>
 
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={featuredCollectionsCount}
+                  onChange={(e) =>
+                    setFeaturedCollectionsCount(
+                      Math.max(1, Number(e.target.value) || 1)
+                    )
+                  }
+                  className="w-full rounded-lg border p-3"
+                />
+
+                <p className="mt-1 text-xs text-[var(--muted)]">
+                  Controls how many featured products appear on the homepage.
+                </p>
+              </div>
+
+              <label className="flex items-center gap-3">
                 <input
                   type="checkbox"
                   checked={featuredCollectionsEnabled}
@@ -358,13 +384,9 @@ export default function AdminHomepagePage() {
                     setFeaturedCollectionsEnabled(e.target.checked)
                   }
                 />
-
                 Enable Featured Collections
-
               </label>
-
             </div>
-
           </div>
 
             <div className="mt-6 space-y-4">
