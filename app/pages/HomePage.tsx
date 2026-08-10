@@ -35,20 +35,19 @@ export default function HomePage() {
     <>
       {/* Hero Section */}
       {settings?.hero_enabled !== false && (
-        <section className="py-16">
+        <section className="relative overflow-hidden bg-[var(--background)]">
           <Container>
-            <div className="grid items-center gap-12 lg:grid-cols-2">
-              <div>
-                <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-[var(--teal)]">
-                  {settings?.hero_subtitle ||
-                    "Luxury Indian Ethnic Wear"}
+            <div className="grid min-h-[680px] items-center gap-12 py-20 lg:grid-cols-2 lg:py-24">
+              <div className="max-w-2xl">
+                <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--accent)]">
+                  {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
 
-                <h1 className="text-5xl font-bold leading-tight lg:text-7xl">
+                <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-[var(--foreground)] sm:text-6xl lg:text-7xl">
                   {settings?.hero_title || "Dress Like Nawaabs"}
                 </h1>
 
-                <p className="mt-8 max-w-xl text-lg text-[var(--muted)]">
+                <p className="mt-7 max-w-xl text-lg leading-8 text-[var(--muted)]">
                   {settings?.hero_subtitle ||
                     "Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions."}
                 </p>
@@ -56,29 +55,26 @@ export default function HomePage() {
                 <div className="mt-10">
                   <Button
                     onClick={() =>
-                      navigate(
-                        settings?.hero_button_url || "/shop"
-                      )
+                      navigate(settings?.hero_button_url || "/shop")
                     }
                   >
-                    {settings?.hero_button_text ||
-                      "Explore Collection"}
+                    {settings?.hero_button_text || "Explore Collection"}
                   </Button>
                 </div>
               </div>
 
-              <div className="flex justify-center">
-                <img
-                  src={heroLogo}
-                  alt="Dress Like Nawaabs"
-                  className="w-full max-w-md rounded-full shadow-2xl"
-                  loading="eager"
-                  decoding="sync"
-                  style={{
-                    imageRendering: "auto",
-                    transform: "translateZ(0)",
-                  }}
-                />
+              <div className="flex justify-center lg:justify-end">
+                <div className="relative">
+                  <div className="absolute inset-6 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+
+                  <img
+                    src={heroLogo}
+                    alt="Dress Like Nawaabs"
+                    className="relative w-full max-w-md rounded-full shadow-2xl"
+                    loading="eager"
+                    decoding="sync"
+                  />
+                </div>
               </div>
             </div>
           </Container>
