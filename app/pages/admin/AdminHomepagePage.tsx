@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Container from "../../components/ui/Container";
 import { supabase } from "../../lib/supabase";
+import { getHomepageSettings } from "../../lib/homepage";
 
 export default function AdminHomepagePage() {
   const [loading, setLoading] = useState(false);
@@ -37,11 +38,10 @@ export default function AdminHomepagePage() {
   
 
   async function loadSettings() {
-    const { data } = await supabase
-      .from("homepage_settings")
-      .select("*")
-      .limit(1)
-      .single();
+    const data = await getHomepageSettings();
+
+    if (!data) return;
+
       setHeroEnabled(data.hero_enabled ?? true);
       setNewArrivalsTitle(data.new_arrivals_title ?? "");
       setNewArrivalsSubtitle(data.new_arrivals_subtitle ?? "");
