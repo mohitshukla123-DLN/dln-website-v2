@@ -40,6 +40,7 @@ export interface AdminProduct {
   sizes: string[];
 
   image: string | null;
+  images: string[];
 
   created_at?: string;
 

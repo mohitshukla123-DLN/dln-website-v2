@@ -54,6 +54,7 @@ export default function EditProductModal({
   const [newArrival, setNewArrival] = useState(false);
   const [image, setImage] = useState("");
   const [libraryImages, setLibraryImages] = useState<string[]>([]);
+  const [productImages, setProductImages] = useState<string[]>([]);
 
   useEffect(() => {
     if (!product) return;
@@ -83,15 +84,22 @@ export default function EditProductModal({
       setOccasion(product.occasion ?? "");
       setCare(product.care ?? "");
 
-      setAvailability(
-        product.availability ?? "In Stock"
-      );
+      setAvailability(product.availability ?? "In Stock");
 
       setBadge(product.badge ?? "");
 
       setFeatured(product.featured);
       setBestseller(product.bestseller);
       setNewArrival(product.new_arrival ?? false);
+
+      setProductImages(
+          Array.isArray(product.images)
+            ? product.images
+            : product.image
+              ? [product.image]
+              : []
+        );
+
       setImage(product.image ?? "");
       loadLibraryImages();
   }, [product]);
@@ -119,8 +127,25 @@ export default function EditProductModal({
 
   if (!open || !product) return null;
 
-    async function saveChanges() {
-  if (!product) return;
+  function removeProductImage(index: number) {
+  setProductImages((current) =>
+    current.filter((_, imageIndex) => imageIndex !== index)
+  );
+}
+
+function setPrimaryImage(index: number) {
+  setProductImages((current) => {
+    if (index === 0) return current;
+
+    const updated = [...current];
+    const [primary] = updated.splice(index, 1);
+
+    return [primary, ...updated];
+  });
+}
+
+async function saveChanges() {
+      if (!product) return;
 
       setLoading(true);
 
@@ -134,10 +159,14 @@ export default function EditProductModal({
           price: Number(price),
           stock: Object.values(sizes).reduce(
             (sum, value) => sum + Number(value || 0),
-            0),
+            0
+          ),
 
           sizes,
-          image,
+
+          // Product images
+          image: productImages[0] ?? null,
+          images: productImages,
 
           description,
 
@@ -344,6 +373,57 @@ export default function EditProductModal({
           value={care}
           onChange={(e)=>setCare(e.target.value)}
         />
+
+        <div className="mb-6">
+            <h3 className="mb-3 text-sm font-semibold">
+              Product Images
+            </h3>
+
+            {productImages.length === 0 ? (
+              <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-500">
+                No product images.
+              </p>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {productImages.map((url, index) => (
+                  <div
+                    key={`${url}-${index}`}
+                    className="rounded-xl border bg-white p-2"
+                  >
+                    <img
+                      src={url}
+                      alt={`Product image ${index + 1}`}
+                      className="mb-2 h-32 w-full rounded-lg object-cover"
+                    />
+
+                    <div className="mb-2 text-xs font-medium text-gray-500">
+                      {index === 0 ? "Primary Image" : `Image ${index + 1}`}
+                    </div>
+
+                    <div className="flex gap-2">
+                      {index !== 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setPrimaryImage(index)}
+                          className="flex-1 rounded-lg border px-2 py-1 text-xs"
+                        >
+                          Set Primary
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => removeProductImage(index)}
+                        className="rounded-lg bg-red-600 px-3 py-1 text-xs text-white"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
         <select
           className="mb-4 w-full rounded-lg border p-3"
