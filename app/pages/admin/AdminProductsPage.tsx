@@ -87,6 +87,10 @@ export default function AdminProductsPage() {
     loadProducts();
   }, []);
 
+  useEffect(() => {
+  setCurrentPage(1);
+}, [search, categoryFilter, statusFilter, sortBy]);
+
   const filteredProducts = [...products]
   .filter((product) => {
     const matchesSearch =
