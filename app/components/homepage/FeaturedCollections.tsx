@@ -23,7 +23,10 @@ export default function FeaturedCollections({ settings }: Props) {
   }
 
   load();
-}, [settings]);
+}, [
+  settings?.featured_collections_count,
+  settings?.featured_collections_enabled,
+]);
 
   if (settings?.featured_collections_enabled === false) {
     return null;

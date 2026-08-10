@@ -22,7 +22,10 @@ export default function BestSellers({ settings }: Props) {
   }
 
   load();
-}, [settings]);
+}, [
+  settings?.best_sellers_count,
+  settings?.best_sellers_enabled,
+]);
 
   if (settings?.best_sellers_enabled === false) {
     return null;

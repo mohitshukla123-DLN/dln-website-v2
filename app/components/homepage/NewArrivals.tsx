@@ -17,14 +17,19 @@ export default function NewArrivals({ settings }: Props) {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
+  if (settings?.new_arrivals_enabled === false) {
+    setProducts([]);
+    return;
+  }
+
   async function load() {
-    const configuredCount = settings?.new_arrivals_count ?? 3;
+    const configuredCount = settings?.new_arrivals_count ?? 8;
     const items = await getNewArrivals(configuredCount);
     setProducts(items);
   }
 
   load();
-}, [settings]);
+}, [settings?.new_arrivals_count, settings?.new_arrivals_enabled]);
 
 
   if (settings?.new_arrivals_enabled === false) {
