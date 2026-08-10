@@ -229,11 +229,15 @@ export default function AdminHomepagePage() {
 
                 <input
                   type="number"
-                  className="w-full rounded-lg border p-3"
+                  min={1}
+                  max={20}
                   value={bestSellersCount}
-                  onChange={(e)=>
-                    setBestSellersCount(Number(e.target.value))
+                  onChange={(e) =>
+                    setBestSellersCount(
+                      Math.max(1, Math.min(20, Number(e.target.value) || 1))
+                    )
                   }
+                  className="w-full rounded-lg border p-3"
                 />
 
                 <label className="flex items-center gap-3">
@@ -408,11 +412,15 @@ export default function AdminHomepagePage() {
 
               <input
                 type="number"
-                className="w-full rounded-lg border p-3"
+                min={1}
+                max={20}
                 value={newArrivalsCount}
-                onChange={(e)=>
-                  setNewArrivalsCount(Number(e.target.value))
+                onChange={(e) =>
+                  setNewArrivalsCount(
+                    Math.max(1, Math.min(20, Number(e.target.value) || 1))
+                  )
                 }
+                className="w-full rounded-lg border p-3"
               />
 
               <label className="flex items-center gap-3">
