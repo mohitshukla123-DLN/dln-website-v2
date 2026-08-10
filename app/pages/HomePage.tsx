@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../lib/supabase";
+import { getHomepageSettings } from "../lib/homepage";
+import type { HomepageSettings } from "../types/homepage";
 
 import Button from "../components/ui/Button";
 import Container from "../components/ui/Container";
@@ -15,24 +16,20 @@ import NewArrivals from "../components/homepage/NewArrivals";
 import SEO from "../components/common/SEO";
 import heroLogo from "../assets/logos/logo-home.png";
 
+
 export default function HomePage() {
   const navigate = useNavigate();
 
-  const [settings, setSettings] = useState<any>(null);
+  const [settings, setSettings] = useState<HomepageSettings | null>(null);
 
   useEffect(() => {
-    async function loadHomepage() {
-      const { data } = await supabase
-        .from("homepage_settings")
-        .select("*")
-        .limit(1)
-        .single();
+  async function loadHomepage() {
+    const data = await getHomepageSettings();
+    setSettings(data);
+  }
 
-      setSettings(data);
-    }
-
-    loadHomepage();
-  }, []);
+  loadHomepage();
+}, []);
 
   return (
     <>
@@ -88,20 +85,20 @@ export default function HomePage() {
         </section>
       )}
 
-      <CategoryGrid />
+      <CategoryGrid settings={settings} />
 
-      <NewArrivals />
+      <NewArrivals settings={settings} />
 
       {/* Featured Collections */}
-      <FeaturedCollections />
+      <FeaturedCollections settings={settings} />
 
-      <WhyChooseUs />
+      <WhyChooseUs settings={settings} />
 
-      <BestSellers />
+      <BestSellers settings={settings} />
 
-      <Testimonials />
+      <Testimonials settings={settings} />
 
-      <Newsletter />
+      <Newsletter settings={settings} />
 
       <SEO
         title="Dress Like Nawaabs"

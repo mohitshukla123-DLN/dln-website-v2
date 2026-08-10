@@ -1,33 +1,11 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-
+import type { HomepageSettings } from "../../types/homepage";
 import Container from "../ui/Container";
 import CategoryCard from "./CategoryCard";
 import { categories } from "../../data/categories";
 
-export default function CategoryGrid() {
-  const [settings, setSettings] = useState<any>(null);
+interface Props {settings: HomepageSettings | null;}
 
-  useEffect(() => {
-    async function loadSettings() {
-      const { data } = await supabase
-        .from("homepage_settings")
-        .select(
-          `
-          featured_categories_title,
-          featured_categories_subtitle,
-          featured_categories_enabled
-          `
-        )
-        .limit(1)
-        .single();
-
-      setSettings(data);
-    }
-
-    loadSettings();
-  }, []);
-
+export default function CategoryGrid({ settings }: Props) {
   if (settings?.featured_categories_enabled === false) {
     return null;
   }

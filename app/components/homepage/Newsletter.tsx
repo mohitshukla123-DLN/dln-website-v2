@@ -1,29 +1,12 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-
+import type { HomepageSettings } from "../../types/homepage";
 import Button from "../ui/Button";
 import Container from "../ui/Container";
 
-export default function Newsletter() {
-  const [settings, setSettings] = useState<any>(null);
+interface Props {
+  settings: HomepageSettings | null;
+}
 
-  useEffect(() => {
-    async function loadSettings() {
-      const { data } = await supabase
-        .from("homepage_settings")
-        .select(`
-          newsletter_title,
-          newsletter_subtitle,
-          newsletter_enabled
-        `)
-        .limit(1)
-        .single();
-
-      setSettings(data);
-    }
-
-    loadSettings();
-  }, []);
+export default function Newsletter({ settings }: Props) {
 
   if (settings?.newsletter_enabled === false) {
     return null;

@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-
+import type { HomepageSettings } from "../../types/homepage";
 import Container from "../ui/Container";
+
+interface Props {
+  settings: HomepageSettings | null;
+}
 
 const testimonials = [
   {
@@ -24,26 +26,7 @@ const testimonials = [
   },
 ];
 
-export default function Testimonials() {
-  const [settings, setSettings] = useState<any>(null);
-
-  useEffect(() => {
-    async function loadSettings() {
-      const { data } = await supabase
-        .from("homepage_settings")
-        .select(`
-          testimonials_title,
-          testimonials_subtitle,
-          testimonials_enabled
-        `)
-        .limit(1)
-        .single();
-
-      setSettings(data);
-    }
-
-    loadSettings();
-  }, []);
+export default function Testimonials({ settings }: Props) {
 
   if (settings?.testimonials_enabled === false) {
     return null;

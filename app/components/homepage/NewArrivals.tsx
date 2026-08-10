@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-import { supabase } from "../../lib/supabase";
 import { getNewArrivals } from "../../lib/products";
+import type { HomepageSettings } from "../../types/homepage";
 
 import Button from "../ui/Button";
 import Container from "../ui/Container";
@@ -10,32 +9,23 @@ import ProductGrid from "../shop/ProductGrid";
 
 import type { Product } from "../../types/product";
 
-export default function NewArrivals() {
-  const [settings, setSettings] = useState<any>(null);
+interface Props {
+  settings: HomepageSettings | null;
+}
+
+export default function NewArrivals({ settings }: Props) {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    async function load() {
-      const { data } = await supabase
-        .from("homepage_settings")
-        .select(`
-          new_arrivals_title,
-          new_arrivals_subtitle,
-          new_arrivals_enabled,
-          new_arrivals_count
-        `)
-        .single();
+  async function load() {
+    const configuredCount = settings?.new_arrivals_count ?? 3;
+    const items = await getNewArrivals(configuredCount);
+    setProducts(items);
+  }
 
-      setSettings(data);
+  load();
+}, [settings]);
 
-      const configuredCount = data?.new_arrivals_count ?? 3;
-
-      const items = await getNewArrivals(configuredCount);
-      setProducts(items);
-    }
-
-    load();
-  }, []);
 
   if (settings?.new_arrivals_enabled === false) {
     return null;

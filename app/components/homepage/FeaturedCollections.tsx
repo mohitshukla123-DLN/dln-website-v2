@@ -1,42 +1,29 @@
 import { useEffect, useState } from "react";
-
-import { supabase } from "../../lib/supabase";
 import { getFeaturedProducts } from "../../lib/products";
-
+import type { HomepageSettings } from "../../types/homepage";
 import Container from "../ui/Container";
 import ProductCard from "../product/ProductCard";
 
 import type { Product } from "../../types/product";
 
-export default function FeaturedCollections() {
-  const [settings, setSettings] = useState<any>(null);
+interface Props {
+  settings: HomepageSettings | null;
+}
+
+export default function FeaturedCollections({ settings }: Props) {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    async function load() {
-      const { data, error } = await supabase
-        .from("homepage_settings")
-        .select(`
-          featured_collections_title,
-          featured_collections_subtitle,
-          featured_collections_enabled,
-          featured_collections_count
-        `)
-        .single();
+  async function load() {
+    const configuredCount =
+      settings?.featured_collections_count ?? 6;
 
-      if (error) {
-        console.error("Failed to load featured collection settings:", error);
-      }
+    const items = await getFeaturedProducts(configuredCount);
+    setProducts(items);
+  }
 
-      setSettings(data);
-
-      const configuredCount = data?.featured_collections_count ?? 6;
-      const items = await getFeaturedProducts(configuredCount);
-      setProducts(items);
-    }
-
-    load();
-  }, []);
+  load();
+}, [settings]);
 
   if (settings?.featured_collections_enabled === false) {
     return null;

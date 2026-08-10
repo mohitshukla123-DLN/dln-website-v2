@@ -1,39 +1,28 @@
 import { useEffect, useState } from "react";
-
-import { supabase } from "../../lib/supabase";
 import { getBestSellers } from "../../lib/products";
-
+import type { HomepageSettings } from "../../types/homepage";
 import Container from "../ui/Container";
 import ProductCard from "../product/ProductCard";
 
 import type { Product } from "../../types/product";
 
-export default function BestSellers() {
-  const [settings, setSettings] = useState<any>(null);
+interface Props {
+  settings: HomepageSettings | null;
+}
+
+export default function BestSellers({ settings }: Props) {
   const [products, setProducts] = useState<Product[]>([]);
-
   useEffect(() => {
-    async function load() {
-      const { data } = await supabase
-        .from("homepage_settings")
-        .select(`
-          best_sellers_title,
-          best_sellers_subtitle,
-          best_sellers_enabled,
-          best_sellers_count
-        `)
-        .single();
+  async function load() {
+    const configuredCount =
+      settings?.best_sellers_count ?? 4;
 
-      setSettings(data);
+    const items = await getBestSellers(configuredCount);
+    setProducts(items);
+  }
 
-      const configuredCount = data?.best_sellers_count ?? 4;
-
-      const items = await getBestSellers(configuredCount);
-      setProducts(items);
-    }
-
-    load();
-  }, []);
+  load();
+}, [settings]);
 
   if (settings?.best_sellers_enabled === false) {
     return null;

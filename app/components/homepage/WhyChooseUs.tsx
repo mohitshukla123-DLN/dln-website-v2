@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../../lib/supabase";
-
+import type { HomepageSettings } from "../../types/homepage";
 import Container from "../ui/Container";
+
+interface Props {
+  settings: HomepageSettings | null;
+}
 
 const features = [
   {
@@ -30,26 +32,7 @@ const features = [
   },
 ];
 
-export default function WhyChooseUs() {
-  const [settings, setSettings] = useState<any>(null);
-
-  useEffect(() => {
-    async function loadSettings() {
-      const { data } = await supabase
-        .from("homepage_settings")
-        .select(`
-          why_choose_us_title,
-          why_choose_us_subtitle,
-          why_choose_us_enabled
-        `)
-        .limit(1)
-        .single();
-
-      setSettings(data);
-    }
-
-    loadSettings();
-  }, []);
+export default function WhyChooseUs({ settings }: Props) {
 
   if (settings?.why_choose_us_enabled === false) {
     return null;
