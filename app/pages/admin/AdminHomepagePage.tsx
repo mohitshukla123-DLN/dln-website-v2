@@ -234,7 +234,7 @@ export default function AdminHomepagePage() {
                   value={bestSellersCount}
                   onChange={(e) =>
                     setBestSellersCount(
-                      Math.max(1, Math.min(20, Number(e.target.value) || 1))
+                      Math.min(20, Math.max(1, Number(e.target.value) || 1))
                     )
                   }
                   className="w-full rounded-lg border p-3"
@@ -417,7 +417,7 @@ export default function AdminHomepagePage() {
                 value={newArrivalsCount}
                 onChange={(e) =>
                   setNewArrivalsCount(
-                    Math.max(1, Math.min(20, Number(e.target.value) || 1))
+                    Math.min(20, Math.max(1, Number(e.target.value) || 1))
                   )
                 }
                 className="w-full rounded-lg border p-3"
