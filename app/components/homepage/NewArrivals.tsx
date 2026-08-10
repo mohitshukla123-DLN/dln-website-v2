@@ -46,20 +46,15 @@ export default function NewArrivals({ settings }: Props) {
     <section className="py-24">
       <Container>
 
-        <div className="mb-12 flex items-center justify-between">
-
+        <div className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-
-            <p className="text-sm uppercase tracking-[0.3em] text-[var(--teal)]">
-              {settings?.new_arrivals_subtitle ??
-                "Latest Collection"}
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--teal)]">
+              {settings?.new_arrivals_subtitle ?? "Latest Collection"}
             </p>
 
-            <h2 className="mt-3 text-4xl font-bold">
-              {settings?.new_arrivals_title ??
-                "New Arrivals"}
+            <h2 className="mt-3 text-4xl font-bold tracking-tight lg:text-5xl">
+              {settings?.new_arrivals_title ?? "New Arrivals"}
             </h2>
-
           </div>
 
           <Link to="/new-arrivals">
@@ -67,7 +62,6 @@ export default function NewArrivals({ settings }: Props) {
               View All
             </Button>
           </Link>
-
         </div>
 
         <ProductGrid products={newProducts} />
