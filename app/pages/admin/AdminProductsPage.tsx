@@ -194,6 +194,32 @@ async function bulkUpdate(
   await loadProducts();
 }
 
+async function bulkDelete() {
+  if (selectedProducts.length === 0) return;
+
+  const confirmed = window.confirm(
+    `Delete ${selectedProducts.length} selected product${
+      selectedProducts.length !== 1 ? "s" : ""
+    }? This cannot be undone.`
+  );
+
+  if (!confirmed) return;
+
+  const { error } = await supabase
+    .from("products")
+    .delete()
+    .in("id", selectedProducts);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setSelectedProducts([]);
+  await loadProducts();
+}
+
+
   return (
     <Container>
       <section className="py-16">
@@ -323,6 +349,35 @@ async function bulkUpdate(
                 >
                   Clear Selection
                 </button>
+
+                <button
+                  onClick={() => bulkUpdate("new_arrival", true)}
+                  className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
+                >
+                  Mark New Arrival
+                </button>
+
+                <button
+                  onClick={() => bulkUpdate("new_arrival", false)}
+                  className="rounded-lg border px-4 py-2 text-sm"
+                >
+                  Remove New Arrival
+                </button>
+
+                <button
+                  onClick={bulkDelete}
+                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white"
+                >
+                  Delete Selected
+                </button>
+
+                <button
+                  onClick={() => setSelectedProducts([])}
+                  className="rounded-lg border px-4 py-2 text-sm"
+                >
+                  Clear Selection
+                </button>
+
               </div>
             </div>
           )}
