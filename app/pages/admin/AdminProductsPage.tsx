@@ -11,18 +11,14 @@ import type { AdminProduct } from "../../types/adminProduct";
 
 export default function AdminProductsPage() {
   const [open, setOpen] = useState(false);
-
   const [editOpen, setEditOpen] = useState(false);
-
-  const [selectedProduct, setSelectedProduct] =
-  useState<AdminProduct | null>(null);
-
+  const [selectedProduct, setSelectedProduct] = useState<AdminProduct | null>(null);
   const [loading, setLoading] = useState(true);
-
   const [products, setProducts] = useState<AdminProduct[]>([]);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   async function loadProducts() {
     setLoading(true);
@@ -102,7 +98,17 @@ export default function AdminProductsPage() {
     categoryFilter === "All" ||
     product.category === categoryFilter;
 
-  return matchesSearch && matchesCategory;
+  const matchesStatus =
+  statusFilter === "All" ||
+  (statusFilter === "Featured" && product.featured) ||
+  (statusFilter === "Bestseller" && product.bestseller) ||
+  (statusFilter === "New Arrival" && product.new_arrival) ||
+  (statusFilter === "Sold Out" && product.stock === 0) ||
+  (statusFilter === "Low Stock" &&
+    product.stock > 0 &&
+    product.stock <= 2);
+
+return matchesSearch && matchesCategory && matchesStatus;
 })
 .sort((a, b) => {
   switch (sortBy) {
@@ -172,6 +178,17 @@ export default function AdminProductsPage() {
             <option>Lehenga</option>
             <option>Gown</option>
             <option>Jacket</option>
+          </select>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="rounded-xl border p-3"
+          >
+            <option>All Status</option>
+            <option>In Stock</option>
+            <option>Made to Order</option>
+            <option>Sold Out</option>
           </select>
 
           <select
