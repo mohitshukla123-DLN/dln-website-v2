@@ -32,12 +32,20 @@ export async function getProductBySlug(
   return data as Product;
 }
 
-export async function getFeaturedProducts(): Promise<Product[]> {
-  const { data, error } = await supabase
+export async function getFeaturedProducts(
+  count?: number
+): Promise<Product[]> {
+  let query = supabase
     .from("products")
     .select("*")
     .eq("featured", true)
     .order("created_at", { ascending: false });
+
+  if (count !== undefined) {
+    query = query.limit(count);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Failed to load featured products:", error);
@@ -47,12 +55,20 @@ export async function getFeaturedProducts(): Promise<Product[]> {
   return (data ?? []) as Product[];
 }
 
-export async function getBestSellers(): Promise<Product[]> {
-  const { data, error } = await supabase
+export async function getBestSellers(
+  count?: number
+): Promise<Product[]> {
+  let query = supabase
     .from("products")
     .select("*")
     .eq("bestseller", true)
     .order("created_at", { ascending: false });
+
+  if (count !== undefined) {
+    query = query.limit(count);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Failed to load best sellers:", error);
@@ -62,12 +78,20 @@ export async function getBestSellers(): Promise<Product[]> {
   return (data ?? []) as Product[];
 }
 
-export async function getNewArrivals(): Promise<Product[]> {
-  const { data, error } = await supabase
+export async function getNewArrivals(
+  count?: number
+): Promise<Product[]> {
+  let query = supabase
     .from("products")
     .select("*")
     .eq("new_arrival", true)
     .order("created_at", { ascending: false });
+
+  if (count !== undefined) {
+    query = query.limit(count);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Failed to load new arrivals:", error);

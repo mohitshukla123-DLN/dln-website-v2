@@ -26,7 +26,9 @@ export default function BestSellers() {
 
       setSettings(data);
 
-      const items = await getBestSellers();
+      const configuredCount = data?.best_sellers_count ?? 4;
+
+      const items = await getBestSellers(configuredCount);
       setProducts(items);
     }
 
@@ -37,9 +39,7 @@ export default function BestSellers() {
     return null;
   }
 
-  const count = settings?.best_sellers_count ?? 4;
-
-  const bestSellers = products.slice(0, count);
+  const bestSellers = products;
 
   if (bestSellers.length === 0) {
     return null;

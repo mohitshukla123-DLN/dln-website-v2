@@ -28,7 +28,9 @@ export default function NewArrivals() {
 
       setSettings(data);
 
-      const items = await getNewArrivals();
+      const configuredCount = data?.new_arrivals_count ?? 3;
+
+      const items = await getNewArrivals(configuredCount);
       setProducts(items);
     }
 
@@ -39,9 +41,7 @@ export default function NewArrivals() {
     return null;
   }
 
-  const count = settings?.new_arrivals_count ?? 3;
-
-  const newProducts = products.slice(0, count);
+  const newProducts = products;
 
   if (newProducts.length === 0) {
     return null;

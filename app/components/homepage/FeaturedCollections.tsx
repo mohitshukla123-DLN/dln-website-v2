@@ -30,7 +30,8 @@ export default function FeaturedCollections() {
 
       setSettings(data);
 
-      const items = await getFeaturedProducts();
+      const configuredCount = data?.featured_collections_count ?? 6;
+      const items = await getFeaturedProducts(configuredCount);
       setProducts(items);
     }
 
@@ -41,9 +42,7 @@ export default function FeaturedCollections() {
     return null;
   }
 
-  const count = settings?.featured_collections_count ?? 6;
-
-  const featuredProducts = products.slice(0, count);
+  const featuredProducts = products;
 
   if (featuredProducts.length === 0) {
     return null;
