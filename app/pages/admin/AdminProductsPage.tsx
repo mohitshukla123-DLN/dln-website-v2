@@ -19,6 +19,8 @@ export default function AdminProductsPage() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Newest");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
 
   async function loadProducts() {
     setLoading(true);
@@ -87,50 +89,59 @@ export default function AdminProductsPage() {
 
   const filteredProducts = [...products]
   .filter((product) => {
-  const matchesSearch =
-    product.name.toLowerCase().includes(search.toLowerCase()) ||
-    product.category.toLowerCase().includes(search.toLowerCase()) ||
-    (product.sku ?? "")
-      .toLowerCase()
-      .includes(search.toLowerCase());
+    const matchesSearch =
+      product.name.toLowerCase().includes(search.toLowerCase()) ||
+      product.category.toLowerCase().includes(search.toLowerCase()) ||
+      (product.sku ?? "")
+        .toLowerCase()
+        .includes(search.toLowerCase());
 
-  const matchesCategory =
-    categoryFilter === "All" ||
-    product.category === categoryFilter;
+    const matchesCategory =
+      categoryFilter === "All" ||
+      product.category === categoryFilter;
 
-  const matchesStatus =
-  statusFilter === "All" ||
-  (statusFilter === "Featured" && product.featured) ||
-  (statusFilter === "Bestseller" && product.bestseller) ||
-  (statusFilter === "New Arrival" && product.new_arrival) ||
-  (statusFilter === "Sold Out" && product.stock === 0) ||
-  (statusFilter === "Low Stock" &&
-    product.stock > 0 &&
-    product.stock <= 2);
+    const matchesStatus =
+      statusFilter === "All" ||
+      (statusFilter === "Featured" && product.featured) ||
+      (statusFilter === "Bestseller" && product.bestseller) ||
+      (statusFilter === "New Arrival" && product.new_arrival) ||
+      (statusFilter === "Sold Out" && product.stock === 0) ||
+      (statusFilter === "Low Stock" &&
+        product.stock > 0 &&
+        product.stock <= 2);
 
-return matchesSearch && matchesCategory && matchesStatus;
-})
-.sort((a, b) => {
-  switch (sortBy) {
-    case "Price Low":
-      return a.price - b.price;
+    return matchesSearch && matchesCategory && matchesStatus;
+  })
+  .sort((a, b) => {
+    switch (sortBy) {
+      case "Price Low":
+        return a.price - b.price;
 
-    case "Price High":
-      return b.price - a.price;
+      case "Price High":
+        return b.price - a.price;
 
-    case "Stock":
-      return b.stock - a.stock;
+      case "Stock":
+        return b.stock - a.stock;
 
-    case "Name":
-      return a.name.localeCompare(b.name);
+      case "Name":
+        return a.name.localeCompare(b.name);
 
-    default:
-      return (
-        new Date(b.created_at ?? 0).getTime() -
-        new Date(a.created_at ?? 0).getTime()
-      );
-  }
-});
+      default:
+        return (
+          new Date(b.created_at ?? 0).getTime() -
+          new Date(a.created_at ?? 0).getTime()
+        );
+    }
+  });
+
+const totalPages = Math.ceil(
+  filteredProducts.length / productsPerPage
+);
+
+const paginatedProducts = filteredProducts.slice(
+  (currentPage - 1) * productsPerPage,
+  currentPage * productsPerPage
+);
 
   return (
     <Container>
@@ -267,7 +278,7 @@ return matchesSearch && matchesCategory && matchesStatus;
                   </tr>
                 )}
 
-              {filteredProducts.map((product) => (
+              {paginatedProducts.map((product) => (
                 <tr
                   key={product.id}
                   className="border-t"
