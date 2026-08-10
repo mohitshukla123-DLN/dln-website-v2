@@ -252,6 +252,18 @@ function toggleSelectAll() {
             <thead className="bg-gray-100">
               <tr>
                 <th className="p-4 text-left">
+                    <input
+                      type="checkbox"
+                      checked={
+                        paginatedProducts.length > 0 &&
+                        paginatedProducts.every((product) =>
+                          selectedProducts.includes(product.id)
+                        )
+                      }
+                      onChange={toggleSelectAll}
+                    />
+                  </th>
+                <th className="p-4 text-left">
                   Image
                 </th>
 
@@ -289,7 +301,7 @@ function toggleSelectAll() {
               {loading && (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="p-10 text-center"
                   >
                     Loading...
@@ -301,7 +313,7 @@ function toggleSelectAll() {
                 products.length === 0 && (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="p-10 text-center"
                     >
                       No products found
@@ -314,6 +326,13 @@ function toggleSelectAll() {
                   key={product.id}
                   className="border-t"
                 >
+                  <td className="p-4">
+                    <input
+                      type="checkbox"
+                      checked={selectedProducts.includes(product.id)}
+                      onChange={() => toggleProductSelection(product.id)}
+                    />
+                  </td>
                   <td className="p-4">
                     {product.image ? (
                       <img
