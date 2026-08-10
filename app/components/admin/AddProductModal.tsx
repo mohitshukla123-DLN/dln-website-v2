@@ -76,18 +76,53 @@ export default function AddProductModal({
   const [imageViews, setImageViews] = useState<string[]>([]);
 
   function handleImages(e: ChangeEvent<HTMLInputElement>) {
-  if (!e.target.files) return;
+        if (!e.target.files) return;
 
-  const selectedImages = Array.from(e.target.files);
+        const selectedImages = Array.from(e.target.files);
 
-  setImages(selectedImages);
+        if (selectedImages.length === 0) {
+          return;
+        }
 
-  setImageViews(
-    selectedImages.map((_, index) =>
-      index === 0 ? "front" : "back"
-    )
-  );
-}
+        const MAX_PRODUCT_IMAGES = 8;
+
+        if (selectedImages.length > MAX_PRODUCT_IMAGES) {
+          alert(
+            `You can upload a maximum of ${MAX_PRODUCT_IMAGES} product images.`
+          );
+          e.target.value = "";
+          return;
+        }
+
+        const invalidImage = selectedImages.find(
+          (file) =>
+            !ALLOWED_IMAGE_TYPES.includes(file.type) ||
+            file.size > MAX_IMAGE_SIZE
+        );
+
+        if (invalidImage) {
+          if (!ALLOWED_IMAGE_TYPES.includes(invalidImage.type)) {
+            alert(
+              `${invalidImage.name} is not a supported image type. Use JPG, PNG, or WEBP.`
+            );
+          } else {
+            alert(
+              `${invalidImage.name} is too large. Maximum image size is 10 MB.`
+            );
+          }
+
+          e.target.value = "";
+          return;
+        }
+
+        setImages(selectedImages);
+
+        setImageViews(
+          selectedImages.map((_, index) =>
+            index === 0 ? "front" : "back"
+          )
+        );
+      }
 
   if (!open) return null;
 
@@ -433,27 +468,29 @@ try {
   </label>
 
   <label
-    htmlFor="product-images"
-    className="group flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-[var(--teal)]/40 bg-[var(--background)] px-6 py-8 text-center transition-all duration-300 hover:border-[var(--teal)] hover:bg-[var(--teal)]/5"
-  >
-    <div>
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--teal)]/10 text-[var(--teal)] transition group-hover:scale-105">
-        ↑
-      </div>
+        htmlFor="product-images"
+        className="group flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-[var(--teal)]/40 bg-[var(--background)] px-6 py-8 text-center transition-all duration-300 hover:border-[var(--teal)] hover:bg-[var(--teal)]/5"
+      >
+        <div>
+          <div className="mb-2 flex justify-center">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--teal)]/10 text-2xl text-[var(--teal)] transition-transform duration-300 group-hover:scale-110">
+              ↑
+            </span>
+          </div>
 
-      <p className="font-semibold text-[var(--foreground)]">
-        Upload Product Images
-      </p>
+          <div className="font-semibold text-[var(--foreground)]">
+            Upload Product Images
+          </div>
 
-      <p className="mt-1 text-sm text-[var(--muted)]">
-        Click to select one or more images
-      </p>
+          <div className="mt-1 text-sm text-gray-500">
+            Click to select one or more images
+          </div>
 
-      <p className="mt-2 text-xs text-[var(--muted)]">
-        JPG, PNG, WEBP
-      </p>
-    </div>
-  </label>
+          <div className="mt-2 text-xs text-gray-400">
+            JPG, PNG, WEBP • Max 8 images • 10 MB each
+          </div>
+        </div>
+      </label>
 
   <input
     id="product-images"
