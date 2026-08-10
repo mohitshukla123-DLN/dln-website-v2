@@ -200,7 +200,7 @@ async function bulkDelete() {
   const confirmed = window.confirm(
     `Delete ${selectedProducts.length} selected product${
       selectedProducts.length !== 1 ? "s" : ""
-    }? This cannot be undone.`
+    }?\n\nThis action cannot be undone.`
   );
 
   if (!confirmed) return;
