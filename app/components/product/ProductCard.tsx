@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import Button from "../ui/Button";
 import type { Product } from "../../types/product";
 import { buildWhatsAppLink } from "../../lib/whatsapp";
+import {getWishlist,toggleWishlist,} from "../../lib/wishlist";
 
 interface Props {
   product: Product;
@@ -15,6 +16,12 @@ export default function ProductCard({
   onQuickView,
 }: Props) {
   const [currentImage, setCurrentImage] = useState(0);
+
+  const [wishlisted, setWishlisted] = useState(false);
+
+  useEffect(() => {
+    setWishlisted(getWishlist().includes(product.id));
+  }, [product.id]);
 
   const intervalRef = useRef<number | null>(null);
 
@@ -128,6 +135,30 @@ export default function ProductCard({
           </span>
         )}
       </div>
+
+      <button
+          type="button"
+          aria-label={
+            wishlisted ? "Remove from wishlist" : "Add to wishlist"
+          }
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const next = toggleWishlist(product.id);
+            setWishlisted(next);
+
+            window.dispatchEvent(new Event("wishlistUpdated"));
+          }}
+          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-xl shadow-md transition hover:scale-105 hover:bg-white"
+        >
+          <span
+            className={wishlisted ? "text-red-600" : "text-gray-500"}
+            aria-hidden="true"
+          >
+            {wishlisted ? "♥" : "♡"}
+          </span>
+        </button>
 
       {/* Product information */}
       <div className="bg-white p-5">
