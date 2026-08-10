@@ -174,12 +174,15 @@ function toggleSelectAll() {
   }
 }
 
-async function bulkUpdate(field: "featured" | "bestseller" | "new_arrival") {
+async function bulkUpdate(
+  field: "featured" | "bestseller" | "new_arrival",
+  value: boolean
+) {
   if (selectedProducts.length === 0) return;
 
   const { error } = await supabase
     .from("products")
-    .update({ [field]: true })
+    .update({ [field]: value })
     .in("id", selectedProducts);
 
   if (error) {
@@ -273,24 +276,45 @@ async function bulkUpdate(field: "featured" | "bestseller" | "new_arrival") {
 
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => bulkUpdate("featured")}
+                  onClick={() => bulkUpdate("featured", true)}
                   className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white"
                 >
                   Mark Featured
                 </button>
 
                 <button
-                  onClick={() => bulkUpdate("bestseller")}
+                  onClick={() => bulkUpdate("featured", false)}
+                  className="rounded-lg border px-4 py-2 text-sm"
+                >
+                  Remove Featured
+                </button>
+
+                <button
+                  onClick={() => bulkUpdate("bestseller", true)}
                   className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
                 >
                   Mark Bestseller
                 </button>
 
                 <button
-                  onClick={() => bulkUpdate("new_arrival")}
+                  onClick={() => bulkUpdate("bestseller", false)}
+                  className="rounded-lg border px-4 py-2 text-sm"
+                >
+                  Remove Bestseller
+                </button>
+
+                <button
+                  onClick={() => bulkUpdate("new_arrival", true)}
                   className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
                 >
                   Mark New Arrival
+                </button>
+
+                <button
+                  onClick={() => bulkUpdate("new_arrival", false)}
+                  className="rounded-lg border px-4 py-2 text-sm"
+                >
+                  Remove New Arrival
                 </button>
 
                 <button
