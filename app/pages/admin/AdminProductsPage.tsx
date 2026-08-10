@@ -298,7 +298,19 @@ return matchesSearch && matchesCategory && matchesStatus;
                   </td>
 
                   <td className="p-4">
-                    {product.stock}
+                    {product.stock === 0 ? (
+                      <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                        Sold Out
+                      </span>
+                    ) : product.stock <= 2 ? (
+                      <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-700">
+                        Low Stock ({product.stock})
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                        In Stock ({product.stock})
+                      </span>
+                    )}
                   </td>
 
                   <td className="p-4">
