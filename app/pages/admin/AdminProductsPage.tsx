@@ -174,6 +174,23 @@ function toggleSelectAll() {
   }
 }
 
+async function bulkUpdate(field: "featured" | "bestseller" | "new_arrival") {
+  if (selectedProducts.length === 0) return;
+
+  const { error } = await supabase
+    .from("products")
+    .update({ [field]: true })
+    .in("id", selectedProducts);
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  setSelectedProducts([]);
+  await loadProducts();
+}
+
   return (
     <Container>
       <section className="py-16">
@@ -254,7 +271,28 @@ function toggleSelectAll() {
                 {selectedProducts.length !== 1 ? "s" : ""} selected
               </span>
 
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => bulkUpdate("featured")}
+                  className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white"
+                >
+                  Mark Featured
+                </button>
+
+                <button
+                  onClick={() => bulkUpdate("bestseller")}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+                >
+                  Mark Bestseller
+                </button>
+
+                <button
+                  onClick={() => bulkUpdate("new_arrival")}
+                  className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white"
+                >
+                  Mark New Arrival
+                </button>
+
                 <button
                   onClick={() => setSelectedProducts([])}
                   className="rounded-lg border px-4 py-2 text-sm"
