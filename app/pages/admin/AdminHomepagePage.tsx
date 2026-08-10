@@ -38,44 +38,57 @@ export default function AdminHomepagePage() {
   
 
   async function loadSettings() {
-    const data = await getHomepageSettings();
+        const data = await getHomepageSettings();
 
-    if (!data) return;
+        if (!data) return;
 
-      setHeroEnabled(data.hero_enabled ?? true);
-      setNewArrivalsTitle(data.new_arrivals_title ?? "");
-      setNewArrivalsSubtitle(data.new_arrivals_subtitle ?? "");
-      setNewArrivalsCount(data.new_arrivals_count ?? 8);
-      setNewArrivalsEnabled(data.new_arrivals_enabled ?? true);
-      setFeaturedCollectionsTitle(data.featured_collections_title ?? "");
-      setFeaturedCollectionsSubtitle(data.featured_collections_subtitle ?? "");
-      setFeaturedCollectionsCount(data.featured_collections_count ?? 6);
-      setFeaturedCollectionsEnabled(data.featured_collections_enabled ?? true);
-      setBestSellersTitle(data.best_sellers_title ?? "");
-      setBestSellersSubtitle(data.best_sellers_subtitle ?? "");
-      setBestSellersCount(data.best_sellers_count ?? 4);
-      setBestSellersEnabled(data.best_sellers_enabled ?? true);
-      setTestimonialsTitle(data.testimonials_title ?? "");
-      setTestimonialsSubtitle(data.testimonials_subtitle ?? "");
-      setTestimonialsEnabled(data.testimonials_enabled ?? true);
-      setNewsletterTitle(data.newsletter_title ?? "");
-      setNewsletterSubtitle(data.newsletter_subtitle ?? "");
-      setNewsletterEnabled(data.newsletter_enabled ?? true);
-          
+        setHeroTitle(data.hero_title ?? "");
+        setHeroSubtitle(data.hero_subtitle ?? "");
+        setHeroButtonText(data.hero_button_text ?? "");
+        setHeroButtonUrl(data.hero_button_url ?? "");
+        setHeroEnabled(data.hero_enabled ?? true);
 
-    if (!data) return;
+        setFeaturedCategoriesTitle(data.featured_categories_title ?? "");
+        setFeaturedCategoriesSubtitle(data.featured_categories_subtitle ?? "");
+        setFeaturedCategoriesEnabled(
+          data.featured_categories_enabled ?? true
+        );
 
-    setHeroTitle(data.hero_title ?? "");
-    setHeroSubtitle(data.hero_subtitle ?? "");
-    setHeroButtonText(data.hero_button_text ?? "");
-    setHeroButtonUrl(data.hero_button_url ?? "");
-    setFeaturedCategoriesTitle(data.featured_categories_title ?? "");
-    setFeaturedCategoriesSubtitle(data.featured_categories_subtitle ?? "");
-    setFeaturedCategoriesEnabled(data.featured_categories_enabled ?? true);
-    setWhyChooseTitle(data.why_choose_us_title ?? "");
-    setWhyChooseSubtitle(data.why_choose_us_subtitle ?? "");
-    setWhyChooseEnabled(data.why_choose_us_enabled ?? true);
-  }
+        setNewArrivalsTitle(data.new_arrivals_title ?? "");
+        setNewArrivalsSubtitle(data.new_arrivals_subtitle ?? "");
+        setNewArrivalsCount(data.new_arrivals_count ?? 8);
+        setNewArrivalsEnabled(data.new_arrivals_enabled ?? true);
+
+        setFeaturedCollectionsTitle(
+          data.featured_collections_title ?? ""
+        );
+        setFeaturedCollectionsSubtitle(
+          data.featured_collections_subtitle ?? ""
+        );
+        setFeaturedCollectionsCount(
+          data.featured_collections_count ?? 6
+        );
+        setFeaturedCollectionsEnabled(
+          data.featured_collections_enabled ?? true
+        );
+
+        setWhyChooseTitle(data.why_choose_us_title ?? "");
+        setWhyChooseSubtitle(data.why_choose_us_subtitle ?? "");
+        setWhyChooseEnabled(data.why_choose_us_enabled ?? true);
+
+        setBestSellersTitle(data.best_sellers_title ?? "");
+        setBestSellersSubtitle(data.best_sellers_subtitle ?? "");
+        setBestSellersCount(data.best_sellers_count ?? 4);
+        setBestSellersEnabled(data.best_sellers_enabled ?? true);
+
+        setTestimonialsTitle(data.testimonials_title ?? "");
+        setTestimonialsSubtitle(data.testimonials_subtitle ?? "");
+        setTestimonialsEnabled(data.testimonials_enabled ?? true);
+
+        setNewsletterTitle(data.newsletter_title ?? "");
+        setNewsletterSubtitle(data.newsletter_subtitle ?? "");
+        setNewsletterEnabled(data.newsletter_enabled ?? true);
+      }
 
   useEffect(() => {
     loadSettings();
