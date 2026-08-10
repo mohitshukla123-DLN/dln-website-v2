@@ -20,6 +20,7 @@ export default function AdminProductsPage() {
   const [sortBy, setSortBy] = useState("Newest");
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
   const productsPerPage = 10;
 
   async function loadProducts() {
@@ -146,6 +147,32 @@ const paginatedProducts = filteredProducts.slice(
   (currentPage - 1) * productsPerPage,
   currentPage * productsPerPage
 );
+
+function toggleProductSelection(id: number) {
+  setSelectedProducts((current) =>
+    current.includes(id)
+      ? current.filter((productId) => productId !== id)
+      : [...current, id]
+  );
+}
+
+function toggleSelectAll() {
+  const pageIds = paginatedProducts.map((product) => product.id);
+
+  const allSelected = pageIds.every((id) =>
+    selectedProducts.includes(id)
+  );
+
+  if (allSelected) {
+    setSelectedProducts((current) =>
+      current.filter((id) => !pageIds.includes(id))
+    );
+  } else {
+    setSelectedProducts((current) => [
+      ...new Set([...current, ...pageIds]),
+    ]);
+  }
+}
 
   return (
     <Container>
