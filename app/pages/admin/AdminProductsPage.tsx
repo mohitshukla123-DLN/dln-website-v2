@@ -247,6 +247,24 @@ function toggleSelectAll() {
 
         </div>
 
+        {selectedProducts.length > 0 && (
+            <div className="mb-4 flex items-center justify-between rounded-xl border bg-white p-4">
+              <span className="font-medium">
+                {selectedProducts.length} product
+                {selectedProducts.length !== 1 ? "s" : ""} selected
+              </span>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSelectedProducts([])}
+                  className="rounded-lg border px-4 py-2 text-sm"
+                >
+                  Clear Selection
+                </button>
+              </div>
+            </div>
+          )}
+
         <div className="overflow-hidden rounded-2xl border bg-white">
           <table className="w-full">
             <thead className="bg-gray-100">
