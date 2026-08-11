@@ -10,8 +10,9 @@ export default function CategoryFilter({
   onSelect,
 }: Props) {
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="mb-6 flex flex-wrap gap-3">
       <button
+        type="button"
         onClick={() => onSelect("All")}
         className={`rounded-full px-5 py-2 transition ${
           selected === "All"
@@ -24,6 +25,7 @@ export default function CategoryFilter({
 
       {categories.map((category) => (
         <button
+          type="button"
           key={category.id}
           onClick={() => onSelect(category.name)}
           className={`rounded-full px-5 py-2 transition ${

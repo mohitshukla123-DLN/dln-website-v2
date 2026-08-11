@@ -20,8 +20,9 @@ export default function SubcategoryFilter({
   if (items.length === 0) return null;
 
   return (
-    <div className="mt-8 flex flex-wrap gap-3">
+    <div className="mb-6 flex flex-wrap gap-3">
       <button
+        type="button"
         onClick={() => onSelect("All")}
         className={`rounded-full px-5 py-2 transition ${
           selected === "All"
@@ -34,6 +35,7 @@ export default function SubcategoryFilter({
 
       {items.map((item) => (
         <button
+          type="button"
           key={item}
           onClick={() => onSelect(item)}
           className={`rounded-full px-5 py-2 transition ${
