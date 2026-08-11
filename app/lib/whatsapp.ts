@@ -4,8 +4,7 @@ export function buildWhatsAppLink(
   price: number,
   slug: string
 ) {
-  const website =
-    "https://dresslikenawaabs.pages.dev";
+  const website = "https://dresslikenawaabs.pages.dev";
 
   const message = `Hello Dress Like Nawaabs,
 
