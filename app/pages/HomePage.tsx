@@ -81,20 +81,33 @@ export default function HomePage() {
         </section>
       )}
 
-      <CategoryGrid settings={settings} />
+      {settings?.featured_categories_enabled !== false && (
+          <CategoryGrid settings={settings} />
+        )}
 
-      <NewArrivals settings={settings} />
+        {settings?.new_arrivals_enabled !== false && (
+          <NewArrivals settings={settings} />
+        )}
 
-      {/* Featured Collections */}
-      <FeaturedCollections settings={settings} />
+        {settings?.featured_collections_enabled !== false && (
+          <FeaturedCollections settings={settings} />
+        )}
 
-      <WhyChooseUs settings={settings} />
+        {settings?.why_choose_us_enabled !== false && (
+          <WhyChooseUs settings={settings} />
+        )}
 
-      <BestSellers settings={settings} />
+        {settings?.best_sellers_enabled !== false && (
+          <BestSellers settings={settings} />
+        )}
 
-      <Testimonials settings={settings} />
+        {settings?.testimonials_enabled !== false && (
+          <Testimonials settings={settings} />
+        )}
 
-      <Newsletter settings={settings} />
+        {settings?.newsletter_enabled !== false && (
+          <Newsletter settings={settings} />
+        )}
 
       <SEO
         title="Dress Like Nawaabs"

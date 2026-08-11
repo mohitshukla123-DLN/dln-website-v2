@@ -131,20 +131,31 @@ export default function AddProductModal({
   .replace(/\s+/g, "-");
 
 async function saveProduct() {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const {data: { session },} = await supabase.auth.getSession();
 
   if (!session) {
     alert("Not logged in");
     return;
   }
 
-  const trimmedName = name.trim();
+    const trimmedName = name.trim();
+  const trimmedColor = color.trim();
+  const trimmedSKU = sku.trim().toUpperCase();
+  const trimmedDescription = description.trim();
   const numericPrice = Number(price);
 
   if (!trimmedName) {
     alert("Product name is required.");
+    return;
+  }
+
+  if (trimmedName.length < 2) {
+    alert("Product name must be at least 2 characters.");
+    return;
+  }
+
+  if (trimmedName.length > 120) {
+    alert("Product name must be 120 characters or less.");
     return;
   }
 
@@ -153,34 +164,55 @@ async function saveProduct() {
     return;
   }
 
-  if (!color.trim()) {
-  alert("Please enter the product color.");
-  return;
+  if (!trimmedColor) {
+    alert("Please enter the product color.");
+    return;
   }
 
-  const trimmedSKU = sku.trim().toUpperCase();
+  if (trimmedColor.length > 60) {
+    alert("Product color must be 60 characters or less.");
+    return;
+  }
 
-if (!trimmedSKU) {
-  alert("Please enter the product SKU.");
-  return;
-}
+  if (!trimmedSKU) {
+    alert("Please enter the product SKU.");
+    return;
+  }
 
-if (!/^[A-Z0-9-]+$/.test(trimmedSKU)) {
-  alert(
-    "SKU may contain only letters, numbers, and hyphens."
-  );
-  return;
-}
+  if (trimmedSKU.length < 2 || trimmedSKU.length > 40) {
+    alert("SKU must be between 2 and 40 characters.");
+    return;
+  }
 
-  if (category && subcategories[
-    categoryKey as keyof typeof subcategories
-  ]?.length > 0 && !subcategory) {
+  if (!/^[A-Z0-9-]+$/.test(trimmedSKU)) {
+    alert(
+      "SKU may contain only letters, numbers, and hyphens."
+    );
+    return;
+  }
+
+  if (
+    category &&
+    subcategories[
+      categoryKey as keyof typeof subcategories
+    ]?.length > 0 &&
+    !subcategory
+  ) {
     alert("Please select a subcategory.");
     return;
   }
 
-  if (!price || !Number.isFinite(numericPrice) || numericPrice <= 0) {
+  if (
+    !price ||
+    !Number.isFinite(numericPrice) ||
+    numericPrice <= 0
+  ) {
     alert("Please enter a valid price greater than 0.");
+    return;
+  }
+
+  if (numericPrice > 10000000) {
+    alert("Please enter a valid price.");
     return;
   }
 
@@ -190,24 +222,24 @@ if (!/^[A-Z0-9-]+$/.test(trimmedSKU)) {
   }
 
   const invalidImage = images.find(
-        (file) =>
-          !ALLOWED_IMAGE_TYPES.includes(file.type) ||
-          file.size > MAX_IMAGE_SIZE
+    (file) =>
+      !ALLOWED_IMAGE_TYPES.includes(file.type) ||
+      file.size > MAX_IMAGE_SIZE
+  );
+
+  if (invalidImage) {
+    if (!ALLOWED_IMAGE_TYPES.includes(invalidImage.type)) {
+      alert(
+        `${invalidImage.name} is not a supported image type. Use JPG, PNG, or WEBP.`
       );
+    } else {
+      alert(
+        `${invalidImage.name} is too large. Maximum image size is 10 MB.`
+      );
+    }
 
-      if (invalidImage) {
-        if (!ALLOWED_IMAGE_TYPES.includes(invalidImage.type)) {
-          alert(
-            `${invalidImage.name} is not a supported image type. Use JPG, PNG, or WEBP.`
-          );
-        } else {
-          alert(
-            `${invalidImage.name} is too large. Maximum image size is 10 MB.`
-          );
-        }
-
-        return;
-      }
+    return;
+  }
 
   const stock = Object.values(sizes).reduce(
     (total, value) => total + Number(value || 0),
@@ -219,8 +251,18 @@ if (!/^[A-Z0-9-]+$/.test(trimmedSKU)) {
     return;
   }
 
-  if (!description.trim()) {
+  if (!Number.isInteger(stock) || stock < 0) {
+    alert("Stock quantity must be a whole number.");
+    return;
+  }
+
+  if (!trimmedDescription) {
     alert("Product description is required.");
+    return;
+  }
+
+  if (trimmedDescription.length < 10) {
+    alert("Product description must be at least 10 characters.");
     return;
   }
 
