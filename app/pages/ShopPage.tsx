@@ -50,13 +50,15 @@ export default function ShopPage() {
 
   const filteredProducts = useMemo(() => {
     const result = products.filter((product) => {
-      const matchesSearch =
-        search === "" ||
-        product.name.toLowerCase().includes(search.toLowerCase()) ||
-        product.sku.toLowerCase().includes(search.toLowerCase()) ||
-        product.category.toLowerCase().includes(search.toLowerCase()) ||
-        product.subcategory.toLowerCase().includes(search.toLowerCase()) ||
-        product.color.toLowerCase().includes(search.toLowerCase());
+      const query = search.trim().toLowerCase();
+
+        const matchesSearch =
+          query === "" ||
+          String(product.name ?? "").toLowerCase().includes(query) ||
+          String(product.sku ?? "").toLowerCase().includes(query) ||
+          String(product.category ?? "").toLowerCase().includes(query) ||
+          String(product.subcategory ?? "").toLowerCase().includes(query) ||
+          String(product.color ?? "").toLowerCase().includes(query);
 
       const matchesCategory =
         category === "All" ||
@@ -146,26 +148,30 @@ export default function ShopPage() {
           onChange={setSearch}
         />
 
-        <CategoryFilter
-          selected={category}
-          onSelect={handleCategory}
-        />
+        <div className="mb-8 space-y-5">
+          <CategoryFilter
+            selected={category}
+            onSelect={handleCategory}
+          />
 
-        <SubcategoryFilter
-          category={category}
-          selected={subcategory}
-          onSelect={setSubcategory}
-        />
+          <SubcategoryFilter
+            category={category}
+            selected={subcategory}
+            onSelect={setSubcategory}
+          />
 
-        <PriceFilter
-          value={priceRange}
-          onChange={setPriceRange}
-        />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <PriceFilter
+              value={priceRange}
+              onChange={setPriceRange}
+            />
 
-        <SortDropdown
-          value={sort}
-          onChange={setSort}
-        />
+            <SortDropdown
+              value={sort}
+              onChange={setSort}
+            />
+          </div>
+        </div>
 
         <p className="mb-8 text-sm text-[var(--muted)]">
           {filteredProducts.length} product
