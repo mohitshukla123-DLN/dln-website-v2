@@ -14,7 +14,7 @@ Product:
 ${productName}
 
 Size:
-${size}
+${size || "Not selected"}
 
 Price:
 ₹${price.toLocaleString("en-IN")}
