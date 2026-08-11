@@ -19,6 +19,7 @@ import ProductReviews from "../components/product/ProductReviews";
 import ProductFAQ from "../components/product/ProductFAQ";
 import ProductCard from "../components/product/ProductCard";
 import ProductShare from "../components/product/ProductShare";
+import {getWishlist,toggleWishlist,} from "../lib/wishlist";
 
 import SEO from "../components/common/SEO";
 import ProductSchema from "../components/common/ProductSchema";
@@ -85,6 +86,8 @@ export default function ProductPage() {
   const [reviews, setReviews] =
     useState<Review[]>([]);
 
+  const [wishlisted, setWishlisted] = useState(false);
+
   useEffect(() => {
     async function loadProduct() {
       if (!slug) {
@@ -115,6 +118,10 @@ export default function ProductPage() {
         };
 
         setProduct(normalizedProduct);
+
+        setWishlisted(
+          getWishlist().includes(normalizedProduct.id)
+        );
 
         setActiveImage(
           normalizedProduct.images[0] ?? ""
@@ -251,14 +258,43 @@ export default function ProductPage() {
 
           <div className="grid gap-16 lg:grid-cols-2">
 
-            <ProductGallery
-              product={product}
-              activeImage={activeImage}
-              setActiveImage={setActiveImage}
-              onImageClick={() =>
-                setLightboxOpen(true)
-              }
-            />
+            <div className="relative">
+              <ProductGallery
+                product={product}
+                activeImage={activeImage}
+                setActiveImage={setActiveImage}
+                onImageClick={() =>
+                  setLightboxOpen(true)
+                }
+              />
+
+              <button
+                type="button"
+                aria-label={
+                  wishlisted
+                    ? "Remove from wishlist"
+                    : "Add to wishlist"
+                }
+                onClick={() => {
+                  const next = toggleWishlist(product.id);
+                  setWishlisted(next);
+                  window.dispatchEvent(
+                    new Event("wishlistUpdated")
+                  );
+                }}
+                className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-2xl shadow-md transition hover:scale-105"
+              >
+                <span
+                  className={
+                    wishlisted
+                      ? "text-red-600"
+                      : "text-gray-500"
+                  }
+                >
+                  {wishlisted ? "♥" : "♡"}
+                </span>
+              </button>
+            </div>
 
             <div>
 

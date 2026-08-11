@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { getProducts } from "../lib/products";
 import type { Product } from "../types/product";
 import { getWishlist } from "../lib/wishlist";
@@ -7,52 +8,84 @@ import Container from "../components/ui/Container";
 import ProductGrid from "../components/shop/ProductGrid";
 
 export default function WishlistPage() {
+  const [products, setProducts] =
+    useState<Product[]>([]);
 
-  const [products, setProducts] = useState<Product[]>([]);
-    useEffect(() => {
-      async function load() {
-        const data = await getProducts();
-        setProducts(data);
-      }
+  const [wishlist, setWishlist] =
+    useState<number[]>(getWishlist());
 
-      load();
-    }, []);
-    
-  const wishlist = getWishlist();
+  useEffect(() => {
+    async function load() {
+      const data = await getProducts();
+      setProducts(data);
+    }
 
-  const wishlistProducts = products.filter((product) =>
-    wishlist.includes(product.id)
+    load();
+  }, []);
+
+  useEffect(() => {
+    function updateWishlist() {
+      setWishlist(getWishlist());
+    }
+
+    window.addEventListener(
+      "wishlistUpdated",
+      updateWishlist
+    );
+
+    window.addEventListener(
+      "storage",
+      updateWishlist
+    );
+
+    return () => {
+      window.removeEventListener(
+        "wishlistUpdated",
+        updateWishlist
+      );
+
+      window.removeEventListener(
+        "storage",
+        updateWishlist
+      );
+    };
+  }, []);
+
+  const wishlistProducts = products.filter(
+    (product) => wishlist.includes(product.id)
   );
 
   return (
     <>
-    <section className="py-20">
-      <Container>
-        <div className="mb-12">
-          <h1 className="text-5xl font-bold">
-            Wishlist
-          </h1>
-
-          <p className="mt-4 text-[var(--muted)]">
-            Your saved products.
-          </p>
-        </div>
-
-        {wishlistProducts.length > 0 ? (
-          <ProductGrid products={wishlistProducts} />
-        ) : (
-          <div className="rounded-3xl border border-dashed p-16 text-center">
-            <h2 className="text-2xl font-semibold">
-              Your wishlist is empty
-            </h2>
+      <section className="py-20">
+        <Container>
+          <div className="mb-12">
+            <h1 className="text-5xl font-bold">
+              Wishlist
+            </h1>
 
             <p className="mt-4 text-[var(--muted)]">
-              Save products by clicking the ❤️ icon.
+              Your saved products.
             </p>
           </div>
-        )}
-      </Container>
-    </section>
+
+          {wishlistProducts.length > 0 ? (
+            <ProductGrid
+              products={wishlistProducts}
+            />
+          ) : (
+            <div className="rounded-3xl border border-dashed p-16 text-center">
+              <h2 className="text-2xl font-semibold">
+                Your wishlist is empty
+              </h2>
+
+              <p className="mt-4 text-[var(--muted)]">
+                Save products by clicking the ❤️ icon.
+              </p>
+            </div>
+          )}
+        </Container>
+      </section>
     </>
   );
 }

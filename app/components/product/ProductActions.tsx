@@ -1,23 +1,42 @@
+import { useState } from "react";
+
 import Button from "../ui/Button";
 import { buildWhatsAppLink } from "../../lib/whatsapp";
+import {
+  getWishlist,
+  toggleWishlist,
+} from "../../lib/wishlist";
 
 interface Props {
   product: {
+    id: number;
     name: string;
     slug: string;
     price: number;
   };
   selectedSize: string;
-  onEnquiry?: () => void;
 }
 
 export default function ProductActions({
   product,
   selectedSize,
-  onEnquiry,
 }: Props) {
+  const [wishlisted, setWishlisted] = useState(
+    getWishlist().includes(product.id)
+  );
+
   function requireSize() {
     alert("Please select a size.");
+  }
+
+  function handleWishlist() {
+    const next = toggleWishlist(product.id);
+
+    setWishlisted(next);
+
+    window.dispatchEvent(
+      new Event("wishlistUpdated")
+    );
   }
 
   return (
@@ -50,16 +69,11 @@ export default function ProductActions({
 
       <Button
         className="flex-1"
-        onClick={() => {
-          if (!selectedSize) {
-            requireSize();
-            return;
-          }
-
-          onEnquiry?.();
-        }}
+        onClick={handleWishlist}
       >
-        Email Enquiry
+        {wishlisted
+          ? "Remove from Wishlist"
+          : "Add to Wishlist"}
       </Button>
     </div>
   );
