@@ -70,9 +70,6 @@
     <loc>https://dresslikenawaabs.pages.dev/collections/sale</loc>
   </url>
   <url>
-    <loc>https://dresslikenawaabs.pages.dev/products/new-saree-3</loc>
-  </url>
-  <url>
     <loc>https://dresslikenawaabs.pages.dev/products/gown</loc>
   </url>
   <url>
@@ -98,5 +95,8 @@
   </url>
   <url>
     <loc>https://dresslikenawaabs.pages.dev/products/new-saree-2</loc>
+  </url>
+  <url>
+    <loc>https://dresslikenawaabs.pages.dev/products/new-saree-3</loc>
   </url>
 </urlset>
