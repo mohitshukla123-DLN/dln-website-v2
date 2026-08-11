@@ -25,15 +25,9 @@ export default function Navbar() {
         .select("logo_url")
         .limit(1);
 
-      console.log("Navbar data:", data);
-      console.log("Navbar error:", error);
-
       if (data && data.length > 0 && data[0].logo_url) {
-        console.log("Setting logo:", data[0].logo_url);
         setLogoUrl(data[0].logo_url);
-      } else {
-        console.log("No logo found.");
-      }
+      } else {}
     }
 
     loadLogo();

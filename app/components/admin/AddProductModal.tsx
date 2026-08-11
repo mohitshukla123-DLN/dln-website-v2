@@ -296,13 +296,6 @@ try {
   for (let index = 0; index < images.length; index++) {
     const image = images[index];
 
-    console.log("Uploading image:", {
-      index,
-      name: image.name,
-      type: image.type,
-      size: image.size,
-    });
-
     try {
       const uploaded = await uploadProductImage({
         file: image,
@@ -312,8 +305,6 @@ try {
         view: imageViews[index] || "front",
         sku: sku.trim(),
       });
-
-      console.log("Image uploaded:", uploaded);
 
       uploadedImages.push(uploaded.url);
     } catch (uploadError) {
@@ -328,8 +319,6 @@ try {
       );
     }
   }
-
-  console.log("All images uploaded:", uploadedImages);
 
   // Insert product
   try {
@@ -381,11 +370,8 @@ try {
     throw insertError;
   }
 
-  console.log("PRODUCT SAVED SUCCESSFULLY");
-
   onClose();
   window.location.reload();
-
 
   } catch (error) {
     alert(

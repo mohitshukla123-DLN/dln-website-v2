@@ -78,8 +78,6 @@ export default function AdminSiteSettingsPage() {
   async function saveSettings() {
     setLoading(true);
 
-    console.log(await supabase.auth.getSession());
-
     const { error } = await supabase
       .from("site_settings")
       .update({

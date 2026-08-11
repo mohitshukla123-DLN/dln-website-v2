@@ -43,8 +43,6 @@ export async function uploadProductImage({
 
   const filePath = `products/${fileName}`;
 
-  console.log("Uploading product image:", filePath);
-
   const { error } = await supabase.storage
     .from("products")
     .upload(filePath, file, {
