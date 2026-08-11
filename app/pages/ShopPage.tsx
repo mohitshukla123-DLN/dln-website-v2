@@ -42,8 +42,6 @@ export default function ShopPage() {
     async function loadProducts() {
       const data = await getProducts();
 
-      console.log("Products from Supabase:", data);
-
       setProducts(data);
     }
 
@@ -80,15 +78,6 @@ export default function ShopPage() {
           product.price <= 10000) ||
         (priceRange === "above-10000" &&
           product.price > 10000);
-
-      console.log({
-        name: product.name,
-        matchesSearch,
-        matchesCategory,
-        matchesSubcategory,
-        matchesPrice,
-      });
-
       return (
         matchesSearch &&
         matchesCategory &&
@@ -130,15 +119,6 @@ export default function ShopPage() {
     setSubcategory("All");
   }
 
-  console.log({
-  totalProducts: products.length,
-  filteredProducts: filteredProducts.length,
-  category,
-  subcategory,
-  search,
-  priceRange,
-  sort,
-});
 
   return (
 
