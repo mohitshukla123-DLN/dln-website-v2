@@ -12,6 +12,14 @@ const SITE_NAME = "Dress Like Nawaabs";
 const SITE_URL = "https://dresslikenawaabs.pages.dev";
 const DEFAULT_IMAGE = "/og-image.jpg";
 
+function absoluteUrl(value: string) {
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+
+  return `${SITE_URL}${value.startsWith("/") ? value : `/${value}`}`;
+}
+
 export default function SEO({
   title,
   description,
@@ -20,9 +28,12 @@ export default function SEO({
   canonical,
 }: SEOProps) {
   const fullTitle =
-    title === "Home"
+    title === "Home" || title === SITE_NAME
       ? SITE_NAME
       : `${title} | ${SITE_NAME}`;
+
+  const canonicalUrl = canonical || SITE_URL;
+  const imageUrl = absoluteUrl(image);
 
   return (
     <Helmet>
@@ -42,7 +53,7 @@ export default function SEO({
 
       <link
         rel="canonical"
-        href={canonical || SITE_URL}
+        href={canonicalUrl}
       />
 
       <meta
@@ -77,12 +88,12 @@ export default function SEO({
 
       <meta
         property="og:url"
-        content={canonical || SITE_URL}
+        content={canonicalUrl}
       />
 
       <meta
         property="og:image"
-        content={`${SITE_URL}${image}`}
+        content={imageUrl}
       />
 
       <meta
@@ -102,7 +113,7 @@ export default function SEO({
 
       <meta
         name="twitter:image"
-        content={`${SITE_URL}${image}`}
+        content={imageUrl}
       />
     </Helmet>
   );
