@@ -1,37 +1,53 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getHomepageSettings } from "../lib/homepage";
 import type { HomepageSettings } from "../types/homepage";
-
 import Button from "../components/ui/Button";
 import Container from "../components/ui/Container";
-import FeaturedCollections from "../components/homepage/FeaturedCollections";
-import WhyChooseUs from "../components/homepage/WhyChooseUs";
-import BestSellers from "../components/homepage/BestSellers";
-import Testimonials from "../components/homepage/Testimonials";
-import Newsletter from "../components/homepage/Newsletter";
-
-import CategoryGrid from "../components/homepage/CategoryGrid";
-import NewArrivals from "../components/homepage/NewArrivals";
 import SEO from "../components/common/SEO";
-import heroLogo from "../assets/logos/logo-home.png";
 import heroLogo400 from "../assets/logos/logo-home-400.webp";
 import heroLogo800 from "../assets/logos/logo-home-800.webp";
 
+const FeaturedCollections = lazy(
+  () => import("../components/homepage/FeaturedCollections")
+);
+
+const WhyChooseUs = lazy(
+  () => import("../components/homepage/WhyChooseUs")
+);
+
+const BestSellers = lazy(
+  () => import("../components/homepage/BestSellers")
+);
+
+const Testimonials = lazy(
+  () => import("../components/homepage/Testimonials")
+);
+
+const Newsletter = lazy(
+  () => import("../components/homepage/Newsletter")
+);
+
+const CategoryGrid = lazy(
+  () => import("../components/homepage/CategoryGrid")
+);
+
+const NewArrivals = lazy(
+  () => import("../components/homepage/NewArrivals")
+);
 
 export default function HomePage() {
   const navigate = useNavigate();
-
   const [settings, setSettings] = useState<HomepageSettings | null>(null);
 
   useEffect(() => {
-  async function loadHomepage() {
-    const data = await getHomepageSettings();
-    setSettings(data);
-  }
+    async function loadHomepage() {
+      const data = await getHomepageSettings();
+      setSettings(data);
+    }
 
-  loadHomepage();
-}, []);
+    loadHomepage();
+  }, []);
 
   return (
     <>
@@ -68,18 +84,21 @@ export default function HomePage() {
               <div className="flex justify-center lg:justify-end">
                 <div className="relative">
                   <div className="absolute inset-6 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+
                   <picture>
                     <source
                       media="(max-width: 639px)"
                       srcSet={heroLogo400}
                       type="image/webp"
                     />
+
                     <source
                       srcSet={heroLogo800}
                       type="image/webp"
                     />
+
                     <img
-                      src={heroLogo}
+                      src={heroLogo800}
                       alt="Dress Like Nawaabs"
                       width={800}
                       height={806}
@@ -96,7 +115,9 @@ export default function HomePage() {
         </section>
       )}
 
-      {settings?.featured_categories_enabled !== false && (
+      {/* Below-the-fold sections */}
+      <Suspense fallback={null}>
+        {settings?.featured_categories_enabled !== false && (
           <CategoryGrid settings={settings} />
         )}
 
@@ -123,6 +144,7 @@ export default function HomePage() {
         {settings?.newsletter_enabled !== false && (
           <Newsletter settings={settings} />
         )}
+      </Suspense>
 
       <SEO
         title="Dress Like Nawaabs"
