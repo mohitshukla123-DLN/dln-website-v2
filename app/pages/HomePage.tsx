@@ -68,28 +68,27 @@ export default function HomePage() {
               <div className="flex justify-center lg:justify-end">
                 <div className="relative">
                   <div className="absolute inset-6 rounded-full bg-[var(--accent)]/10 blur-3xl" />
-
                   <picture>
-                      <source
-                        media="(max-width: 639px)"
-                        srcSet={heroLogo400}
-                        type="image/webp"
-                      />
-                      <source
-                        srcSet={heroLogo800}
-                        type="image/webp"
-                      />
-                      <img
-                        src={heroLogo}
-                        alt="Dress Like Nawaabs"
-                        width={800}
-                        height={806}
-                        className="relative w-full max-w-md rounded-full shadow-2xl"
-                        loading="eager"
-                        decoding="async"
-                        fetchPriority="high"
-                      />
-                    </picture>
+                    <source
+                      media="(max-width: 639px)"
+                      srcSet={heroLogo400}
+                      type="image/webp"
+                    />
+                    <source
+                      srcSet={heroLogo800}
+                      type="image/webp"
+                    />
+                    <img
+                      src={heroLogo}
+                      alt="Dress Like Nawaabs"
+                      width={800}
+                      height={806}
+                      loading="eager"
+                      fetchPriority="high"
+                      decoding="async"
+                      className="..."
+                    />
+                  </picture>
                 </div>
               </div>
             </div>
