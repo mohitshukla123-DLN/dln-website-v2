@@ -15,6 +15,8 @@ import CategoryGrid from "../components/homepage/CategoryGrid";
 import NewArrivals from "../components/homepage/NewArrivals";
 import SEO from "../components/common/SEO";
 import heroLogo from "../assets/logos/logo-home.png";
+import heroLogo400 from "../assets/logos/logo-home-400.webp";
+import heroLogo800 from "../assets/logos/logo-home-800.webp";
 
 
 export default function HomePage() {
@@ -67,13 +69,27 @@ export default function HomePage() {
                 <div className="relative">
                   <div className="absolute inset-6 rounded-full bg-[var(--accent)]/10 blur-3xl" />
 
-                  <img
-                    src={heroLogo}
-                    alt="Dress Like Nawaabs"
-                    className="relative w-full max-w-md rounded-full shadow-2xl"
-                    loading="eager"
-                    decoding="sync"
-                  />
+                  <picture>
+                      <source
+                        media="(max-width: 639px)"
+                        srcSet={heroLogo400}
+                        type="image/webp"
+                      />
+                      <source
+                        srcSet={heroLogo800}
+                        type="image/webp"
+                      />
+                      <img
+                        src={heroLogo}
+                        alt="Dress Like Nawaabs"
+                        width={800}
+                        height={806}
+                        className="relative w-full max-w-md rounded-full shadow-2xl"
+                        loading="eager"
+                        decoding="async"
+                        fetchPriority="high"
+                      />
+                    </picture>
                 </div>
               </div>
             </div>
