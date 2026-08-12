@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Product } from "../../types/product";
 import Button from "../ui/Button";
+import { buildWhatsAppLink } from "../../lib/whatsapp";
 
 interface Props {
   product: Product | null;
@@ -86,11 +87,15 @@ export default function ProductQuickView({
               </Link>
 
               <a
-                href={`https://wa.me/?text=I'm interested in ${encodeURIComponent(product.name)}`}
+                href={buildWhatsAppLink(
+                  product.name,
+                  "",
+                  product.price,
+                  product.slug
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1"
-              >
+                className="flex-1">
                 <Button className="w-full">
                   WhatsApp
                 </Button>
