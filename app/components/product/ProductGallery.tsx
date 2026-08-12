@@ -16,6 +16,9 @@ export default function ProductGallery({
   setActiveImage,
   onImageClick,
 }: Props) {
+
+  const [imageLoaded, setImageLoaded] = useState(false);
+
   const [zoomStyle, setZoomStyle] = useState({
     transformOrigin: "center center",
     transform: "scale(1)",
@@ -36,6 +39,7 @@ export default function ProductGallery({
         ? images.length - 1
         : currentIndex - 1;
 
+    setImageLoaded(false);
     setActiveImage(images[previousIndex]);
     resetZoom();
   }
@@ -48,6 +52,7 @@ export default function ProductGallery({
         ? 0
         : currentIndex + 1;
 
+    setImageLoaded(false);
     setActiveImage(images[nextIndex]);
     resetZoom();
   }
@@ -93,10 +98,13 @@ export default function ProductGallery({
     <div>
       {/* Main image */}
       <div
-        className="group relative overflow-hidden rounded-2xl bg-[var(--background)]"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={resetZoom}
-      >
+          className="group relative overflow-hidden rounded-2xl bg-[var(--background)]"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={resetZoom}
+        >
+          {!imageLoaded && (
+            <div className="absolute inset-0 animate-pulse bg-gray-200" />
+          )}
         <button
           type="button"
           onClick={onImageClick}
@@ -109,7 +117,10 @@ export default function ProductGallery({
             loading="eager"
             decoding="async"
             fetchPriority="high"
-            className="h-[600px] w-full object-cover transition-transform duration-500"
+            onLoad={() => setImageLoaded(true)}
+            className={`h-[600px] w-full object-cover transition-all duration-500 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
             style={zoomStyle}
           />
         </button>
@@ -160,6 +171,7 @@ export default function ProductGallery({
               key={`${image}-${index}`}
               type="button"
               onClick={() => {
+                setImageLoaded(false);
                 setActiveImage(image);
                 resetZoom();
               }}
@@ -176,6 +188,8 @@ export default function ProductGallery({
                 loading="lazy"
                 decoding="async"
                 className="h-24 w-24 object-cover"
+                width={96}
+                height={96}
               />
             </button>
           ))}
