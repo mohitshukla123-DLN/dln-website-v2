@@ -216,7 +216,7 @@ export default function ProductPage() {
 
       <SEO
         title={product.name}
-        description={product.description}
+        description={`${product.name} by Dress Like Nawaabs. View product details, fabric, available sizes and WhatsApp enquiry options.`}
         canonical={`https://dresslikenawaabs.pages.dev/products/${product.slug}`}
         image={product.images[0] ?? product.image}
         keywords={[
