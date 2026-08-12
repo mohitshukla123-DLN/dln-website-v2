@@ -1,15 +1,16 @@
 import { Helmet } from "react-helmet-async";
 
+const SITE_URL = "https://dresslikenawaabs.pages.dev";
+
 export default function StructuredData() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Dress Like Nawaabs",
-    url: "https://dresslikenawaabs.pages.dev",
-    logo: "https://dresslikenawaabs.pages.dev/favicon.png",
+    url: SITE_URL,
+    logo: `${SITE_URL}/favicon.png`,
     description:
-      "Premium ethnic wear including Kurtis, Sarees, Shararas, Co-ord Sets and more.",
-    sameAs: [],
+      "Premium Indian ethnic wear including Kurtis, Sarees, Shararas, Co-ord Sets and more.",
   };
 
   return (
