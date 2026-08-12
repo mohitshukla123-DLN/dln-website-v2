@@ -2,9 +2,8 @@ import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import Container from "../ui/Container";
-import logo from "../../assets/logos/logo-navbar.png";
+import fallbackLogo from "../../assets/logos/logo-navbar.png";
 import { supabase } from "../../lib/supabase";
-
 import { getWishlist } from "../../lib/wishlist";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -19,15 +18,14 @@ export default function Navbar() {
   const [logoUrl, setLogoUrl] = useState("");
 
   useEffect(() => {
-      async function loadLogo() {
-      const { data, error } = await supabase
+    async function loadLogo() {
+      const { data } = await supabase
         .from("site_settings")
         .select("logo_url")
-        .limit(1);
+        .eq("id", 1)
+        .single();
 
-      if (data && data.length > 0 && data[0].logo_url) {
-        setLogoUrl(data[0].logo_url);
-      } else {}
+      setLogoUrl(data?.logo_url?.trim() || "");
     }
 
     loadLogo();
@@ -47,28 +45,23 @@ export default function Navbar() {
     };
   }, []);
 
-  return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-black/5">
-      <Container className="flex h-20 items-center justify-between">
+  const currentLogo = logoUrl || fallbackLogo;
 
-        <Link to="/">
+  return (
+    <header className="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
+      <Container className="flex h-20 items-center justify-between">
+        <Link to="/" aria-label="Dress Like Nawaabs Home">
           <img
-            src={
-              logoUrl
-                ? `${logoUrl}?v=${Date.now()}`
-                : logo
-            }
+            src={currentLogo}
             alt="Dress Like Nawaabs"
             className="h-14 w-14 rounded-full object-cover"
             onError={(e) => {
-              console.log("Navbar logo failed:", logoUrl);
-              (e.currentTarget as HTMLImageElement).src = logo;
+              e.currentTarget.src = fallbackLogo;
             }}
           />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-
           <NavLink to="/" end className={navLinkClass}>
             Home
           </NavLink>
@@ -106,9 +99,7 @@ export default function Navbar() {
           >
             🔍
           </Link>
-
         </nav>
-
       </Container>
     </header>
   );
