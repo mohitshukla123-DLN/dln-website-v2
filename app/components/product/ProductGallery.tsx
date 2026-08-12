@@ -106,6 +106,9 @@ export default function ProductGallery({
           <img
             src={activeImage}
             alt={product.name}
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
             className="h-[600px] w-full object-cover transition-transform duration-500"
             style={zoomStyle}
           />
