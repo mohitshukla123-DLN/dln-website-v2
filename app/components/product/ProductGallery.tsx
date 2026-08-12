@@ -170,6 +170,8 @@ export default function ProductGallery({
               <img
                 src={image}
                 alt={`${product.name} ${index + 1}`}
+                loading="lazy"
+                decoding="async"
                 className="h-24 w-24 object-cover"
               />
             </button>
