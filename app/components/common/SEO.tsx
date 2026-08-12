@@ -6,6 +6,7 @@ interface SEOProps {
   keywords?: string;
   image?: string;
   canonical?: string;
+  verification?: string;
 }
 
 const SITE_NAME = "Dress Like Nawaabs";
@@ -24,6 +25,7 @@ export default function SEO({
   title,
   description,
   keywords,
+  verification,
   image = DEFAULT_IMAGE,
   canonical,
 }: SEOProps) {
@@ -37,6 +39,13 @@ export default function SEO({
 
   return (
     <Helmet>
+
+      {verification && (
+        <meta
+          name="google-site-verification"
+          content={verification}
+        />
+      )}
       <title>{fullTitle}</title>
 
       <meta

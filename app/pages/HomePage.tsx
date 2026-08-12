@@ -110,10 +110,9 @@ export default function HomePage() {
         )}
 
       <SEO
-  title="Dress Like Nawaabs"
-  description="Explore premium Indian ethnic wear including Kurtis, Sarees, Shararas, Co-ord Sets and more. Browse our catalogue and enquire directly on WhatsApp for availability and details."
-  keywords="Indian ethnic wear, Kurtis, Sarees, Shararas, Co-ord Sets, ethnic wear catalogue, WhatsApp enquiry, Dress Like Nawaabs"
-/>
+        title="Dress Like Nawaabs"
+        description="Explore Dress Like Nawaabs, a curated catalogue of premium Indian ethnic wear. Browse Kurtis, Sarees, Shararas, Co-ord Sets and more, then enquire directly on WhatsApp."
+      />
     </>
   );
 }
