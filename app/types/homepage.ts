@@ -6,6 +6,7 @@ export interface HomepageSettings {
   hero_subtitle: string | null;
   hero_button_text: string | null;
   hero_button_url: string | null;
+  hero_image_url: string | null;
 
   featured_categories_enabled: boolean;
   featured_categories_title: string | null;

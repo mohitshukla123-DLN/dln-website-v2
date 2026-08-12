@@ -5,6 +5,7 @@ import type { HomepageSettings } from "../types/homepage";
 import Button from "../components/ui/Button";
 import Container from "../components/ui/Container";
 import SEO from "../components/common/SEO";
+import { supabase } from "../lib/supabase";
 import heroLogo400 from "../assets/logos/logo-home-400.webp";
 import heroLogo800 from "../assets/logos/logo-home-800.webp";
 
@@ -38,16 +39,38 @@ const NewArrivals = lazy(
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [settings, setSettings] = useState<HomepageSettings | null>(null);
+
+  const [settings, setSettings] =
+    useState<HomepageSettings | null>(null);
+
+  const [siteLogoUrl, setSiteLogoUrl] = useState("");
 
   useEffect(() => {
     async function loadHomepage() {
-      const data = await getHomepageSettings();
-      setSettings(data);
+      const [homepageData, siteSettingsResult] =
+        await Promise.all([
+          getHomepageSettings(),
+
+          supabase
+            .from("site_settings")
+            .select("logo_url")
+            .eq("id", 1)
+            .single(),
+        ]);
+
+      setSettings(homepageData);
+
+      if (!siteSettingsResult.error) {
+        setSiteLogoUrl(
+          siteSettingsResult.data?.logo_url ?? ""
+        );
+      }
     }
 
     loadHomepage();
   }, []);
+
+  const heroLogo = siteLogoUrl || heroLogo800;
 
   return (
     <>
@@ -58,11 +81,13 @@ export default function HomePage() {
             <div className="grid min-h-[680px] items-center gap-12 py-20 lg:grid-cols-2 lg:py-24">
               <div className="max-w-2xl">
                 <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--accent)]">
-                  {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
+                  {settings?.hero_subtitle ||
+                    "Luxury Indian Ethnic Wear"}
                 </p>
 
                 <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-[var(--foreground)] sm:text-6xl lg:text-7xl">
-                  {settings?.hero_title || "Dress Like Nawaabs"}
+                  {settings?.hero_title ||
+                    "Dress Like Nawaabs"}
                 </h1>
 
                 <p className="mt-7 max-w-xl text-lg leading-8 text-[var(--muted)]">
@@ -73,10 +98,13 @@ export default function HomePage() {
                 <div className="mt-10">
                   <Button
                     onClick={() =>
-                      navigate(settings?.hero_button_url || "/shop")
+                      navigate(
+                        settings?.hero_button_url || "/shop"
+                      )
                     }
                   >
-                    {settings?.hero_button_text || "Explore Collection"}
+                    {settings?.hero_button_text ||
+                      "Explore Collection"}
                   </Button>
                 </div>
               </div>
@@ -85,29 +113,16 @@ export default function HomePage() {
                 <div className="relative">
                   <div className="absolute inset-6 rounded-full bg-[var(--accent)]/10 blur-3xl" />
 
-                  <picture>
-                    <source
-                      media="(max-width: 639px)"
-                      srcSet={heroLogo400}
-                      type="image/webp"
-                    />
-
-                    <source
-                      srcSet={heroLogo800}
-                      type="image/webp"
-                    />
-
-                    <img
-                      src={heroLogo800}
-                      alt="Dress Like Nawaabs"
-                      width={800}
-                      height={806}
-                      loading="eager"
-                      fetchPriority="high"
-                      decoding="async"
-                      className="..."
-                    />
-                  </picture>
+                  <img
+                    src={heroLogo}
+                    alt="Dress Like Nawaabs"
+                    width={800}
+                    height={806}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    className="relative max-h-[520px] w-auto object-contain"
+                  />
                 </div>
               </div>
             </div>
