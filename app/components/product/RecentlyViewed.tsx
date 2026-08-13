@@ -20,7 +20,7 @@ function WhatsAppLink({
         )}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex-1"
+      className="min-w-0 flex-1"
     >
       <button
         type="button"
@@ -120,26 +120,23 @@ export default function RecentlyViewed({
                   </span>
                 )}
 
-                <div className="mt-6 flex gap-3">
-                  <Link
-                    to={`/products/${product.slug}`}
-                    className="flex-1"
-                  >
-                    <button
-                      type="button"
-                      className="w-full rounded-full bg-[var(--teal)] px-5 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-90"
-                    >
-                      View Details
-                    </button>
-                  </Link>
-                  <WhatsAppLink product={product} />
-                    <button
-                      type="button"
-                      className="w-full rounded-full bg-[var(--teal)] px-5 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-90"
-                    >
-                      WhatsApp
-                    </button>
-                </div>
+                    <div className="mt-6 flex items-stretch gap-3">
+                      <Link
+                        to={`/products/${product.slug}`}
+                        className="min-w-0 flex-1"
+                      >
+                        <button
+                          type="button"
+                          className="flex min-h-[52px] w-full items-center justify-center rounded-full bg-[var(--teal)] px-3 py-3 text-center text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-90"
+                        >
+                          View Details
+                        </button>
+                      </Link>
+
+                      <div className="min-w-0 flex-1">
+                        <WhatsAppLink product={product} />
+                      </div>
+                    </div>
               </div>
             </article>
           );
