@@ -25,7 +25,8 @@ export default function NewArrivalsPage() {
     <>
       <SEO
         title="New Arrivals"
-        description="Discover the latest additions to our luxury ethnic wear collection."
+        description="Discover the latest ethnic wear arrivals from Dress Like Nawaabs."
+        canonical="https://dresslikenawaabs.pages.dev/new-arrivals"
       />
 
       <section className="py-20">

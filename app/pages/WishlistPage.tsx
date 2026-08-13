@@ -6,6 +6,7 @@ import { getWishlist } from "../lib/wishlist";
 
 import Container from "../components/ui/Container";
 import ProductGrid from "../components/shop/ProductGrid";
+import SEO from "../components/common/SEO";
 
 export default function WishlistPage() {
   const [products, setProducts] =
@@ -57,6 +58,13 @@ export default function WishlistPage() {
 
   return (
     <>
+
+      <SEO
+          title="Wishlist"
+          description="View your saved Dress Like Nawaabs products."
+          canonical="https://dresslikenawaabs.pages.dev/wishlist"
+        />
+
       <section className="py-20">
         <Container>
           <div className="mb-12">
