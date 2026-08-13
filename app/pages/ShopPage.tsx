@@ -22,6 +22,8 @@ export default function ShopPage() {
   const [sort, setSort] = useState("featured");
   const [priceRange, setPriceRange] = useState("all");
   const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
   const params = new URLSearchParams();
@@ -39,14 +41,23 @@ export default function ShopPage() {
 
 
   useEffect(() => {
-    async function loadProducts() {
+  async function loadProducts() {
+    try {
+      setLoading(true);
+      setLoadError(false);
+
       const data = await getProducts();
-
       setProducts(data);
+    } catch (error) {
+      console.error("Failed to load shop products:", error);
+      setLoadError(true);
+    } finally {
+      setLoading(false);
     }
+  }
 
-    loadProducts();
-  }, []);
+  loadProducts();
+}, []);
 
   const filteredProducts = useMemo(() => {
     const result = products.filter((product) => {
@@ -89,6 +100,14 @@ export default function ShopPage() {
     });
 
     switch (sort) {
+
+      case "newest":
+        return [...result].sort(
+          (a, b) =>
+            new Date(b.created_at ?? 0).getTime() -
+            new Date(a.created_at ?? 0).getTime()
+        );
+
       case "price-low":
         return [...result].sort(
           (a, b) => a.price - b.price
@@ -178,7 +197,31 @@ export default function ShopPage() {
           {filteredProducts.length !== 1 ? "s" : ""} found
         </p>
 
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <div className="rounded-3xl border py-24 text-center">
+            <p className="text-[var(--muted)]">
+              Loading products...
+            </p>
+          </div>
+        ) : loadError ? (
+          <div className="rounded-3xl border py-24 text-center">
+            <h2 className="text-2xl font-bold">
+              Unable to load products
+            </h2>
+
+            <p className="mt-3 text-[var(--muted)]">
+              Please check your connection and try again.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="mt-6 rounded-full bg-[var(--teal)] px-6 py-3 text-white"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <ProductGrid products={filteredProducts} />
         ) : (
           <EmptyState />
