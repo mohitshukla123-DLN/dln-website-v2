@@ -53,8 +53,6 @@ export default function EditProductModal({
   const [bestseller, setBestseller] = useState(false);
 
   const [newArrival, setNewArrival] = useState(false);
-  const [image, setImage] = useState("");
-  const [libraryImages, setLibraryImages] = useState<string[]>([]);
   const [productImages, setProductImages] = useState<string[]>([]);
 
   useEffect(() => {
@@ -100,27 +98,7 @@ export default function EditProductModal({
               ? [product.image]
               : []
         );
-
-      setImage(product.image ?? "");
-      loadLibraryImages();
   }, [product]);
-
-    async function loadLibraryImages() {
-    const { data } = await supabase.storage
-      .from("media-library")
-      .list("", { limit: 200 });
-
-    if (!data) return;
-
-    setLibraryImages(
-      data.map(
-        (file) =>
-          supabase.storage
-            .from("media-library")
-            .getPublicUrl(file.name).data.publicUrl
-      )
-    );
-  }
 
   const categoryKey = category
   .toLowerCase()
@@ -344,40 +322,6 @@ async function saveChanges() {
             </div>
           ))}
         </div>
-
-        <label className="mb-2 block font-medium">
-            Product Image
-          </label>
-
-          {image && (
-            <img
-              src={image}
-              alt=""
-              className="mb-4 h-40 rounded-lg border object-cover"
-            />
-          )}
-
-          <div className="mb-6 grid grid-cols-4 gap-3 max-h-64 overflow-y-auto rounded-lg border p-3">
-
-            {libraryImages.map((url) => (
-
-              <img
-                key={url}
-                src={url}
-                alt=""
-                onClick={() => setImage(url)}
-                className={`h-20 w-full cursor-pointer rounded-lg object-cover border-2 transition
-                  ${
-                    image === url
-                      ? "border-black"
-                      : "border-transparent"
-                  }`}
-              />
-
-            ))}
-
-          </div>
-
 
         <textarea
           className="mb-4 w-full rounded-lg border p-3"
