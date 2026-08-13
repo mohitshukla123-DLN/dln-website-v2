@@ -198,15 +198,15 @@ export default function ProductCard({
           )}
 
         {/* Action buttons */}
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex w-full flex-row gap-3">
           <Link
-            to={`/products/${product.slug}`}
-            className="min-w-0 flex-1"
-          >
-            <Button className="flex w-full items-center justify-center whitespace-nowrap px-3 py-3 text-center text-sm sm:px-4 sm:text-base">
-              View Details
-            </Button>
-          </Link>
+              to={`/products/${product.slug}`}
+              className="min-w-0 flex-1"
+            >
+              <Button className="flex w-full items-center justify-center whitespace-nowrap px-3 py-3 text-center text-sm sm:px-4 sm:text-base">
+                View Details
+              </Button>
+            </Link>
 
           <a 
             href={whatsappLink}
@@ -214,7 +214,7 @@ export default function ProductCard({
             rel="noopener noreferrer"
             className="min-w-0 flex-1"
           >
-            <Button className="flex w-full items-center justify-center gap-2 whitespace-nowrap px-3 py-3 text-sm sm:px-4 sm:text-base">
+            <Button className="flex w-full items-center justify-center gap-2 whitespace-nowrap px-3 py-3 text-center text-sm sm:px-4 sm:text-base">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)]">
                 <svg
                   viewBox="0 0 24 24"
