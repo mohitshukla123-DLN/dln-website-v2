@@ -4,13 +4,8 @@ import RootLayout from "./layout/RootLayout";
 import Analytics from "./components/common/Analytics";
 import StructuredData from "./components/common/StructuredData";
 import Favicon from "./components/common/Favicon";
-import AdminLoginPage from "./pages/AdminLoginPage";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
-import AdminHomepagePage from "./pages/admin/AdminHomepagePage";
-import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
-import AdminSiteSettingsPage from "./pages/admin/AdminSiteSettingsPage";
-import AdminMediaLibraryPage from "./pages/admin/Admin/AdminMediaLibraryPage";
+
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ShopPage = lazy(() => import("./pages/ShopPage"));
@@ -25,6 +20,12 @@ const SizeGuidePage = lazy(() => import("./pages/SizeGuidePage"));
 const PolicyPage = lazy(() => import("./pages/PolicyPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 const AdminProductsPage = lazy(() => import("./pages/admin/AdminProductsPage"));
+const AdminLoginPage = lazy(() => import("./pages/AdminLoginPage"));
+const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
+const AdminHomepagePage = lazy(() => import("./pages/admin/AdminHomepagePage"));
+const AdminCategoriesPage = lazy(() => import("./pages/admin/AdminCategoriesPage"));
+const AdminSiteSettingsPage = lazy(() => import("./pages/admin/AdminSiteSettingsPage"));
+const AdminMediaLibraryPage = lazy(() => import("./pages/admin/Admin/AdminMediaLibraryPage"));
 
 
 export default function App() {
