@@ -49,9 +49,9 @@ export default function ProductActions({
   : "#";
 
   return (
-    <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+    <div className="mt-10 flex flex-row gap-3">
       <a
-        className="flex-1"
+        className="min-w-0 flex-1"
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
@@ -62,13 +62,13 @@ export default function ProductActions({
           }
         }}
       >
-        <Button className="w-full">
+        <Button className="w-full whitespace-nowrap px-3 text-sm">
           WhatsApp Enquiry
         </Button>
       </a>
 
       <Button
-        className="flex-1"
+        className="min-w-0 flex-1 whitespace-nowrap px-3 text-sm"
         onClick={handleWishlist}
       >
         {wishlisted
