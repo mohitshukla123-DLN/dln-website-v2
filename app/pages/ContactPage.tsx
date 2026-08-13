@@ -1,11 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import emailjs from "@emailjs/browser";
 
 import Container from "../components/ui/Container";
 import Button from "../components/ui/Button";
 import SEO from "../components/common/SEO";
+import { supabase } from "../lib/supabase";
 
 export default function ContactPage() {
+
+    const [siteSettings, setSiteSettings] = useState({
+    phone: "",
+    whatsapp: "",
+    email: "",
+    address: "",
+    google_maps: "",
+  });
+
+  useEffect(() => {
+    async function loadSettings() {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("phone,whatsapp,email,address,google_maps")
+        .limit(1)
+        .single();
+
+      if (data) {
+        setSiteSettings({
+          phone: data.phone ?? "",
+          whatsapp: data.whatsapp ?? "",
+          email: data.email ?? "",
+          address: data.address ?? "",
+          google_maps: data.google_maps ?? "",
+        });
+      }
+    }
+
+    loadSettings();
+  }, []);
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -99,149 +131,154 @@ export default function ContactPage() {
       <section className="py-20">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2">
-            <div>
-              <h2 className="text-3xl font-bold">
-                Contact Information
-              </h2>
+              <div>
+                <h2 className="text-3xl font-bold">
+                  Contact Information
+                </h2>
 
-              <div className="mt-8 space-y-6">
-                <div>
-                  <h3 className="font-semibold">
-                    📞 Phone
-                  </h3>
+                  <div className="mt-8 space-y-6">
+          <div>
+            <h3 className="font-semibold">
+              📞 Phone
+            </h3>
 
-                  <a
-                    href="tel:+917570828473"
-                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
-                  >
-                    +91 75708 28473
-                  </a>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold">
-                    💬 WhatsApp
-                  </h3>
-
-                  <a
-                    href="https://wa.me/917570828473"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
-                  >
-                    +91 75708 28473
-                  </a>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold">
-                    ✉️ Email
-                  </h3>
-
-                  <a
-                    href="mailto:dresslikenawaabs@gmail.com"
-                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
-                  >
-                    dresslikenawaabs@gmail.com
-                  </a>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold">
-                    🕒 Business Hours
-                  </h3>
-
-                  <p className="text-[var(--muted)]">
-                    Monday – Saturday
-                    <br />
-                    10:00 AM – 7:00 PM
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold">
-                    📍 Address
-                  </h3>
-
-                  <p className="text-[var(--muted)]">
-                    Your Store Address
-                    <br />
-                    City, State
-                    <br />
-                    India
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-
-            <div className="rounded-3xl border border-black/10 p-8 shadow-sm">
-              <h2 className="text-3xl font-bold">
-                Send an Enquiry
-              </h2>
-
-              <form
-                onSubmit={handleSubmit}
-                className="mt-8 space-y-6"
-              >
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Your Name"
-                  required
-                  className="w-full rounded-xl border p-4"
-                />
-
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="Email Address"
-                  required
-                  className="w-full rounded-xl border p-4"
-                />
-
-                <input
-                  type="tel"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  placeholder="Phone Number"
-                  className="w-full rounded-xl border p-4"
-                />
-
-                <textarea
-                  rows={5}
-                  name="message"
-                  value={form.message}
-                  onChange={handleChange}
-                  placeholder="Your Message"
-                  required
-                  className="w-full rounded-xl border p-4"
-                />
-
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full"
-                >
-                  {loading
-                    ? "Sending..."
-                    : "Send Message"}
-                </Button>
-
-                {status && (
-                  <p className="text-center text-sm text-[var(--teal)]">
-                    {status}
-                  </p>
-                )}
-              </form>
-            </div>
+            <a
+              href={`tel:${siteSettings.phone.replace(/\D/g, "")}`}
+              className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
+            >
+              {siteSettings.phone}
+            </a>
           </div>
+
+          <div>
+            <h3 className="font-semibold">
+              💬 WhatsApp
+            </h3>
+
+            <a
+              href={`https://wa.me/${siteSettings.whatsapp.replace(/\D/g, "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
+            >
+              {siteSettings.whatsapp}
+            </a>
+          </div>
+
+          <div>
+            <h3 className="font-semibold">
+              ✉️ Email
+            </h3>
+
+            <a
+              href={`mailto:${siteSettings.email}`}
+              className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
+            >
+              {siteSettings.email}
+            </a>
+          </div>
+
+          <div>
+            <h3 className="font-semibold">
+              🕒 Business Hours
+            </h3>
+
+            <p className="text-[var(--muted)]">
+              Monday – Saturday
+              <br />
+              10:00 AM – 7:00 PM
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold">
+              📍 Address
+            </h3>
+
+            {siteSettings.google_maps ? (
+              <a
+                href={siteSettings.google_maps}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--muted)] underline underline-offset-4"
+              >
+                {siteSettings.address}
+              </a>
+            ) : (
+              <p className="text-[var(--muted)]">
+                {siteSettings.address}
+              </p>
+            )}
+          </div>
+        </div>
+
+                    <div className="rounded-3xl border border-black/10 p-8 shadow-sm">
+                      <h2 className="text-3xl font-bold">
+                        Send an Enquiry
+                      </h2>
+
+                      <form
+                        onSubmit={handleSubmit}
+                        className="mt-8 space-y-6"
+                      >
+                        <input
+                          type="text"
+                          name="name"
+                          value={form.name}
+                          onChange={handleChange}
+                          placeholder="Your Name"
+                          required
+                          className="w-full rounded-xl border p-4"
+                        />
+
+                        <input
+                          type="email"
+                          name="email"
+                          value={form.email}
+                          onChange={handleChange}
+                          placeholder="Email Address"
+                          required
+                          className="w-full rounded-xl border p-4"
+                        />
+
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={form.phone}
+                          onChange={handleChange}
+                          placeholder="Phone Number"
+                          className="w-full rounded-xl border p-4"
+                        />
+
+                        <textarea
+                          rows={5}
+                          name="message"
+                          value={form.message}
+                          onChange={handleChange}
+                          placeholder="Your Message"
+                          required
+                          className="w-full rounded-xl border p-4"
+                        />
+
+                        <Button
+                          type="submit"
+                          disabled={loading}
+                          className="w-full"
+                        >
+                          {loading
+                            ? "Sending..."
+                            : "Send Message"}
+                        </Button>
+
+                        {status && (
+                          <p className="text-center text-sm text-[var(--teal)]">
+                            {status}
+                          </p>
+                        )}
+                      </form>
+                    </div>
+              </div>
+            </div>  
         </Container>
       </section>
     </>
