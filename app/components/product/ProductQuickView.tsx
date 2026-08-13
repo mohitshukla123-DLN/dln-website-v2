@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import type { Product } from "../../types/product";
 import Button from "../ui/Button";
 import { buildWhatsAppLink } from "../../lib/whatsapp";
@@ -14,6 +15,22 @@ export default function ProductQuickView({
   open,
   onClose,
 }: Props) {
+  const [whatsappLink, setWhatsappLink] = useState("");
+
+    useEffect(() => {
+  if (!product) {
+    setWhatsappLink("");
+    return;
+  }
+
+  buildWhatsAppLink(
+    product.name,
+    "",
+    product.price,
+    product.slug
+  ).then(setWhatsappLink);
+}, [product]);
+
   if (!open || !product) return null;
 
   return (
@@ -87,12 +104,7 @@ export default function ProductQuickView({
               </Link>
 
               <a
-                href={buildWhatsAppLink(
-                  product.name,
-                  "",
-                  product.price,
-                  product.slug
-                )}
+                href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1">

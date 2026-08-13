@@ -19,6 +19,17 @@ export default function ProductCard({
 
   const [wishlisted, setWishlisted] = useState(false);
 
+  const [whatsappLink, setWhatsappLink] = useState("#");
+
+    useEffect(() => {
+      buildWhatsAppLink(
+        product.name,
+        "",
+        product.price,
+        product.slug
+      ).then(setWhatsappLink);
+    }, [product.name, product.price, product.slug]);
+
   useEffect(() => {
     setWishlisted(getWishlist().includes(product.id));
   }, [product.id]);
@@ -201,13 +212,8 @@ export default function ProductCard({
             </Button>
           </Link>
 
-          <a
-            href={buildWhatsAppLink(
-              product.name,
-              "",
-              product.price,
-              product.slug
-            )}
+          <a 
+            href={whatsappLink}
             target="_blank"
             rel="noopener noreferrer"
             className="min-w-0 flex-1"

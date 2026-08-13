@@ -4,6 +4,39 @@ import { getProducts } from "../../lib/products";
 import { buildWhatsAppLink } from "../../lib/whatsapp";
 import type { Product } from "../../types/product";
 
+function WhatsAppLink({
+  product,
+}: {
+  product: Product;
+}) {
+  const [href, setHref] = useState("#");
+
+  useEffect(() => {
+    buildWhatsAppLink(
+      product.name,
+      "",
+      product.price,
+      product.slug
+    ).then(setHref);
+  }, [product]);
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex-1"
+    >
+      <button
+        type="button"
+        className="w-full rounded-full bg-[var(--teal)] px-5 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-90"
+      >
+        WhatsApp
+      </button>
+    </a>
+  );
+}
+
 interface Props {
   currentSlug: string;
 }
@@ -104,25 +137,13 @@ export default function RecentlyViewed({
                       View Details
                     </button>
                   </Link>
-
-                  <a
-                    href={buildWhatsAppLink(
-                      product.name,
-                      "",
-                      product.price,
-                      product.slug
-                    )}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1"
-                  >
+                  <WhatsAppLink product={product} />
                     <button
                       type="button"
                       className="w-full rounded-full bg-[var(--teal)] px-5 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:opacity-90"
                     >
                       WhatsApp
                     </button>
-                  </a>
                 </div>
               </div>
             </article>
