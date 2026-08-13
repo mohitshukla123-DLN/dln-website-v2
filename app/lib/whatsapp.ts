@@ -1,27 +1,13 @@
-import { supabase } from "./supabase";
+const WHATSAPP_NUMBER = "917570828473";
+const WEBSITE = "https://dresslikenawaabs.pages.dev";
 
-export async function buildWhatsAppLink(
+export function buildWhatsAppLink(
   productName: string,
   size: string,
   price: number,
   slug: string
-) {
-  const website = "https://dresslikenawaabs.pages.dev";
-
-  const { data } = await supabase
-    .from("site_settings")
-    .select("site_name,whatsapp")
-    .limit(1)
-    .single();
-
-  const siteName = data?.site_name || "Dress Like Nawaabs";
-  const whatsapp = data?.whatsapp?.replace(/\D/g, "");
-
-  if (!whatsapp) {
-    throw new Error("WhatsApp number is not configured.");
-  }
-
-  const message = `Hello ${siteName},
+): string {
+  const message = `Hello Dress Like Nawaabs,
 
 I'm interested in the following outfit.
 
@@ -35,11 +21,11 @@ Price:
 ₹${price.toLocaleString("en-IN")}
 
 Product Link:
-${website}/products/${slug}
+${WEBSITE}/products/${slug}
 
 Please share availability and further details.
 
 Thank you.`;
 
-  return `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }

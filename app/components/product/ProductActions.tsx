@@ -25,47 +25,6 @@ export default function ProductActions({
     getWishlist().includes(product.id)
   );
 
-  const [whatsappLink, setWhatsappLink] = useState("#");
-
-  useEffect(() => {
-    if (!selectedSize) {
-      setWhatsappLink("#");
-      return;
-    }
-
-    let cancelled = false;
-
-    async function loadWhatsAppLink() {
-      try {
-        const link = await buildWhatsAppLink(
-          product.name,
-          selectedSize,
-          product.price,
-          product.slug
-        );
-
-        if (!cancelled) {
-          setWhatsappLink(link);
-        }
-      } catch {
-        if (!cancelled) {
-          setWhatsappLink("#");
-        }
-      }
-    }
-
-    loadWhatsAppLink();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    product.name,
-    product.slug,
-    product.price,
-    selectedSize,
-  ]);
-
   function requireSize() {
     alert("Please select a size.");
   }
@@ -80,6 +39,15 @@ export default function ProductActions({
     );
   }
 
+  const whatsappLink = selectedSize
+  ? buildWhatsAppLink(
+      product.name,
+      selectedSize,
+      product.price,
+      product.slug
+    )
+  : "#";
+
   return (
     <div className="mt-10 flex flex-col gap-4 sm:flex-row">
       <a
@@ -88,7 +56,7 @@ export default function ProductActions({
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => {
-          if (!selectedSize || whatsappLink === "#") {
+          if (!selectedSize) {
             e.preventDefault();
             requireSize();
           }

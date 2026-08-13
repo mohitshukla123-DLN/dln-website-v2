@@ -17,18 +17,20 @@ export default function ProductQuickView({
 }: Props) {
   const [whatsappLink, setWhatsappLink] = useState("");
 
-    useEffect(() => {
+   useEffect(() => {
   if (!product) {
     setWhatsappLink("");
     return;
   }
 
-  buildWhatsAppLink(
-    product.name,
-    "",
-    product.price,
-    product.slug
-  ).then(setWhatsappLink);
+  setWhatsappLink(
+    buildWhatsAppLink(
+      product.name,
+      "",
+      product.price,
+      product.slug
+    )
+  );
 }, [product]);
 
   if (!open || !product) return null;
@@ -104,7 +106,12 @@ export default function ProductQuickView({
               </Link>
 
               <a
-                href={whatsappLink}
+                href={buildWhatsAppLink(
+                    product.name,
+                    "",
+                    product.price,
+                    product.slug
+                  )}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1">

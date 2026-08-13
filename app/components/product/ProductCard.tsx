@@ -19,17 +19,6 @@ export default function ProductCard({
 
   const [wishlisted, setWishlisted] = useState(false);
 
-  const [whatsappLink, setWhatsappLink] = useState("#");
-
-    useEffect(() => {
-      buildWhatsAppLink(
-        product.name,
-        "",
-        product.price,
-        product.slug
-      ).then(setWhatsappLink);
-    }, [product.name, product.price, product.slug]);
-
   useEffect(() => {
     setWishlisted(getWishlist().includes(product.id));
   }, [product.id]);
@@ -78,6 +67,13 @@ export default function ProductCard({
   }
 
   const image = images[currentImage] ?? "";
+
+  const whatsappLink = buildWhatsAppLink(
+  product.name,
+  "",
+  product.price,
+  product.slug
+);
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">

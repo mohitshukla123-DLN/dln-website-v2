@@ -9,20 +9,15 @@ function WhatsAppLink({
 }: {
   product: Product;
 }) {
-  const [href, setHref] = useState("#");
-
-  useEffect(() => {
-    buildWhatsAppLink(
-      product.name,
-      "",
-      product.price,
-      product.slug
-    ).then(setHref);
-  }, [product]);
 
   return (
     <a
-      href={href}
+      href={buildWhatsAppLink(
+          product.name,
+          "",
+          product.price,
+          product.slug
+        )}
       target="_blank"
       rel="noopener noreferrer"
       className="flex-1"
