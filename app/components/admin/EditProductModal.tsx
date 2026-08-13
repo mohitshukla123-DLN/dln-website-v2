@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
+import { uploadProductImage } from "../../lib/storage";
 import type { AdminProduct } from "../../types/adminProduct";
 import { categories } from "../../data/categories";
 import { subcategories } from "../../data/subcategories";
@@ -142,6 +143,57 @@ function setPrimaryImage(index: number) {
 
     return [primary, ...updated];
   });
+}
+
+async function uploadNewProductImages(
+  e: React.ChangeEvent<HTMLInputElement>
+) {
+  if (!e.target.files?.length || !product) return;
+
+  const files = Array.from(e.target.files);
+
+  if (productImages.length + files.length > 8) {
+    alert("You can have a maximum of 8 product images.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const uploaded: string[] = [];
+
+    for (const file of files) {
+      if (!file.type.startsWith("image/")) {
+        throw new Error(`Invalid image: ${file.name}`);
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error(`Image must be under 10MB: ${file.name}`);
+      }
+
+      const result = await uploadProductImage({
+        file,
+        category,
+        productName: name,
+        color: "default",
+        view: `edit-${productImages.length + uploaded.length + 1}`,
+        sku: product.sku ?? `product-${product.id}`,
+      });
+
+      uploaded.push(result.url);
+    }
+
+    setProductImages((current) => [...current, ...uploaded]);
+  } catch (error) {
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Image upload failed."
+    );
+  } finally {
+    setLoading(false);
+    e.target.value = "";
+  }
 }
 
 async function saveChanges() {
@@ -378,6 +430,23 @@ async function saveChanges() {
             <h3 className="mb-3 text-sm font-semibold">
               Product Images
             </h3>
+
+            <label
+                htmlFor="edit-product-images"
+                className="inline-flex cursor-pointer rounded-lg bg-[var(--teal)] px-5 py-3 font-medium text-white"
+              >
+                Upload New Images
+              </label>
+
+              <input
+                id="edit-product-images"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={uploadNewProductImages}
+                disabled={loading}
+                className="hidden"
+              />
 
             {productImages.length === 0 ? (
               <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-500">
