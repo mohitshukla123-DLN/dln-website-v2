@@ -6,7 +6,7 @@ export function buildWhatsAppLink(
   size: string,
   price: number,
   slug: string
-): string {
+) {
   const message = `Hello Dress Like Nawaabs,
 
 I'm interested in the following outfit.
@@ -27,5 +27,7 @@ Please share availability and further details.
 
 Thank you.`;
 
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    message
+  )}`;
 }
