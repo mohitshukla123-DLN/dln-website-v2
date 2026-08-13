@@ -203,7 +203,7 @@ export default function ProductCard({
             to={`/products/${product.slug}`}
             className="min-w-0 flex-1"
           >
-            <Button className="w-full px-4 py-3 text-sm">
+            <Button className="w-full whitespace-nowrap px-3 py-3 text-sm sm:px-4 sm:text-base">
               View Details
             </Button>
           </Link>
@@ -214,7 +214,7 @@ export default function ProductCard({
             rel="noopener noreferrer"
             className="min-w-0 flex-1"
           >
-            <Button className="flex w-full items-center justify-center gap-2 px-4 py-3 text-sm">
+            <Button className="flex w-full items-center justify-center gap-2 whitespace-nowrap px-3 py-3 text-sm sm:px-4 sm:text-base">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)]">
                 <svg
                   viewBox="0 0 24 24"
