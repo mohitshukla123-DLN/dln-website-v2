@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v2";
+const CACHE_NAME = "dln-v3";
 
 const APP_SHELL = [
   "/",
@@ -11,7 +11,9 @@ const APP_SHELL = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.addAll(APP_SHELL)
+    )
   );
 
   self.skipWaiting();
@@ -40,7 +42,8 @@ self.addEventListener("fetch", (event) => {
 
   if (url.origin !== self.location.origin) return;
 
-  // HTML navigation: network first, cached shell fallback.
+  // Navigation requests:
+  // Network first, cached app shell when offline.
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request)
@@ -55,28 +58,66 @@ self.addEventListener("fetch", (event) => {
 
           return response;
         })
-        .catch(() => caches.match("/"))
+        .catch(async () => {
+          const cachedShell = await caches.match("/");
+
+          if (cachedShell) {
+            return cachedShell;
+          }
+
+          return new Response(
+            `
+              <!doctype html>
+              <html>
+                <head>
+                  <title>Dress Like Nawaabs</title>
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                </head>
+                <body>
+                  <h1>Dress Like Nawaabs</h1>
+                  <p>You are currently offline.</p>
+                  <p>Please reconnect to continue browsing.</p>
+                  <a href="/">Go to Home</a>
+                </body>
+              </html>
+            `,
+            {
+              headers: {
+                "Content-Type": "text/html",
+              },
+            }
+          );
+        })
     );
 
     return;
   }
 
-  // Static assets: cache first, then network.
+  // Cache same-origin application assets after they are requested.
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      if (cached) return cached;
+      if (cached) {
+        return cached;
+      }
 
-      return fetch(event.request).then((response) => {
-        if (response.ok) {
-          const copy = response.clone();
+      return fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
 
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, copy);
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, copy);
+            });
+          }
+
+          return response;
+        })
+        .catch(() => {
+          return new Response("", {
+            status: 503,
+            statusText: "Offline",
           });
-        }
-
-        return response;
-      });
+        });
     })
   );
 });
