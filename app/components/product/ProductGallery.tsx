@@ -118,9 +118,7 @@ export default function ProductGallery({
             decoding="async"
             fetchPriority="high"
             onLoad={() => setImageLoaded(true)}
-            className={`h-[600px] w-full object-cover transition-all duration-500 ${
-              imageLoaded ? "opacity-100" : "opacity-0"
-            }`}
+            className="h-auto max-h-[600px] w-full object-contain transition-all duration-500"
             style={zoomStyle}
           />
         </button>
