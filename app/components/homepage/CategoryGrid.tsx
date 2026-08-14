@@ -11,7 +11,7 @@ export default function CategoryGrid({ settings }: Props) {
   }
 
   return (
-    <section className="py-24">
+    <section id="featured-categories" className="scroll-mt-20 bg-[#f3eee8] py-24">
       <Container>
         <div className="mb-14 text-center">
           <h2 className="text-5xl font-bold">

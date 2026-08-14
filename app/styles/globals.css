@@ -11,6 +11,7 @@
   --pink: #c83b72;
   --saffron: #c98b2d;
   --green: #5c8a3b;
+  --accent: #b08d57;
 
   --radius: 14px;
 
@@ -43,11 +44,13 @@ body {
   color: var(--foreground);
 
   font-family:
-    Inter,
-    system-ui,
-    sans-serif;
+    Georgia,
+    "Times New Roman",
+    serif;
 
   line-height: 1.6;
+
+  color-scheme: light;
 
   -webkit-font-smoothing: antialiased;
 }

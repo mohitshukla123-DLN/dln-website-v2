@@ -13,7 +13,7 @@ export default function Newsletter({ settings }: Props) {
   }
 
   return (
-    <section className="bg-[var(--teal)] py-24 text-white">
+    <section id="newsletter" className="scroll-mt-20 bg-[var(--teal)] py-24 text-white">
       <Container>
 
         <div className="mx-auto max-w-3xl text-center">

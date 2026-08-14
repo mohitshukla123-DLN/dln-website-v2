@@ -39,7 +39,7 @@ export default function FeaturedCollections({ settings }: Props) {
   }
 
   return (
-    <section>
+    <section id="featured-collections" className="scroll-mt-20 bg-[#f1eee8] py-24">
       <Container>
         <div className="mb-14 text-center">
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">

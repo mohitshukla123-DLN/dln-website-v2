@@ -38,7 +38,7 @@ export default function BestSellers({ settings }: Props) {
   }
 
   return (
-    <section className="py-24">
+    <section id="best-sellers" className="scroll-mt-20 bg-[var(--background)] py-24">
       <Container>
 
         <div className="mb-14 text-center">

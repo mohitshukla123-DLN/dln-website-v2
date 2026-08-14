@@ -43,7 +43,7 @@ export default function NewArrivals({ settings }: Props) {
   }
 
   return (
-    <section className="py-24">
+    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--background)] py-24">
       <Container>
 
         <div className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">

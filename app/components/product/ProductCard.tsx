@@ -170,35 +170,33 @@ export default function ProductCard({
         </button>
 
       {/* Product information */}
-      <div className="bg-white p-5">
-        <p className="mb-2 text-xs uppercase tracking-[0.2em] text-[var(--teal)]">
+      <div className="bg-white p-4 sm:p-5">
+        <p className="mb-1 text-[11px] uppercase tracking-[0.2em] text-[var(--teal)]">
           {product.category}
         </p>
 
-        <h3 className="line-clamp-2 text-lg font-semibold text-black transition-colors group-hover:text-[var(--teal)]">
+        <h3 className="line-clamp-2 text-base font-semibold leading-6 text-black transition-colors group-hover:text-[var(--teal)]">
           {product.name}
         </h3>
 
-        <p className="mt-2 text-xl font-semibold text-black">
-          ₹{product.price.toLocaleString("en-IN")}
-        </p>
-
-        {product.stock === 0 && (
-          <p className="mt-2 text-sm font-semibold text-red-600">
-            Sold Out
+        <div className="mt-2 flex items-center justify-between gap-3">
+          <p className="text-lg font-semibold text-black">
+            ₹{product.price.toLocaleString("en-IN")}
           </p>
-        )}
 
-        {product.stock !== undefined &&
-          product.stock > 0 &&
-          product.stock <= 2 && (
-            <p className="mt-2 text-sm font-semibold text-orange-600">
+          {product.stock === 0 && (
+            <p className="text-xs font-semibold text-red-600">Sold Out</p>
+          )}
+
+          {product.stock !== undefined && product.stock > 0 && product.stock <= 2 && (
+            <p className="text-xs font-semibold text-orange-600">
               Only {product.stock} left
             </p>
           )}
+        </div>
 
         {/* Action buttons */}
-        <div className="mt-6 flex w-full flex-row gap-3">
+        <div className="mt-4 flex w-full flex-row gap-3">
           <Link
               to={`/products/${product.slug}`}
               className="min-w-0 flex-1"

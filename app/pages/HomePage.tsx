@@ -58,37 +58,12 @@ export default function HomePage() {
     <>
       {/* Hero Section */}
       {settings?.hero_enabled !== false && (
-        <section className="relative overflow-hidden bg-[var(--background)]">
+        <section className="relative overflow-hidden bg-white">
           <Container>
-            <div className="grid min-h-[680px] items-center gap-12 py-20 lg:grid-cols-2 lg:py-24">
-              <div className="max-w-2xl">
-                <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--accent)]">
-                  {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
-                </p>
-
-                <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-[var(--foreground)] sm:text-6xl lg:text-7xl">
-                  {settings?.hero_title || "Dress Like Nawaabs"}
-                </h1>
-
-                <p className="mt-7 max-w-xl text-lg leading-8 text-[var(--muted)]">
-                  {settings?.hero_subtitle ||
-                    "Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions."}
-                </p>
-
-                <div className="mt-10">
-                  <Button
-                    onClick={() =>
-                      navigate(settings?.hero_button_url || "/shop")
-                    }
-                  >
-                    {settings?.hero_button_text || "Explore Collection"}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="flex justify-center lg:justify-end">
+            <div className="grid min-h-[680px] items-center gap-12 py-16 lg:grid-cols-2 lg:gap-20 lg:py-20">
+              <div className="order-1 flex justify-center lg:order-none lg:justify-start">
                 <div className="relative">
-                  <div className="absolute inset-6 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+                  <div className="absolute inset-10 rounded-full bg-[var(--teal)]/8 blur-3xl" />
 
                   <picture>
                     <source
@@ -98,18 +73,37 @@ export default function HomePage() {
 
                     <img
                       src={heroImage800}
-                      alt={
-                        settings?.hero_title ||
-                        "Dress Like Nawaabs"
-                      }
+                      alt={settings?.hero_title || "Dress Like Nawaabs"}
                       width={800}
                       height={806}
                       loading="eager"
                       fetchPriority="high"
                       decoding="async"
-                      className="relative max-h-[620px] w-auto max-w-full object-contain"
+                      className="relative max-h-[560px] w-auto max-w-full object-contain"
                     />
                   </picture>
+                </div>
+              </div>
+
+              <div className="order-2 max-w-2xl lg:order-none">
+                <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--teal)]">
+                  {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
+                </p>
+
+                <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-[var(--foreground)] sm:text-6xl lg:text-7xl">
+                  {settings?.hero_title || "Dress Like Nawaabs"}
+                </h1>
+
+                <p className="mt-7 max-w-xl text-lg leading-8 text-[var(--muted)]">
+                  Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions.
+                </p>
+
+                <div className="mt-10">
+                  <Button
+                    onClick={() => navigate(settings?.hero_button_url || "/shop")}
+                  >
+                    {settings?.hero_button_text || "Explore Collection"}
+                  </Button>
                 </div>
               </div>
             </div>
