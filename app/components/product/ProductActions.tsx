@@ -62,8 +62,9 @@ export default function ProductActions({
           }
         }}
       >
-        <Button className="w-full whitespace-nowrap px-3 text-sm">
-          WhatsApp Enquiry
+        <Button className="w-full px-2 text-xs sm:px-3 sm:text-sm">
+          <span className="sm:hidden">WhatsApp</span>
+          <span className="hidden sm:inline">WhatsApp Enquiry</span>
         </Button>
       </a>
 
