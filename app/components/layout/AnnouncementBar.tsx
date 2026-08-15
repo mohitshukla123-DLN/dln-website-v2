@@ -17,18 +17,18 @@ export default function AnnouncementBar() {
 
       if (!mounted) return;
 
-      const cleanedAnnouncement = (data?.announcement_text?.trim() || "")
+      const cleanedAnnouncement = (data?.announcement_text || "")
         .replace(/wishlist/gi, "")
+        .replace(/&#(?:x2764|10084);?/gi, "")
+        .replace(/&#(?:x2665|9829);?/gi, "")
         .replace(/[\u200B-\u200D\uFEFF]/g, "")
-        .replace(/[\u{1F300}-\u{1FAFF}]/gu, "")
+        .replace(/[\u{1F000}-\u{1FAFF}]/gu, "")
         .replace(/[\u2600-\u27BF]/gu, "")
         .replace(/[♥♡❤❣]/gu, "")
         .replace(/\uFE0F/gu, "")
         .replace(/\s{2,}/g, " ")
         .trim();
-
-      console.log("RAW ANNOUNCEMENT:", data?.announcement_text);
-      console.log("CLEANED ANNOUNCEMENT:", cleanedAnnouncement);  
+ 
       setMessage(cleanedAnnouncement);
       setEnabled(data?.announcement_enabled ?? false);
     }
