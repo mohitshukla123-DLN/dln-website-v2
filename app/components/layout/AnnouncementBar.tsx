@@ -19,7 +19,9 @@ export default function AnnouncementBar() {
 
       const cleanedAnnouncement = (data?.announcement_text?.trim() || "")
         .replace(/wishlist/gi, "")
-        .replace(/❤️|♥️|♥|♡|❤|💖|💗|💓|💞|💕|💘|💝|💟|❣️|❣/gu, "")
+        .replace(/[\u200B-\u200D\uFEFF]/g, "")
+        .replace(/[\u2600-\u27BF]/gu, "")
+        .replace(/[\u{1F300}-\u{1FAFF}]/gu, "")
         .replace(/\s{2,}/g, " ")
         .trim();
 
