@@ -78,6 +78,32 @@ export default function ProductLightbox({
         ×
       </button>
 
+      <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/55 p-1 text-white backdrop-blur-sm">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setScale((current) => Math.max(1, current - 0.5));
+          }}
+          className="flex h-10 w-10 items-center justify-center rounded-full text-2xl hover:bg-white/15"
+          aria-label="Zoom out"
+        >
+          −
+        </button>
+        <span className="min-w-12 text-center text-sm font-medium">{Math.round(scale * 100)}%</span>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setScale((current) => Math.min(4, current + 0.5));
+          }}
+          className="flex h-10 w-10 items-center justify-center rounded-full text-2xl hover:bg-white/15"
+          aria-label="Zoom in"
+        >
+          +
+        </button>
+      </div>
+
       <button
         type="button"
         onClick={(e) => { e.stopPropagation(); previousImage(); }}

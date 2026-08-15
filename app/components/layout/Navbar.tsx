@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Container from "../ui/Container";
 import fallbackLogo from "../../assets/logos/logo-navbar.png";
 import { supabase } from "../../lib/supabase";
-import { getWishlist } from "../../lib/wishlist";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `transition-colors ${
@@ -14,7 +13,6 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   }`;
 
 export default function Navbar() {
-  const [wishlistCount, setWishlistCount] = useState(0);
   const [logoUrl, setLogoUrl] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -30,20 +28,6 @@ export default function Navbar() {
     }
 
     loadLogo();
-
-    const updateWishlist = () => {
-      setWishlistCount(getWishlist().length);
-    };
-
-    updateWishlist();
-
-    window.addEventListener("storage", updateWishlist);
-    window.addEventListener("wishlistUpdated", updateWishlist);
-
-    return () => {
-      window.removeEventListener("storage", updateWishlist);
-      window.removeEventListener("wishlistUpdated", updateWishlist);
-    };
   }, []);
 
   const currentLogo = logoUrl || fallbackLogo;
@@ -87,16 +71,6 @@ export default function Navbar() {
 
           <NavLink to="/policies" className={navLinkClass}>
             Policies
-          </NavLink>
-
-          <NavLink to="/wishlist" className={navLinkClass}>
-            ❤️ Wishlist
-
-            {wishlistCount > 0 && (
-              <span className="ml-2 rounded-full bg-[var(--teal)] px-2 py-1 text-xs text-white">
-                {wishlistCount}
-              </span>
-            )}
           </NavLink>
 
           <Link
@@ -171,19 +145,6 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
             >
               Policies
-            </NavLink>
-
-            <NavLink
-              to="/wishlist"
-              className={navLinkClass}
-              onClick={() => setMenuOpen(false)}
-            >
-              ❤️ Wishlist
-              {wishlistCount > 0 && (
-                <span className="ml-2 rounded-full bg-[var(--teal)] px-2 py-1 text-xs text-white">
-                  {wishlistCount}
-                </span>
-              )}
             </NavLink>
 
             <Link

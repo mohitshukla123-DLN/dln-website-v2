@@ -24,6 +24,7 @@ export default function ShopPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
   const params = new URLSearchParams();
@@ -141,10 +142,10 @@ export default function ShopPage() {
       canonical="https://dresslikenawaabs.pages.dev/shop"
     />
 
-    <section className="py-20">
+    <section className="py-10 sm:py-16 lg:py-20">
       <Container className="max-w-[1600px]">
-        <div className="mb-12">
-          <h1 className="text-5xl font-bold">
+        <div className="mb-8 sm:mb-12">
+          <h1 className="text-4xl font-bold sm:text-5xl">
             Shop
           </h1>
 
@@ -158,8 +159,21 @@ export default function ShopPage() {
           onChange={setSearch}
         />
 
-        <div className="mb-10 grid grid-cols-1 gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
-          <aside className="space-y-5 rounded-3xl border border-black/5 bg-white p-5 shadow-sm lg:sticky lg:top-28">
+        <div className="mb-8 lg:mb-10">
+          <button
+            type="button"
+            onClick={() => setFiltersOpen((open) => !open)}
+            aria-expanded={filtersOpen}
+            className="mb-4 flex w-full items-center justify-between rounded-2xl border border-black/10 bg-white px-5 py-4 text-left shadow-sm lg:hidden"
+          >
+            <span className="font-semibold">Filters & Sort</span>
+            <span className="text-xl text-[var(--muted)]" aria-hidden="true">
+              {filtersOpen ? "−" : "+"}
+            </span>
+          </button>
+
+          <div className={`grid grid-cols-1 gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start ${filtersOpen ? "" : ""}`}>
+          <aside className={`${filtersOpen ? "block" : "hidden"} space-y-5 rounded-3xl border border-black/5 bg-white p-5 shadow-sm lg:sticky lg:top-28 lg:block`}>
             <div>
               <h2 className="text-xl font-semibold">Filters</h2>
               <p className="mt-1 text-sm text-[var(--muted)]">Refine your collection.</p>
@@ -215,6 +229,7 @@ export default function ShopPage() {
             ) : (
               <EmptyState />
             )}
+          </div>
           </div>
         </div>
 

@@ -231,32 +231,7 @@ export default function ProductPage() {
 
       <section className="py-20">
         <Container>
-
-          <div className="mb-10 text-sm text-[var(--muted)]">
-            <Link
-              to="/"
-              className="hover:text-[var(--teal)]"
-            >
-              Home
-            </Link>
-
-            {" / "}
-
-            <Link
-              to="/shop"
-              className="hover:text-[var(--teal)]"
-            >
-              Shop
-            </Link>
-
-            {" / "}
-
-            <span className="text-[var(--foreground)]">
-              {product.name}
-            </span>
-          </div>
-
-          <div className="grid gap-16 lg:grid-cols-2">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
 
             <div className="relative">
               <ProductGallery
