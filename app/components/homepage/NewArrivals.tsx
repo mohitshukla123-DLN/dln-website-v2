@@ -46,22 +46,24 @@ export default function NewArrivals({ settings }: Props) {
     <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--background)] py-24">
       <Container>
 
-        <div className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--teal)]">
-              {settings?.new_arrivals_subtitle ?? "Latest Collection"}
-            </p>
+        <div className="mb-14 text-center">
+          <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
+            {settings?.new_arrivals_subtitle ?? "Latest Collection"}
+          </p>
 
-            <h2 className="mt-3 text-4xl font-bold tracking-tight lg:text-5xl">
-              {settings?.new_arrivals_title ?? "New Arrivals"}
-            </h2>
+          <h2 className="mt-4 text-4xl font-bold">
+            {settings?.new_arrivals_title ?? "New Arrivals"}
+          </h2>
+
+          <p className="mx-auto mt-5 max-w-2xl text-[var(--muted)]">
+            Discover the latest additions to our collection.
+          </p>
+
+          <div className="mt-6">
+            <Link to="/new-arrivals">
+              <Button>View All</Button>
+            </Link>
           </div>
-
-          <Link to="/new-arrivals">
-            <Button>
-              View All
-            </Button>
-          </Link>
         </div>
 
         <ProductGrid products={newProducts} />

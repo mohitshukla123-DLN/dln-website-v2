@@ -79,22 +79,22 @@ export default function HomePage() {
                       loading="eager"
                       fetchPriority="high"
                       decoding="async"
-                      className="relative max-h-[560px] w-auto max-w-full object-contain"
+                      className="relative max-h-[560px] w-auto max-w-full object-contain max-sm:max-h-[390px]"
                     />
                   </picture>
                 </div>
               </div>
 
-              <div className="order-2 max-w-2xl lg:order-none">
-                <p className="mb-6 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--teal)]">
+              <div className="order-2 max-w-2xl text-center lg:order-none lg:text-left">
+                <p className="mb-8 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--teal)]">
                   {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
 
-                <h1 className="hero-title text-[clamp(3rem,5.2vw,5.5rem)] font-normal leading-none tracking-tight text-[var(--foreground)]">
+                <h1 className="hero-title mx-auto max-w-full text-[clamp(2.5rem,9vw,5.5rem)] font-light leading-[1.05] tracking-tight text-[var(--foreground)] lg:mx-0 lg:text-[clamp(3rem,5.2vw,5.5rem)]">
                   {settings?.hero_title || "Dress Like Nawaabs"}
                 </h1>
 
-                <p className="mt-6 max-w-xl text-xl leading-9 text-[var(--muted)]">
+                <p className="mx-auto mt-7 max-w-xl text-lg leading-8 text-[var(--muted)] lg:mx-0 lg:mt-6 lg:text-xl lg:leading-9">
                   Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions.
                 </p>
 
