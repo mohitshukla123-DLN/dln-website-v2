@@ -7,7 +7,7 @@
   --foreground: #232323;
   --muted: #666666;
 
-  --teal: #0f7d73;
+  --teal: #7a1f3d;
   --pink: #c83b72;
   --saffron: #c98b2d;
   --green: #5c8a3b;
@@ -44,11 +44,12 @@ body {
   color: var(--foreground);
 
   font-family:
-    Georgia,
-    "Times New Roman",
-    serif;
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
 
-  line-height: 1.6;
+  font-size: 18px;
+  line-height: 1.65;
 
   color-scheme: light;
 
@@ -67,4 +68,55 @@ a {
 
 button {
   font: inherit;
+}
+
+.price-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  background: var(--teal);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.price-range::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #ffffff;
+  border-radius: 9999px;
+  background: var(--teal);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.price-range::-webkit-slider-runnable-track,
+.price-range::-moz-range-track {
+  background: transparent;
+}
+
+
+.hero-title {
+  font-family: "P22 Operina Romano", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+p, li, label, input, button, select, textarea {
+  font-size: 1.05rem;
 }

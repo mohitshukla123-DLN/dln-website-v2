@@ -10,14 +10,14 @@ export default function CategoryFilter({
   onSelect,
 }: Props) {
   return (
-    <div className="mb-6 flex flex-wrap gap-3">
+    <div className="space-y-2">
       <button
         type="button"
         onClick={() => onSelect("All")}
-        className={`rounded-full px-5 py-2 transition ${
+        className={`flex w-full items-center rounded-xl px-4 py-3 text-left text-sm transition ${
           selected === "All"
             ? "bg-[var(--teal)] text-white"
-            : "border hover:border-[var(--teal)]"
+            : "border border-black/10 hover:border-[var(--teal)] hover:bg-[var(--teal)]/5"
         }`}
       >
         All
@@ -28,10 +28,10 @@ export default function CategoryFilter({
           type="button"
           key={category.id}
           onClick={() => onSelect(category.name)}
-          className={`rounded-full px-5 py-2 transition ${
+          className={`flex w-full items-center rounded-xl px-4 py-3 text-left text-sm transition ${
             selected === category.name
               ? "bg-[var(--teal)] text-white"
-              : "border hover:border-[var(--teal)]"
+              : "border border-black/10 hover:border-[var(--teal)] hover:bg-[var(--teal)]/5"
           }`}
         >
           {category.name}

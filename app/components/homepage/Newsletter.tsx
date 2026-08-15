@@ -13,7 +13,10 @@ export default function Newsletter({ settings }: Props) {
   }
 
   return (
-    <section id="newsletter" className="scroll-mt-20 bg-[var(--teal)] py-24 text-white">
+    <section
+      id="newsletter"
+      className="scroll-mt-20 bg-[var(--surface)] py-20 text-[var(--foreground)]"
+    >
       <Container>
 
         <div className="mx-auto max-w-3xl text-center">
@@ -27,7 +30,7 @@ export default function Newsletter({ settings }: Props) {
               "Join the Dress Like Nawaabs Family"}
           </h2>
 
-          <p className="mt-6 text-white/80">
+          <p className="mt-6 text-[1.05rem] leading-8 text-[var(--muted)]">
             {settings?.newsletter_subtitle ??
               "Be the first to know about new arrivals, exclusive collections, wedding style inspiration and special offers."}
           </p>
@@ -42,7 +45,7 @@ export default function Newsletter({ settings }: Props) {
 
             <Button
               type="submit"
-              className="bg-white !text-[var(--teal)] hover:bg-neutral-100"
+              className="bg-[var(--teal)] !text-white hover:bg-[#641932]"
             >
               Subscribe
             </Button>

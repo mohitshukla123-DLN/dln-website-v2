@@ -189,12 +189,20 @@ export default function App() {
 
           <Route
             path="/admin/site-settings"
-            element={<AdminSiteSettingsPage />}
+            element={
+              <ProtectedRoute>
+                <AdminSiteSettingsPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route
             path="/admin/media"
-            element={<AdminMediaLibraryPage />}
+            element={
+              <ProtectedRoute>
+                <AdminMediaLibraryPage />
+              </ProtectedRoute>
+            }
           />
 
           <Route

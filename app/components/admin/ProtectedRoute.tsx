@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { getSession } from "../../lib/auth";
+import { getSession, supabase } from "../../lib/auth";
 
 interface Props {
   children: React.ReactNode;
@@ -16,17 +16,40 @@ export default function ProtectedRoute({
     useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
     async function checkSession() {
       const session = await getSession();
 
-      setAuthenticated(!!session);
-      setLoading(false);
+      if (mounted) {
+        setAuthenticated(!!session);
+        setLoading(false);
+      }
     }
 
     checkSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      setAuthenticated(!!session);
+      setLoading(false);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-6">
+        <p className="text-sm text-[var(--muted)]">Loading admin...</p>
+      </div>
+    );
+  }
 
   if (!authenticated) {
     return (

@@ -86,15 +86,15 @@ export default function HomePage() {
               </div>
 
               <div className="order-2 max-w-2xl lg:order-none">
-                <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--teal)]">
+                <p className="mb-6 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--teal)]">
                   {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
 
-                <h1 className="text-5xl font-bold leading-[1.05] tracking-tight text-[var(--foreground)] sm:text-6xl lg:text-7xl">
+                <h1 className="hero-title text-[clamp(3rem,5.2vw,5.5rem)] font-normal leading-none tracking-tight text-[var(--foreground)]">
                   {settings?.hero_title || "Dress Like Nawaabs"}
                 </h1>
 
-                <p className="mt-7 max-w-xl text-lg leading-8 text-[var(--muted)]">
+                <p className="mt-6 max-w-xl text-xl leading-9 text-[var(--muted)]">
                   Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions.
                 </p>
 

@@ -20,7 +20,7 @@ export default function ShopPage() {
   const [category, setCategory] = useState(searchParams.get("category") ?? "All");
   const [subcategory, setSubcategory] = useState(searchParams.get("subcategory") ?? "All");
   const [sort, setSort] = useState("featured");
-  const [priceRange, setPriceRange] = useState("all");
+  const [priceRange, setPriceRange] = useState({ min: 100, max: 5000 });
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
@@ -79,18 +79,9 @@ export default function ShopPage() {
         subcategory === "All" ||
         product.subcategory === subcategory;
 
-        const matchesPrice =
-        priceRange === "all" ||
-        (priceRange === "under-2000" &&
-          product.price < 2000) ||
-        (priceRange === "2000-5000" &&
-          product.price >= 2000 &&
-          product.price <= 5000) ||
-        (priceRange === "5000-10000" &&
-          product.price > 5000 &&
-          product.price <= 10000) ||
-        (priceRange === "above-10000" &&
-          product.price > 10000);
+      const matchesPrice =
+        product.price >= priceRange.min &&
+        product.price <= priceRange.max;
       return (
         matchesSearch &&
         matchesCategory &&
@@ -151,7 +142,7 @@ export default function ShopPage() {
     />
 
     <section className="py-20">
-      <Container>
+      <Container className="max-w-[1600px]">
         <div className="mb-12">
           <h1 className="text-5xl font-bold">
             Shop
@@ -167,21 +158,27 @@ export default function ShopPage() {
           onChange={setSearch}
         />
 
-        <div className="mb-8 space-y-5">
-          <CategoryFilter
-            selected={category}
-            onSelect={handleCategory}
-          />
+        <div className="mb-10 grid grid-cols-1 gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start">
+          <aside className="space-y-5 rounded-3xl border border-black/5 bg-white p-5 shadow-sm lg:sticky lg:top-28">
+            <div>
+              <h2 className="text-xl font-semibold">Filters</h2>
+              <p className="mt-1 text-sm text-[var(--muted)]">Refine your collection.</p>
+            </div>
 
-          <SubcategoryFilter
-            category={category}
-            selected={subcategory}
-            onSelect={setSubcategory}
-          />
+            <CategoryFilter
+              selected={category}
+              onSelect={handleCategory}
+            />
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <SubcategoryFilter
+              category={category}
+              selected={subcategory}
+              onSelect={setSubcategory}
+            />
+
             <PriceFilter
-              value={priceRange}
+              min={priceRange.min}
+              max={priceRange.max}
               onChange={setPriceRange}
             />
 
@@ -189,43 +186,39 @@ export default function ShopPage() {
               value={sort}
               onChange={setSort}
             />
+          </aside>
+
+          <div className="min-w-0">
+            <p className="mb-8 text-sm text-[var(--muted)]">
+              {filteredProducts.length} product
+              {filteredProducts.length !== 1 ? "s" : ""} found
+            </p>
+
+            {loading ? (
+              <div className="rounded-3xl border py-24 text-center">
+                <p className="text-[var(--muted)]">Loading products...</p>
+              </div>
+            ) : loadError ? (
+              <div className="rounded-3xl border py-24 text-center">
+                <h2 className="text-2xl font-bold">Unable to load products</h2>
+                <p className="mt-3 text-[var(--muted)]">Please check your connection and try again.</p>
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="mt-6 rounded-full bg-[var(--teal)] px-6 py-3 text-white"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : filteredProducts.length > 0 ? (
+              <ProductGrid products={filteredProducts} />
+            ) : (
+              <EmptyState />
+            )}
           </div>
         </div>
 
-        <p className="mb-8 text-sm text-[var(--muted)]">
-          {filteredProducts.length} product
-          {filteredProducts.length !== 1 ? "s" : ""} found
-        </p>
 
-        {loading ? (
-          <div className="rounded-3xl border py-24 text-center">
-            <p className="text-[var(--muted)]">
-              Loading products...
-            </p>
-          </div>
-        ) : loadError ? (
-          <div className="rounded-3xl border py-24 text-center">
-            <h2 className="text-2xl font-bold">
-              Unable to load products
-            </h2>
-
-            <p className="mt-3 text-[var(--muted)]">
-              Please check your connection and try again.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="mt-6 rounded-full bg-[var(--teal)] px-6 py-3 text-white"
-            >
-              Try Again
-            </button>
-          </div>
-        ) : filteredProducts.length > 0 ? (
-          <ProductGrid products={filteredProducts} />
-        ) : (
-          <EmptyState />
-        )}
             </Container>
     </section>
   </>

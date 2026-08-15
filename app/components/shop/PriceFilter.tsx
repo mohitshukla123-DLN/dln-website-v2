@@ -1,30 +1,74 @@
 interface Props {
-  value: string;
-  onChange: (value: string) => void;
+  min: number;
+  max: number;
+  onChange: (range: { min: number; max: number }) => void;
 }
 
-export default function PriceFilter({
-  value,
-  onChange,
-}: Props) {
-  return (
-  <div className="flex flex-col gap-2">
-    <label htmlFor="price" className="text-sm font-medium">
-      Price
-    </label>
+const MIN_PRICE = 100;
+const MAX_PRICE = 5000;
+const STEP = 100;
 
-    <select
-      id="price"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="rounded-xl border border-black/10 bg-white px-4 py-2 outline-none transition focus:border-[var(--teal)]"
-    >
-      <option value="all">All Prices</option>
-      <option value="under-2000">Under ₹2,000</option>
-      <option value="2000-5000">₹2,000 – ₹5,000</option>
-      <option value="5000-10000">₹5,000 – ₹10,000</option>
-      <option value="above-10000">Above ₹10,000</option>
-    </select>
-  </div>
-);
+function formatPrice(value: number) {
+  return value >= MAX_PRICE
+    ? `₹${MAX_PRICE.toLocaleString("en-IN")}+`
+    : `₹${value.toLocaleString("en-IN")}`;
+}
+
+export default function PriceFilter({ min, max, onChange }: Props) {
+  const handleMinChange = (value: number) =>
+    onChange({ min: Math.min(value, max - STEP), max });
+
+  const handleMaxChange = (value: number) =>
+    onChange({ min, max: Math.max(value, min + STEP) });
+
+  return (
+    <div className="rounded-2xl border border-black/5 bg-white p-5">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <label className="text-sm font-semibold uppercase tracking-[0.12em]">
+          Price
+        </label>
+        <span className="text-xs text-[var(--muted)]">
+          {formatPrice(min)} – {formatPrice(max)}
+        </span>
+      </div>
+
+      <div className="relative h-8">
+        <div className="absolute left-0 right-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-black/10" />
+        <div
+          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-[var(--teal)]"
+          style={{
+            left: `${((min - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}%`,
+            right: `${100 - ((max - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}%`,
+          }}
+        />
+
+        <input
+          type="range"
+          min={MIN_PRICE}
+          max={MAX_PRICE}
+          step={STEP}
+          value={min}
+          onChange={(e) => handleMinChange(Number(e.target.value))}
+          aria-label="Minimum price"
+          className="price-range absolute inset-0 z-20 h-8 w-full appearance-none bg-transparent"
+        />
+
+        <input
+          type="range"
+          min={MIN_PRICE}
+          max={MAX_PRICE}
+          step={STEP}
+          value={max}
+          onChange={(e) => handleMaxChange(Number(e.target.value))}
+          aria-label="Maximum price"
+          className="price-range absolute inset-0 z-10 h-8 w-full appearance-none bg-transparent"
+        />
+      </div>
+
+      <div className="mt-3 flex items-center justify-between text-xs text-[var(--muted)]">
+        <span>₹100</span>
+        <span>₹{MAX_PRICE.toLocaleString("en-IN")}</span>
+      </div>
+    </div>
+  );
 }

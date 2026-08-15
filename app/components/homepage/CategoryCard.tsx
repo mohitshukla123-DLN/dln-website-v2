@@ -18,7 +18,7 @@ const palette = [
 ];
 
 export default function CategoryCard({ category }: Props) {
-  const colorClass = palette[Math.abs(category.id.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0)) % palette.length];
+  const colorClass = "bg-[var(--surface)] hover:bg-[#f8eef1]";
 
   return (
     <Link
@@ -34,7 +34,7 @@ export default function CategoryCard({ category }: Props) {
       </div>
 
       <div className={`py-5 text-center shadow-sm transition-colors duration-300 ${colorClass}`}>
-        <h3 className="text-xl font-semibold text-[var(--foreground)] transition-colors group-hover:text-[var(--foreground)]">
+        <h3 className="text-[1.3rem] font-medium text-[var(--foreground)] transition-colors group-hover:text-[var(--teal)]">
           {category.name}
         </h3>
       </div>

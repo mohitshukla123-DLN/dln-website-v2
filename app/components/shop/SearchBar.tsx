@@ -52,7 +52,7 @@ export default function SearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
-        placeholder="Search by product, SKU, category, colour..."
+        placeholder="Search by product, category, colour..."
         className="w-full rounded-2xl border border-black/10 px-5 py-4 outline-none transition focus:border-[var(--teal)]"
       />
 
