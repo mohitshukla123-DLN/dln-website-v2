@@ -19,8 +19,7 @@ export default function AnnouncementBar() {
 
       const cleanedAnnouncement = (data?.announcement_text?.trim() || "")
         .replace(/wishlist/gi, "")
-        .replace(/[❤️♥♡❤]/g, "")
-        .replace(/[\u2764\u2665\u2661\uFE0F]/g, "")
+        .replace(/[\u2764\u2665\u2661\uFE0F\u200D]/g, "")
         .replace(/\s{2,}/g, " ")
         .trim();
 

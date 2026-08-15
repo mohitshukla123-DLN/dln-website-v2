@@ -201,7 +201,7 @@ export default function ProductCard({
               to={`/products/${product.slug}`}
               className="min-w-0 flex-1"
             >
-              <Button className="flex w-full items-center justify-center whitespace-nowrap px-1 py-2 text-center text-[8px] font-semibold sm:px-4 sm:py-3 sm:text-base">
+              <Button className="flex w-full items-center justify-center whitespace-nowrap px-1 py-2 text-center text-[9px] font-semibold sm:px-4 sm:py-3 sm:text-base">
                 Details
               </Button>
             </Link>
