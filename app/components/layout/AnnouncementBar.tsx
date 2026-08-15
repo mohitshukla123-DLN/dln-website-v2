@@ -17,7 +17,13 @@ export default function AnnouncementBar() {
 
       if (!mounted) return;
 
-      setMessage((data?.announcement_text?.trim() || "").replace(/(?:❤️|♥|♡)?\s*Wishlist/gi, "").replace(/[❤️♥♡]/g, "").trim());
+      const cleanedAnnouncement = (data?.announcement_text?.trim() || "")
+        .replace(/wishlist/gi, "")
+        .replace(/[\u2764\u2665\u2661\uFE0F]/g, "")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+
+      setMessage(cleanedAnnouncement);
       setEnabled(data?.announcement_enabled ?? false);
     }
 

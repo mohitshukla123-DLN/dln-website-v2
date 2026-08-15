@@ -60,7 +60,7 @@ export default function HomePage() {
       {settings?.hero_enabled !== false && (
         <section className="relative overflow-hidden bg-white">
           <Container>
-            <div className="grid min-h-[680px] items-center gap-12 py-16 lg:grid-cols-2 lg:gap-20 lg:py-20">
+            <div className="grid min-h-[680px] items-center gap-10 py-12 lg:grid-cols-2 lg:gap-20 lg:py-20">
               <div className="order-1 flex justify-center lg:order-none lg:justify-start">
                 <div className="relative">
                   <div className="absolute inset-10 rounded-full bg-[var(--teal)]/8 blur-3xl" />
@@ -85,16 +85,16 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="order-2 max-w-2xl text-center lg:order-none lg:text-left">
-                <p className="mb-8 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--teal)]">
+              <div className="order-2 flex max-w-2xl flex-col justify-center text-center lg:order-none lg:min-h-[560px] lg:justify-center lg:text-left">
+                <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--teal)] sm:mb-6">
                   {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
 
-                <h1 className="hero-title mx-auto max-w-none whitespace-nowrap text-[clamp(1.9rem,8vw,5.5rem)] font-light leading-[1.05] tracking-tight text-[var(--foreground)] lg:mx-0 lg:text-[clamp(3rem,5.2vw,5.5rem)]">
+                <h1 className="hero-title mx-auto w-full max-w-none whitespace-nowrap text-[clamp(2rem,8vw,5.5rem)] font-extralight leading-[1.02] tracking-tight text-[var(--foreground)] lg:mx-0 lg:text-[clamp(3rem,5.2vw,5.5rem)]">
                   {settings?.hero_title || "Dress Like Nawaabs"}
                 </h1>
 
-                <p className="mx-auto mt-8 max-w-xl text-lg leading-8 text-[var(--muted)] lg:mx-0 lg:mt-8 lg:text-xl lg:leading-9">
+                <p className="mx-auto mt-2 max-w-xl text-lg leading-8 text-[var(--muted)] sm:mt-3 lg:mx-0 lg:mt-3 lg:text-xl lg:leading-9">
                   Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions.
                 </p>
 

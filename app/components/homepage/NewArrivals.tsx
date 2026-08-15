@@ -59,11 +59,12 @@ export default function NewArrivals({ settings }: Props) {
             Discover the latest additions to our collection.
           </p>
 
-          <div className="absolute right-0 top-1/2 -translate-y-1/2">
-            <Link to="/new-arrivals">
-              <Button className="px-4 py-2 text-sm">View All</Button>
-            </Link>
-          </div>
+        </div>
+
+        <div className="mb-6 flex justify-center sm:justify-end">
+          <Link to="/new-arrivals">
+            <Button className="px-4 py-2 text-sm">View All</Button>
+          </Link>
         </div>
 
         <ProductGrid products={newProducts} />

@@ -98,8 +98,9 @@ button {
 
 
 .hero-title {
-  font-family: "P22 Operina Romano", Georgia, "Times New Roman", serif;
+  font-family: "P22 Operina Romano", "P22 Operina", Georgia, "Times New Roman", serif;
   font-weight: 300;
+  font-style: normal;
   white-space: nowrap;
   overflow-wrap: normal;
   text-wrap: nowrap;
