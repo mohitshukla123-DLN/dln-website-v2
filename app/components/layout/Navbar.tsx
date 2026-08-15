@@ -68,6 +68,9 @@ export default function Navbar() {
           <NavLink to="/contact" className={navLinkClass}>
             Contact
           </NavLink>
+          <NavLink to="/wishlist" className={navLinkClass}>
+            Wishlist
+          </NavLink>
 
           <NavLink to="/policies" className={navLinkClass}>
             Policies
@@ -137,6 +140,14 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
             >
               Contact
+            </NavLink>
+
+            <NavLink
+              to="/wishlist"
+              className={navLinkClass}
+              onClick={() => setMenuOpen(false)}
+            >
+              Wishlist
             </NavLink>
 
             <NavLink
