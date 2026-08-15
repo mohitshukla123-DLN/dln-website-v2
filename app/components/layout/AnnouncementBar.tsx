@@ -20,11 +20,15 @@ export default function AnnouncementBar() {
       const cleanedAnnouncement = (data?.announcement_text?.trim() || "")
         .replace(/wishlist/gi, "")
         .replace(/[\u200B-\u200D\uFEFF]/g, "")
-        .replace(/[\u2600-\u27BF]/gu, "")
         .replace(/[\u{1F300}-\u{1FAFF}]/gu, "")
+        .replace(/[\u2600-\u27BF]/gu, "")
+        .replace(/[♥♡❤❣]/gu, "")
+        .replace(/\uFE0F/gu, "")
         .replace(/\s{2,}/g, " ")
         .trim();
 
+      console.log("RAW ANNOUNCEMENT:", data?.announcement_text);
+      console.log("CLEANED ANNOUNCEMENT:", cleanedAnnouncement);  
       setMessage(cleanedAnnouncement);
       setEnabled(data?.announcement_enabled ?? false);
     }
