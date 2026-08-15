@@ -1,3 +1,12 @@
+
+@font-face {
+  font-family: "P22 Operina Romano";
+  src: url("/fonts/P22-Operina-Romano-Romano.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import "tailwindcss";
 
 :root {
