@@ -61,7 +61,7 @@ export default function NewArrivals({ settings }: Props) {
 
         </div>
 
-        <div className="mb-3 flex justify-center sm:mb-4 sm:justify-end">
+        <div className="mb-3 flex justify-center sm:mb-3 sm:justify-end">
           <Link to="/new-arrivals">
             <Button className="px-4 py-2 text-sm">View All</Button>
           </Link>
