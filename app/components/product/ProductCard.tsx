@@ -197,36 +197,36 @@ export default function ProductCard({
 
         {/* Action buttons */}
         <div className="mt-3 flex w-full flex-row gap-2 sm:mt-4 sm:gap-3">
-            <Link
-              to={`/products/${product.slug}`}
-              className="min-w-0 flex-1"
-            >
-              <Button className="flex h-full min-h-11 w-full items-center justify-center whitespace-nowrap px-1.5 py-2.5 text-center text-[8px] font-semibold sm:min-h-11 sm:px-4 sm:py-3 sm:text-base">
-                Details
-              </Button>
-            </Link>
+          <Link
+            to={`/products/${product.slug}`}
+            className="min-w-0 flex-1"
+          >
+            <Button className="flex h-full min-h-11 w-full items-center justify-center whitespace-nowrap px-2 py-2.5 text-center text-[9px] font-semibold sm:min-h-11 sm:px-4 sm:py-3 sm:text-base">
+              Details
+            </Button>
+          </Link>
 
-            <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="min-w-0 flex-1"
-            >
-              <Button className="flex h-full min-h-11 w-full items-center justify-center gap-1 whitespace-nowrap px-1.5 py-2.5 text-center text-[8px] font-semibold sm:min-h-11 sm:gap-2 sm:px-4 sm:py-3 sm:text-base">
-                <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-3.5 w-3.5 sm:h-4 sm:w-4"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path d="M12 2a10 10 0 0 0-8.66 15l-1.05 3.82 3.91-1.03A10 10 0 1 0 12 2Zm0 18a8 8 0 0 1-4.08-1.12l-.29-.17-2.32.61.62-2.26-.18-.3A8 8 0 1 1 12 20Zm4.4-5.9c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.68 2.56 4.07 3.59.57.25 1.09.16 1.5.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z" />
-                  </svg>
-                </span>
-                <span>Enquiry</span>
-              </Button>
-            </a>
-          </div>
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="min-w-0 flex-1"
+          >
+            <Button className="flex h-full min-h-11 w-full items-center justify-center gap-1 whitespace-nowrap px-2 py-2.5 text-center text-[7px] font-semibold sm:min-h-11 sm:gap-2 sm:px-4 sm:py-3 sm:text-base">
+              <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-3.5 w-3.5 sm:h-4 sm:w-4"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M12 2a10 10 0 0 0-8.66 15l-1.05 3.82 3.91-1.03A10 10 0 1 0 12 2Zm0 18a8 8 0 0 1-4.08-1.12l-.29-.17-2.32.61.62-2.26-.18-.3A8 8 0 1 1 12 20Zm4.4-5.9c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.68 2.56 4.07 3.59.57.25 1.09.4 1.35.51.57.18 1.09.16 1.5.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z" />
+                </svg>
+              </span>
+              <span className="truncate">Enquiry</span>
+            </Button>
+          </a>
+        </div>
       </div>
     </article>
   );
