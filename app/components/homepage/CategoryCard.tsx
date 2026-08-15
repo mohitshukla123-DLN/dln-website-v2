@@ -23,18 +23,18 @@ export default function CategoryCard({ category }: Props) {
   return (
     <Link
       to={`/category/${category.slug}`}
-      className="group overflow-hidden rounded-3xl"
+      className="group overflow-hidden rounded-2xl sm:rounded-3xl"
     >
       <div className="overflow-hidden">
         <img
           src={category.image}
           alt={category.name}
-          className="h-80 w-full object-cover transition duration-500 group-hover:scale-105"
+          className="h-44 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80"
         />
       </div>
 
-      <div className={`py-5 text-center shadow-sm transition-colors duration-300 ${colorClass}`}>
-        <h3 className="text-[1.3rem] font-medium text-[var(--foreground)] transition-colors group-hover:text-[var(--teal)]">
+      <div className={`py-3 text-center shadow-sm transition-colors duration-300 sm:py-5 ${colorClass}`}>
+        <h3 className="text-[0.95rem] font-medium leading-5 text-[var(--foreground)] transition-colors group-hover:text-[var(--teal)] sm:text-[1.3rem] sm:leading-normal">
           {category.name}
         </h3>
       </div>

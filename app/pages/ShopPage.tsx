@@ -142,14 +142,14 @@ export default function ShopPage() {
       canonical="https://dresslikenawaabs.pages.dev/shop"
     />
 
-    <section className="py-10 sm:py-16 lg:py-20">
+    <section className="py-6 sm:py-16 lg:py-20">
       <Container className="max-w-[1600px]">
-        <div className="mb-8 sm:mb-12">
+        <div className="mb-4 sm:mb-12">
           <h1 className="text-4xl font-bold sm:text-5xl">
             Shop
           </h1>
 
-          <p className="mt-4 text-[var(--muted)]">
+          <p className="mt-2 text-[var(--muted)] sm:mt-4">
             Browse our premium collection.
           </p>
         </div>

@@ -11,21 +11,21 @@ export default function CategoryGrid({ settings }: Props) {
   }
 
   return (
-    <section id="featured-categories" className="scroll-mt-20 bg-[#f3eee8] py-24">
+    <section id="featured-categories" className="scroll-mt-20 bg-[#f3eee8] py-12 sm:py-24">
       <Container>
-        <div className="mb-14 text-center">
-          <h2 className="text-5xl font-bold">
+        <div className="mb-8 text-center sm:mb-14">
+          <h2 className="text-3xl font-bold sm:text-5xl">
             {settings?.featured_categories_title ||
               "Shop by Category"}
           </h2>
 
-          <p className="mt-5 text-[var(--muted)]">
+          <p className="mt-3 text-[var(--muted)] sm:mt-5">
             {settings?.featured_categories_subtitle ||
               "Explore our handcrafted collections."}
           </p>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4">
           {categories.map((category) => (
             <CategoryCard
               key={category.id}

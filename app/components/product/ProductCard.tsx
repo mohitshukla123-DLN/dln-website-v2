@@ -128,7 +128,7 @@ export default function ProductCard({
         {/* Badge */}
         {product.badge && (
           <span
-            className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-medium ${
+            className={`absolute left-2 top-2 rounded-full px-2.5 py-1 text-[10px] font-medium sm:left-4 sm:top-4 sm:px-3 sm:text-xs ${
               product.badge === "NEW"
                 ? "bg-[var(--teal)] text-white"
                 : product.badge === "BESTSELLER"
@@ -159,7 +159,7 @@ export default function ProductCard({
 
             window.dispatchEvent(new Event("wishlistUpdated"));
           }}
-          className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-xl shadow-md transition hover:scale-105 hover:bg-white"
+          className="absolute right-2 top-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-xl shadow-md transition hover:scale-105 hover:bg-white sm:right-4 sm:top-4 sm:h-10 sm:w-10"
         >
           <span
             className={wishlisted ? "text-red-600" : "text-gray-500"}
@@ -170,17 +170,17 @@ export default function ProductCard({
         </button>
 
       {/* Product information */}
-      <div className="bg-white p-4 sm:p-5">
-        <p className="mb-1 text-[11px] uppercase tracking-[0.2em] text-[var(--teal)]">
+      <div className="bg-white p-3 sm:p-5">
+        <p className="mb-0.5 text-[9px] uppercase tracking-[0.14em] text-[var(--teal)] sm:mb-1 sm:text-[11px] sm:tracking-[0.2em]">
           {product.category}
         </p>
 
-        <h3 className="line-clamp-2 text-base font-semibold leading-6 text-black transition-colors group-hover:text-[var(--teal)]">
+        <h3 className="line-clamp-2 text-[14px] font-semibold leading-5 text-black transition-colors group-hover:text-[var(--teal)] sm:text-base sm:leading-6">
           {product.name}
         </h3>
 
-        <div className="mt-2 flex items-center justify-between gap-3">
-          <p className="text-lg font-semibold text-black">
+        <div className="mt-1.5 flex items-center justify-between gap-2 sm:mt-2 sm:gap-3">
+          <p className="text-base font-semibold text-black sm:text-lg">
             ₹{product.price.toLocaleString("en-IN")}
           </p>
 
@@ -196,13 +196,13 @@ export default function ProductCard({
         </div>
 
         {/* Action buttons */}
-        <div className="mt-4 flex w-full flex-row gap-3">
+        <div className="mt-3 flex w-full flex-row gap-2 sm:mt-4 sm:gap-3">
           <Link
               to={`/products/${product.slug}`}
               className="min-w-0 flex-1"
             >
-              <Button className="flex w-full items-center justify-center whitespace-nowrap px-3 py-3 text-center text-sm sm:px-4 sm:text-base">
-                View Details
+              <Button className="flex w-full items-center justify-center whitespace-nowrap px-2 py-2.5 text-center text-[12px] sm:px-4 sm:py-3 sm:text-base">
+                Details
               </Button>
             </Link>
 
@@ -212,11 +212,11 @@ export default function ProductCard({
             rel="noopener noreferrer"
             className="min-w-0 flex-1"
           >
-            <Button className="flex w-full items-center justify-center gap-2 whitespace-nowrap px-3 py-3 text-center text-sm sm:px-4 sm:text-base">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)]">
+            <Button className="flex w-full items-center justify-center gap-1 whitespace-nowrap px-2 py-2.5 text-center text-[12px] sm:gap-2 sm:px-4 sm:py-3 sm:text-base">
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
                 <svg
                   viewBox="0 0 24 24"
-                  className="h-4 w-4"
+                  className="h-3 w-3 sm:h-4 sm:w-4"
                   fill="currentColor"
                   aria-hidden="true"
                 >

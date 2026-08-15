@@ -46,7 +46,7 @@ export default function SearchBar({
   }, [products, value]);
 
   return (
-    <div className="relative mb-8">
+    <div className="relative mb-4 sm:mb-8">
       <input
         type="text"
         value={value}
