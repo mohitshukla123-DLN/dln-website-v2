@@ -17,7 +17,7 @@ export default function AnnouncementBar() {
 
       if (!mounted) return;
 
-      setMessage((data?.announcement_text?.trim() || "").replace(/❤️\s*Wishlist/gi, "").trim());
+      setMessage((data?.announcement_text?.trim() || "").replace(/(?:❤️|♥|♡)?\s*Wishlist/gi, "").replace(/[❤️♥♡]/g, "").trim());
       setEnabled(data?.announcement_enabled ?? false);
     }
 

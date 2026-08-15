@@ -40,14 +40,11 @@ export default function CategoryGrid({ settings }: Props) {
               key={category.id}
               category={category}
               productImages={products
-                .filter((product) => product.category?.toLowerCase() === category.name.toLowerCase())
-                .flatMap((product) =>
-                  Array.isArray(product.images) && product.images.length > 0
-                    ? product.images
-                    : product.image
-                      ? [product.image]
-                      : []
+                .filter(
+                  (product) =>
+                    product.category?.toLowerCase() === category.name.toLowerCase()
                 )
+                .map((product) => product.image || product.images?.[0])
                 .filter(Boolean)
               }
             />

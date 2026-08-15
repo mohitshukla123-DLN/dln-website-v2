@@ -46,7 +46,7 @@ export default function NewArrivals({ settings }: Props) {
     <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--background)] py-24">
       <Container>
 
-        <div className="mb-14 text-center">
+        <div className="relative mb-14 text-center">
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
             {settings?.new_arrivals_subtitle ?? "Latest Collection"}
           </p>
@@ -59,9 +59,9 @@ export default function NewArrivals({ settings }: Props) {
             Discover the latest additions to our collection.
           </p>
 
-          <div className="mt-6">
+          <div className="absolute right-0 top-1/2 -translate-y-1/2">
             <Link to="/new-arrivals">
-              <Button>View All</Button>
+              <Button className="px-4 py-2 text-sm">View All</Button>
             </Link>
           </div>
         </div>

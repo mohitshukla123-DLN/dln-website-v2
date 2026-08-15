@@ -32,7 +32,7 @@ export default function CategoryCard({ category, productImages = [] }: Props) {
 
     const interval = window.setInterval(() => {
       setCurrentImage((index) => (index + 1) % images.length);
-    }, 2600);
+    }, 1800);
 
     return () => window.clearInterval(interval);
   }, [images.length]);
