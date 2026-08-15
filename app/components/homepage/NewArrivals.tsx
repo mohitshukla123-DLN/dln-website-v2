@@ -51,7 +51,7 @@ export default function NewArrivals({ settings }: Props) {
             {settings?.new_arrivals_subtitle ?? "Latest Collection"}
           </p>
 
-          <h2 className="mt-4 text-4xl font-bold">
+          <h2 className="mt-2 text-4xl font-bold">
             {settings?.new_arrivals_title ?? "New Arrivals"}
           </h2>
 
@@ -61,7 +61,7 @@ export default function NewArrivals({ settings }: Props) {
 
         </div>
 
-        <div className="mb-6 flex justify-end sm:justify-end">
+        <div className="mb-6 flex justify-center sm:justify-end sm:justify-end">
           <Link to="/new-arrivals">
             <Button className="px-4 py-2 text-sm">View All</Button>
           </Link>
