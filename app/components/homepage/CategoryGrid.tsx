@@ -1,11 +1,20 @@
+import { useEffect, useState } from "react";
 import type { HomepageSettings } from "../../types/homepage";
+import type { Product } from "../../types/product";
 import Container from "../ui/Container";
 import CategoryCard from "./CategoryCard";
 import { categories } from "../../data/categories";
+import { getProducts } from "../../lib/products";
 
 interface Props {settings: HomepageSettings | null;}
 
 export default function CategoryGrid({ settings }: Props) {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    getProducts().then(setProducts);
+  }, []);
+
   if (settings?.featured_categories_enabled === false) {
     return null;
   }
@@ -30,6 +39,17 @@ export default function CategoryGrid({ settings }: Props) {
             <CategoryCard
               key={category.id}
               category={category}
+              productImages={products
+                .filter((product) => product.category?.toLowerCase() === category.name.toLowerCase())
+                .flatMap((product) =>
+                  Array.isArray(product.images) && product.images.length > 0
+                    ? product.images
+                    : product.image
+                      ? [product.image]
+                      : []
+                )
+                .filter(Boolean)
+              }
             />
           ))}
         </div>

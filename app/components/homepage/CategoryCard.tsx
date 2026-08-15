@@ -1,9 +1,11 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import type { Category } from "../../types/category";
 
 interface Props {
   category: Category;
+  productImages?: string[];
 }
 
 const palette = [
@@ -17,7 +19,23 @@ const palette = [
   "bg-[#e7d9df] hover:bg-[#d1b4c2]",
 ];
 
-export default function CategoryCard({ category }: Props) {
+export default function CategoryCard({ category, productImages = [] }: Props) {
+  const images = useMemo(
+    () => Array.from(new Set(productImages.filter(Boolean))),
+    [productImages]
+  );
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    setCurrentImage(0);
+    if (images.length <= 1) return;
+
+    const interval = window.setInterval(() => {
+      setCurrentImage((index) => (index + 1) % images.length);
+    }, 2600);
+
+    return () => window.clearInterval(interval);
+  }, [images.length]);
   const colorClass = "bg-[var(--surface)] hover:bg-[#f8eef1]";
 
   return (
@@ -27,7 +45,7 @@ export default function CategoryCard({ category }: Props) {
     >
       <div className="overflow-hidden">
         <img
-          src={category.image}
+          src={images[currentImage] ?? category.image}
           alt={category.name}
           className="h-44 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80"
         />

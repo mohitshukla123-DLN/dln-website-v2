@@ -201,7 +201,7 @@ export default function ProductCard({
               to={`/products/${product.slug}`}
               className="min-w-0 flex-1"
             >
-              <Button className="flex w-full items-center justify-center whitespace-nowrap px-2 py-2.5 text-center text-[12px] sm:px-4 sm:py-3 sm:text-base">
+              <Button className="flex w-full items-center justify-center whitespace-nowrap px-1.5 py-2 text-center text-[10px] sm:px-4 sm:py-3 sm:text-base">
                 Details
               </Button>
             </Link>
@@ -212,11 +212,11 @@ export default function ProductCard({
             rel="noopener noreferrer"
             className="min-w-0 flex-1"
           >
-            <Button className="flex w-full items-center justify-center gap-1 whitespace-nowrap px-2 py-2.5 text-center text-[12px] sm:gap-2 sm:px-4 sm:py-3 sm:text-base">
-              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
+            <Button className="flex w-full items-center justify-center gap-0.5 whitespace-nowrap px-1.5 py-2 text-center text-[10px] sm:gap-2 sm:px-4 sm:py-3 sm:text-base">
+              <span className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
                 <svg
                   viewBox="0 0 24 24"
-                  className="h-3 w-3 sm:h-4 sm:w-4"
+                  className="h-2.5 w-2.5 sm:h-4 sm:w-4"
                   fill="currentColor"
                   aria-hidden="true"
                 >

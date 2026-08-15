@@ -90,11 +90,11 @@ export default function HomePage() {
                   {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
 
-                <h1 className="hero-title mx-auto max-w-full text-[clamp(2.5rem,9vw,5.5rem)] font-light leading-[1.05] tracking-tight text-[var(--foreground)] lg:mx-0 lg:text-[clamp(3rem,5.2vw,5.5rem)]">
+                <h1 className="hero-title mx-auto max-w-none whitespace-nowrap text-[clamp(1.9rem,8vw,5.5rem)] font-light leading-[1.05] tracking-tight text-[var(--foreground)] lg:mx-0 lg:text-[clamp(3rem,5.2vw,5.5rem)]">
                   {settings?.hero_title || "Dress Like Nawaabs"}
                 </h1>
 
-                <p className="mx-auto mt-7 max-w-xl text-lg leading-8 text-[var(--muted)] lg:mx-0 lg:mt-6 lg:text-xl lg:leading-9">
+                <p className="mx-auto mt-8 max-w-xl text-lg leading-8 text-[var(--muted)] lg:mx-0 lg:mt-8 lg:text-xl lg:leading-9">
                   Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions.
                 </p>
 
