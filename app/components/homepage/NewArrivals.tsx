@@ -55,13 +55,18 @@ export default function NewArrivals({ settings }: Props) {
             {settings?.new_arrivals_title ?? "New Arrivals"}
           </h2>
 
-          <div className="mt-2 flex flex-col items-center gap-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-            <p className="max-w-2xl text-sm text-[var(--muted)] sm:text-base">
+          <div className="relative mt-2 flex flex-col items-center sm:mt-4">
+            <p className="max-w-2xl text-center text-sm text-[var(--muted)] sm:text-base">
               Discover the latest additions to our collection.
             </p>
 
-            <Link to="/new-arrivals" className="shrink-0">
-              <Button className="min-w-[96px] sm:min-w-[108px]">View All</Button>
+            <Link
+              to="/new-arrivals"
+              className="mt-3 shrink-0 sm:absolute sm:right-0 sm:top-1/2 sm:mt-0 sm:-translate-y-1/2"
+            >
+              <Button className="min-w-[96px] px-4 py-2 text-sm sm:min-w-[108px]">
+                View All
+              </Button>
             </Link>
           </div>
         </div>
