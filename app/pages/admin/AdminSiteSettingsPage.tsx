@@ -16,6 +16,12 @@ export default function AdminSiteSettingsPage() {
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
 
+  const [instagram, setInstagram] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [youtube, setYoutube] = useState("");
+  const [pinterest, setPinterest] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+
   const [announcement, setAnnouncement] = useState("");
   const [announcementEnabled, setAnnouncementEnabled] = useState(true);
 
@@ -44,6 +50,12 @@ export default function AdminSiteSettingsPage() {
     setPhone(data.phone ?? "");
     setEmail(data.email ?? "");
     setAddress(data.address ?? "");
+
+    setInstagram(data.instagram ?? "");
+    setFacebook(data.facebook ?? "");
+    setYoutube(data.youtube ?? "");
+    setPinterest(data.pinterest ?? "");
+    setLinkedin(data.linkedin ?? "");
     setAnnouncement(data.announcement_text ?? "");
     setAnnouncementEnabled(data.announcement_enabled ?? true);
   }
@@ -151,6 +163,11 @@ export default function AdminSiteSettingsPage() {
         phone,
         email,
         address,
+        instagram,
+        facebook,
+        youtube,
+        pinterest,
+        linkedin,
         logo_url: logoUrl,
         favicon_url: faviconUrl,
         announcement_text: announcement,
@@ -269,6 +286,59 @@ export default function AdminSiteSettingsPage() {
                   Uploading favicon...
                 </p>
               )}
+            </div>
+
+            {/* SOCIAL MEDIA */}
+            <div className="border-t border-black/10 pt-6">
+              <h2 className="mb-2 text-xl font-semibold">
+                Social Media Links
+              </h2>
+
+              <p className="mb-5 text-sm text-[var(--muted)]">
+                Add your social media profile URLs. These appear as linked icons in the footer.
+              </p>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <input
+                  type="url"
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Instagram URL"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                />
+
+                <input
+                  type="url"
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Facebook URL"
+                  value={facebook}
+                  onChange={(e) => setFacebook(e.target.value)}
+                />
+
+                <input
+                  type="url"
+                  className="w-full rounded-lg border p-3"
+                  placeholder="YouTube URL"
+                  value={youtube}
+                  onChange={(e) => setYoutube(e.target.value)}
+                />
+
+                <input
+                  type="url"
+                  className="w-full rounded-lg border p-3"
+                  placeholder="Pinterest URL"
+                  value={pinterest}
+                  onChange={(e) => setPinterest(e.target.value)}
+                />
+
+                <input
+                  type="url"
+                  className="w-full rounded-lg border p-3"
+                  placeholder="LinkedIn URL"
+                  value={linkedin}
+                  onChange={(e) => setLinkedin(e.target.value)}
+                />
+              </div>
             </div>
 
             {/* ANNOUNCEMENT */}
