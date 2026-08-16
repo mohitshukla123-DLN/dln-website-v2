@@ -170,12 +170,12 @@ export default function ProductCard({
         </button>
 
       {/* Product information */}
-      <div className="bg-white p-3 sm:p-5">
-        <p className="mb-0.5 text-[9px] uppercase tracking-[0.14em] text-[var(--teal)] sm:mb-1 sm:text-[11px] sm:tracking-[0.2em]">
+      <div className="bg-white p-2.5 sm:p-5">
+        <p className="mb-0.5 text-[8px] uppercase tracking-[0.1em] text-[var(--teal)] sm:mb-1 sm:text-[11px] sm:tracking-[0.2em]">
           {product.category}
         </p>
 
-        <h3 className="line-clamp-2 text-[14px] font-semibold leading-5 text-black transition-colors group-hover:text-[var(--teal)] sm:text-base sm:leading-6">
+        <h3 className="line-clamp-2 text-[12px] font-semibold leading-4 text-black transition-colors group-hover:text-[var(--teal)] sm:text-base sm:leading-6">
           {product.name}
         </h3>
 
@@ -196,12 +196,12 @@ export default function ProductCard({
         </div>
 
         {/* Action buttons */}
-        <div className="mt-3 flex w-full flex-row gap-2 sm:mt-4 sm:gap-3">
+        <div className="mt-2 flex w-full flex-row gap-1.5 sm:mt-4 sm:gap-3">
           <Link
             to={`/products/${product.slug}`}
             className="min-w-0 flex-1"
           >
-            <Button className="flex h-full min-h-11 w-full items-center justify-center whitespace-nowrap px-2 py-2.5 text-center text-[9px] font-semibold sm:min-h-11 sm:px-4 sm:py-3 sm:text-base">
+            <Button className="flex h-full min-h-9 w-full items-center justify-center whitespace-nowrap px-2 py-1.5 text-center text-[9px] font-semibold sm:min-h-11 sm:px-4 sm:py-3 sm:text-base">
               <span className="text-[9px] font-semibold leading-none sm:text-base">
                 Details
               </span>

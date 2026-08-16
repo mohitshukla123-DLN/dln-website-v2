@@ -38,28 +38,28 @@ export default function BestSellers({ settings }: Props) {
   }
 
   return (
-    <section id="best-sellers" className="scroll-mt-20 bg-[var(--background)] py-24">
+    <section id="best-sellers" className="scroll-mt-20 bg-[var(--background)] py-12 sm:py-24">
       <Container>
 
-        <div className="mb-14 text-center">
+        <div className="mb-6 text-center sm:mb-14">
 
-          <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--teal)] sm:text-sm sm:tracking-[0.35em]">
             Best Sellers
           </p>
 
-          <h2 className="mt-4 text-4xl font-bold">
+          <h2 className="mt-1 text-2xl font-bold sm:mt-4 sm:text-4xl">
             {settings?.best_sellers_title ??
               "Our Most Loved Outfits"}
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-[var(--muted)]">
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-[var(--muted)] sm:mt-5 sm:text-base">
             {settings?.best_sellers_subtitle ??
               "Discover the designs our customers choose for weddings, receptions and special celebrations."}
           </p>
 
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
 
           {bestSellers.map((product) => (
             <ProductCard

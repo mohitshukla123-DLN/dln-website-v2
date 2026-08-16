@@ -43,27 +43,27 @@ export default function NewArrivals({ settings }: Props) {
   }
 
   return (
-    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--background)] py-24">
+    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--background)] py-12 sm:py-24">
       <Container>
 
-        <div className="relative mb-6 text-center sm:mb-8">
-          <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
+        <div className="relative mb-5 text-center sm:mb-8">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--teal)] sm:text-sm sm:tracking-[0.35em]">
             {settings?.new_arrivals_subtitle ?? "Latest Collection"}
           </p>
 
-          <h2 className="mt-2 text-4xl font-bold">
+          <h2 className="mt-1 text-2xl font-bold sm:mt-2 sm:text-4xl">
             {settings?.new_arrivals_title ?? "New Arrivals"}
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-[var(--muted)]">
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-[var(--muted)] sm:mt-5 sm:text-base">
             Discover the latest additions to our collection.
           </p>
 
         </div>
 
-        <div className="mb-6 flex justify-center sm:mb-8 sm:justify-end">
+        <div className="mb-4 flex justify-center sm:mb-8 sm:justify-end">
           <Link to="/new-arrivals">
-            <Button className="px-4 py-2 text-sm">View All</Button>
+            <Button className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm">View All</Button>
           </Link>
         </div>
 
