@@ -76,7 +76,7 @@ export default function ProductCard({
 );
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+    <article className="group relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
       <div className="relative overflow-hidden">
         {image ? (
           <div className="aspect-[4/5] overflow-hidden bg-white">
