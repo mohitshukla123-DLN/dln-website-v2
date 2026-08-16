@@ -29,18 +29,26 @@ export default function NewArrivalsPage() {
         canonical="https://dresslikenawaabs.pages.dev/new-arrivals"
       />
 
-      <section className="bg-[#5b2333] py-10 sm:py-14 text-white">
+      <section className="bg-[#5b2333] py-10 text-white sm:py-14">
         <Container>
-          <h1 className="text-3xl font-bold sm:text-5xl">
-            New Arrivals
-          </h1>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold sm:text-5xl">
+              New Arrivals
+            </h1>
 
-          <p className="mt-2 mb-8 text-white/80 sm:mt-4 sm:mb-10">
-            Discover the latest additions to our collection.
-          </p>
+            <p className="mx-auto mt-2 max-w-2xl text-sm text-white/80 sm:mt-4 sm:text-base">
+              Discover the latest additions to our collection.
+            </p>
+          </div>
+        </Container>
+      </section>
 
+      <section className="bg-[var(--background)] py-10 sm:py-16">
+        <Container>
           {loading ? (
-            <p>Loading...</p>
+            <p className="py-10 text-center text-[var(--muted)]">
+              Loading...
+            </p>
           ) : (
             <ProductGrid products={newProducts} />
           )}

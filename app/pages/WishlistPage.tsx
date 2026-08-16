@@ -65,35 +65,39 @@ export default function WishlistPage() {
           canonical="https://dresslikenawaabs.pages.dev/wishlist"
         />
 
-      <section className="bg-[#5b2333] py-10 sm:py-14 text-white">
-        <Container>
-          <div className="mb-8 sm:mb-10">
-            <h1 className="text-3xl font-bold sm:text-5xl">
-              Wishlist
-            </h1>
+      <>
+        <section className="bg-[#5b2333] py-10 sm:py-14 text-white">
+          <Container>
+            <div>
+              <h1 className="text-3xl font-bold sm:text-5xl">
+                Wishlist
+              </h1>
 
-            <p className="mt-2 text-white/80 sm:mt-4">
-              Your saved products.
-            </p>
-          </div>
-
-          {wishlistProducts.length > 0 ? (
-            <ProductGrid
-              products={wishlistProducts}
-            />
-          ) : (
-            <div className="rounded-3xl border border-dashed p-16 text-center">
-              <h2 className="text-2xl font-semibold">
-                Your wishlist is empty
-              </h2>
-
-              <p className="mt-4 text-[var(--muted)]">
-                Save products by clicking the ❤️ icon.
+              <p className="mt-2 text-white/80 sm:mt-4">
+                Your saved products.
               </p>
             </div>
-          )}
-        </Container>
-      </section>
+          </Container>
+        </section>
+
+        <section className="bg-[var(--background)] py-8 sm:py-12">
+          <Container>
+            {wishlistProducts.length > 0 ? (
+              <ProductGrid products={wishlistProducts} />
+            ) : (
+              <div className="rounded-3xl border border-dashed p-10 text-center sm:p-16">
+                <h2 className="text-2xl font-semibold">
+                  Your wishlist is empty
+                </h2>
+
+                <p className="mt-4 text-[var(--muted)]">
+                  Save products by clicking the ❤️ icon.
+                </p>
+              </div>
+            )}
+          </Container>
+        </section>
+      </>
     </>
   );
 }
