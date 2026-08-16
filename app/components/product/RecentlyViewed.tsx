@@ -36,7 +36,7 @@ export default function RecentlyViewed({ currentSlug }: Props) {
 
   return (
     <section className="mt-24 scroll-mt-20 pb-16">
-      <h2 className="mb-10 text-4xl font-bold">Recently Viewed</h2>
+      <h2 className="mb-10 text-2xl font-bold sm:text-4xl">Recently Viewed</h2>
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {recentProducts.map((product) => (

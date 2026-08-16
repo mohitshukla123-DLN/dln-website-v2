@@ -33,7 +33,7 @@ const faqs = [
 export default function ProductFAQ() {
   return (
     <section className="mt-16">
-      <h2 className="text-3xl font-bold">
+      <h2 className="text-2xl font-bold sm:text-3xl">
         Frequently Asked Questions
       </h2>
 

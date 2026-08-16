@@ -17,7 +17,7 @@ export default function ProductSection({
   return (
     <section className="py-16">
       <div className="mb-10 text-center">
-        <h2 className="text-4xl font-bold">
+        <h2 className="text-2xl font-bold sm:text-4xl">
           {title}
         </h2>
 

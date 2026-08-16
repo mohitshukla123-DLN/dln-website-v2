@@ -43,7 +43,7 @@ export default function RelatedProducts({
 
   return (
     <section className="mt-24">
-      <h2 className="mb-10 text-4xl font-bold">
+      <h2 className="mb-10 text-2xl font-bold sm:text-4xl">
         You May Also Like
       </h2>
 

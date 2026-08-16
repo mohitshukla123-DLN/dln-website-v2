@@ -25,7 +25,7 @@ export default function Newsletter({ settings }: Props) {
             Stay Updated
           </p>
 
-          <h2 className="mt-5 text-4xl font-bold">
+          <h2 className="mt-5 text-2xl font-bold sm:text-4xl">
             {settings?.newsletter_title ??
               "Join the Dress Like Nawaabs Family"}
           </h2>

@@ -33,16 +33,16 @@ export default function Testimonials({ settings }: Props) {
   }
 
   return (
-    <section id="testimonials" className="scroll-mt-20 bg-[#f3eee8] py-24">
+    <section id="testimonials" className="scroll-mt-20 bg-[#f3eee8] py-12 sm:py-24">
       <Container>
 
-        <div className="mb-14 text-center">
+        <div className="mb-7 text-center sm:mb-14">
 
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
             Testimonials
           </p>
 
-          <h2 className="mt-4 text-4xl font-bold">
+          <h2 className="mt-4 text-2xl font-bold sm:text-4xl">
             {settings?.testimonials_title ??
               "Loved by Our Customers"}
           </h2>

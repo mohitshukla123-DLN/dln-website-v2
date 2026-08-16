@@ -39,16 +39,16 @@ export default function WhyChooseUs({ settings }: Props) {
   }
 
   return (
-    <section id="why-choose-us" className="scroll-mt-20 bg-[#eee8df] py-24">
+    <section id="why-choose-us" className="scroll-mt-20 bg-[#eee8df] py-12 sm:py-24">
       <Container>
 
-        <div className="mb-14 text-center">
+        <div className="mb-7 text-center sm:mb-14">
 
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
             Why Choose Us
           </p>
 
-          <h2 className="mt-4 text-4xl font-bold">
+          <h2 className="mt-4 text-2xl font-bold sm:text-4xl">
             {settings?.why_choose_us_title ??
               "Crafted for Modern Royalty"}
           </h2>

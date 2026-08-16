@@ -201,7 +201,7 @@ export default function ProductCard({
             to={`/products/${product.slug}`}
             className="min-w-0 flex-1"
           >
-            <Button className="flex h-full min-h-9 w-full items-center justify-center whitespace-nowrap px-2 py-1.5 text-center text-[9px] font-semibold sm:min-h-11 sm:px-4 sm:py-3 sm:text-base">
+            <Button className="flex h-full min-h-9 w-full items-center justify-center whitespace-nowrap px-2 py-1.5 text-center text-[10px] font-semibold leading-4 sm:min-h-11 sm:px-4 sm:py-3 sm:text-base sm:leading-normal">
               <span className="text-[9px] font-semibold leading-none sm:text-base">
                 Details
               </span>
@@ -214,7 +214,7 @@ export default function ProductCard({
             rel="noopener noreferrer"
             className="min-w-0 flex-1"
           >
-            <Button className="flex h-full min-h-11 w-full items-center justify-center gap-1 whitespace-nowrap px-2 py-2.5 text-center text-[9px] font-semibold sm:min-h-11 sm:gap-2 sm:px-4 sm:py-3 sm:text-base">
+            <Button className="flex h-full min-h-9 w-full items-center justify-center gap-1 whitespace-nowrap px-2 py-1.5 text-center text-[10px] font-semibold leading-4 sm:min-h-11 sm:gap-2 sm:px-4 sm:py-3 sm:text-base sm:leading-normal">
               <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
                 <svg
                   viewBox="0 0 24 24"
