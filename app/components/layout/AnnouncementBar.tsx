@@ -9,27 +9,18 @@ export default function AnnouncementBar() {
     let mounted = true;
 
     async function loadAnnouncement() {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("site_settings")
         .select("announcement_text, announcement_enabled")
         .eq("id", 1)
         .single();
 
+      console.log("ANNOUNCEMENT DB:", data);
+      console.log("ANNOUNCEMENT ERROR:", error);
+
       if (!mounted) return;
 
-      const cleanedAnnouncement = (data?.announcement_text || "")
-        .replace(/wishlist/gi, "")
-        .replace(/&#(?:x2764|10084);?/gi, "")
-        .replace(/&#(?:x2665|9829);?/gi, "")
-        .replace(/[\u200B-\u200D\uFEFF]/g, "")
-        .replace(/[\u{1F000}-\u{1FAFF}]/gu, "")
-        .replace(/[\u2600-\u27BF]/gu, "")
-        .replace(/[♥♡❤❣]/gu, "")
-        .replace(/\uFE0F/gu, "")
-        .replace(/\s{2,}/g, " ")
-        .trim();
- 
-      setMessage(cleanedAnnouncement);
+      setMessage(data?.announcement_text?.trim() || "");
       setEnabled(data?.announcement_enabled ?? false);
     }
 

@@ -202,7 +202,7 @@ export default function ProductCard({
             className="min-w-0 flex-1"
           >
             <Button className="flex h-full min-h-11 w-full items-center justify-center whitespace-nowrap px-2 py-2.5 text-center text-[9px] font-semibold sm:min-h-11 sm:px-4 sm:py-3 sm:text-base">
-              <span className="whitespace-nowrap text-[9px] font-semibold leading-none sm:text-base">
+              <span className="text-[9px] font-semibold leading-none sm:text-base">
                 Details
               </span>
             </Button>
@@ -226,7 +226,6 @@ export default function ProductCard({
                 </svg>
               </span>
               <span className="whitespace-nowrap text-[9px] font-semibold leading-none sm:text-base">
-
                 Enquiry
               </span>
             </Button>
