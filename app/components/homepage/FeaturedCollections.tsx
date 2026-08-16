@@ -39,25 +39,25 @@ export default function FeaturedCollections({ settings }: Props) {
   }
 
   return (
-    <section id="featured-collections" className="scroll-mt-20 bg-[#f1eee8] py-24">
+    <section id="featured-collections" className="scroll-mt-20 bg-[#f1eee8] py-12 sm:py-24">
       <Container>
-        <div className="mb-14 text-center">
-          <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
+        <div className="mb-6 text-center sm:mb-14">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--teal)] sm:text-sm sm:tracking-[0.35em]">
             Featured
           </p>
 
-          <h2 className="mt-4 text-4xl font-bold">
+          <h2 className="mt-1 text-2xl font-bold sm:mt-4 sm:text-4xl">
             {settings?.featured_collections_title ??
               "Featured Products"}
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-[var(--muted)]">
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-[var(--muted)] sm:mt-5 sm:text-base">
             {settings?.featured_collections_subtitle ??
               "Handpicked styles selected especially for you."}
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
           {featuredProducts.map((product) => (
             <ProductCard
               key={product.id}
