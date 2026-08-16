@@ -170,7 +170,7 @@ export default function ProductCard({
         </button>
 
       {/* Product information */}
-      <div className="bg-white p-2.5 sm:p-5">
+      <div className="bg-white p-2 sm:p-4">
         <p className="mb-0.5 text-[8px] uppercase tracking-[0.1em] text-[var(--teal)] sm:mb-1 sm:text-[11px] sm:tracking-[0.2em]">
           {product.category}
         </p>
@@ -196,12 +196,12 @@ export default function ProductCard({
         </div>
 
         {/* Action buttons */}
-        <div className="mt-2 flex w-full flex-row gap-1.5 sm:mt-4 sm:gap-3">
+        <div className="mt-2 flex w-full flex-row gap-1.5 sm:mt-3 sm:gap-2.5">
           <Link
             to={`/products/${product.slug}`}
             className="min-w-0 flex-1"
           >
-            <Button className="flex h-full min-h-9 w-full items-center justify-center whitespace-nowrap px-2 py-1.5 text-center text-[10px] font-semibold leading-4 sm:min-h-11 sm:px-4 sm:py-3 sm:text-base sm:leading-normal">
+            <Button className="h-9 w-full px-2 text-[10px] leading-4 sm:h-10 sm:px-3 sm:text-sm sm:leading-5">
               <span className="text-[9px] font-semibold leading-none sm:text-base">
                 Details
               </span>
@@ -214,8 +214,8 @@ export default function ProductCard({
             rel="noopener noreferrer"
             className="min-w-0 flex-1"
           >
-            <Button className="flex h-full min-h-9 w-full items-center justify-center gap-1 whitespace-nowrap px-2 py-1.5 text-center text-[10px] font-semibold leading-4 sm:min-h-11 sm:gap-2 sm:px-4 sm:py-3 sm:text-base sm:leading-normal">
-              <span className="flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
+            <Button className="h-9 w-full gap-1 px-2 text-[10px] leading-4 sm:h-10 sm:gap-1.5 sm:px-3 sm:text-sm sm:leading-5">
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
                 <svg
                   viewBox="0 0 24 24"
                   className="h-3.5 w-3.5 sm:h-4 sm:w-4"

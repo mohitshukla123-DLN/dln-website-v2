@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap");
 
 @font-face {
   font-family: "P22 Operina Romano";
@@ -57,8 +58,8 @@ body {
     Arial,
     sans-serif;
 
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: 16px;
+  line-height: 1.55;
 
   color-scheme: light;
 
@@ -122,13 +123,15 @@ h4,
 h5,
 h6 {
   font-family:
-    "Trebuchet MS",
-    Arial,
-    sans-serif;
-  line-height: 1.2;
-  letter-spacing: 0.01em;
+    "Cormorant Garamond",
+    Georgia,
+    "Times New Roman",
+    serif;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: 0;
 }
 
 p, li, label, input, button, select, textarea {
-  font-size: 1.05rem;
+  font-size: 1rem;
 }

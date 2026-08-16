@@ -43,10 +43,10 @@ export default function NewArrivals({ settings }: Props) {
   }
 
   return (
-    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--background)] py-12 sm:py-24">
+    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--background)] py-10 sm:py-16">
       <Container>
 
-        <div className="relative mb-5 text-center sm:mb-8">
+        <div className="mb-6 text-center sm:mb-8">
           <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--teal)] sm:text-sm sm:tracking-[0.35em]">
             {settings?.new_arrivals_subtitle ?? "Latest Collection"}
           </p>
@@ -55,16 +55,15 @@ export default function NewArrivals({ settings }: Props) {
             {settings?.new_arrivals_title ?? "New Arrivals"}
           </h2>
 
-          <p className="mx-auto mt-2 max-w-2xl text-sm text-[var(--muted)] sm:mt-5 sm:text-base">
-            Discover the latest additions to our collection.
-          </p>
+          <div className="mt-2 flex flex-col items-center gap-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+            <p className="max-w-2xl text-sm text-[var(--muted)] sm:text-base">
+              Discover the latest additions to our collection.
+            </p>
 
-        </div>
-
-        <div className="mb-4 flex justify-center sm:mb-8 sm:justify-end">
-          <Link to="/new-arrivals">
-            <Button className="px-3 py-1.5 text-xs sm:px-4 sm:py-2 sm:text-sm">View All</Button>
-          </Link>
+            <Link to="/new-arrivals" className="shrink-0">
+              <Button className="min-w-[96px] sm:min-w-[108px]">View All</Button>
+            </Link>
+          </div>
         </div>
 
         <ProductGrid products={newProducts} />

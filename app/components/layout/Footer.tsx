@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Container from "../ui/Container";
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
@@ -55,171 +54,57 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="mt-24 bg-black text-white">
-      <Container className="py-16">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
+    <footer className="mt-12 bg-black text-white sm:mt-16">
+      <Container className="py-10 sm:py-12">
+        <div className="flex flex-col items-center text-center">
+          <h2 className="text-3xl font-semibold sm:text-4xl">
+            {siteName}
+          </h2>
 
-          <div>
-            <h2 className="text-2xl font-bold">
-              {siteName}
-            </h2>
+          {phone && (
+            <a
+              href={`tel:${phone.replace(/[^+\d]/g, "")}`}
+              className="mt-4 text-sm text-gray-300 transition hover:text-white sm:text-base"
+            >
+              {phone}
+            </a>
+          )}
 
-            <p className="mt-4 text-sm leading-7 text-gray-300">
-              {tagline}
-            </p>
-          </div>
-
-          {/* Quick Links */}
-
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">
-              Quick Links
-            </h3>
-
-            <ul className="space-y-3 text-gray-300">
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-
-              <li>
-                <Link to="/shop">Shop</Link>
-              </li>
-
-              <li>
-                <Link to="/about">About Us</Link>
-              </li>
-
-              <li>
-                <Link to="/contact">Contact</Link>
-              </li>
-
-              <li>
-                <Link to="/size-guide">Size Guide</Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Policies */}
-
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">
-              Policies
-            </h3>
-
-            <ul className="space-y-3 text-gray-300">
-              <li>
-                <Link to="/policies">Policies</Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">
-              Contact
-            </h3>
-
-            <div className="space-y-3 text-gray-300">
-              {phone && <p>📞 {phone}</p>}
-
-              {whatsapp && (
-                <a
-                  href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block hover:text-white"
-                >
-                  💬 WhatsApp
-                </a>
-              )}
-
-              {email && (
-                <a
-                  href={`mailto:${email}`}
-                  className="block hover:text-white"
-                >
-                  ✉️ {email}
-                </a>
-              )}
-
-              {address && <p>📍 {address}</p>}
-
-              {googleMaps && (
-                <a
-                  href={googleMaps}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block hover:text-white"
-                >
-                  View on Google Maps
-                </a>
-              )}
-
-              <div className="flex flex-wrap gap-4 pt-2">
-                {instagram && (
-                  <a
-                    href={instagram}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-white"
-                  >
-                    Instagram
-                  </a>
-                )}
-
-                {facebook && (
-                  <a
-                    href={facebook}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-white"
-                  >
-                    Facebook
-                  </a>
-                )}
-
-                {youtube && (
-                  <a
-                    href={youtube}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-white"
-                  >
-                    YouTube
-                  </a>
-                )}
-
-                {pinterest && (
-                  <a
-                    href={pinterest}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-white"
-                  >
-                    Pinterest
-                  </a>
-                )}
-
-                {linkedin && (
-                  <a
-                    href={linkedin}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-white"
-                  >
-                    LinkedIn
-                  </a>
-                )}
-              </div>
-            </div>
+          <div className="mt-5 flex items-center justify-center gap-3">
+            {instagram && (
+              <a href={instagram} target="_blank" rel="noreferrer" aria-label="Instagram"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-sm transition hover:border-white hover:bg-white hover:text-black">
+                IG
+              </a>
+            )}
+            {facebook && (
+              <a href={facebook} target="_blank" rel="noreferrer" aria-label="Facebook"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-sm transition hover:border-white hover:bg-white hover:text-black">
+                f
+              </a>
+            )}
+            {youtube && (
+              <a href={youtube} target="_blank" rel="noreferrer" aria-label="YouTube"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-sm transition hover:border-white hover:bg-white hover:text-black">
+                YT
+              </a>
+            )}
+            {pinterest && (
+              <a href={pinterest} target="_blank" rel="noreferrer" aria-label="Pinterest"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-sm transition hover:border-white hover:bg-white hover:text-black">
+                P
+              </a>
+            )}
+            {linkedin && (
+              <a href={linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-sm transition hover:border-white hover:bg-white hover:text-black">
+                in
+              </a>
+            )}
           </div>
         </div>
 
-        {/* Copyright */}
-
-        <div className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-gray-400">
+        <div className="mt-8 border-t border-white/10 pt-5 text-center text-xs text-gray-500 sm:mt-10">
           {copyrightText ||
             `© ${new Date().getFullYear()} ${siteName}. All Rights Reserved.`}
         </div>

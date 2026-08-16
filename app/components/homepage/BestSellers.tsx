@@ -38,10 +38,10 @@ export default function BestSellers({ settings }: Props) {
   }
 
   return (
-    <section id="best-sellers" className="scroll-mt-20 bg-[var(--background)] py-12 sm:py-24">
+    <section id="best-sellers" className="scroll-mt-20 bg-[var(--background)] py-10 sm:py-16">
       <Container>
 
-        <div className="mb-6 text-center sm:mb-14">
+        <div className="mb-6 text-center sm:mb-10">
 
           <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--teal)] sm:text-sm sm:tracking-[0.35em]">
             Best Sellers

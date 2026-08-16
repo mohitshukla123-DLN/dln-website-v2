@@ -39,9 +39,9 @@ export default function FeaturedCollections({ settings }: Props) {
   }
 
   return (
-    <section id="featured-collections" className="scroll-mt-20 bg-[#f1eee8] py-12 sm:py-24">
+    <section id="featured-collections" className="scroll-mt-20 bg-[#f1eee8] py-10 sm:py-16">
       <Container>
-        <div className="mb-6 text-center sm:mb-14">
+        <div className="mb-6 text-center sm:mb-10">
           <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--teal)] sm:text-sm sm:tracking-[0.35em]">
             Featured
           </p>
