@@ -29,13 +29,13 @@ export default function NewArrivalsPage() {
         canonical="https://dresslikenawaabs.pages.dev/new-arrivals"
       />
 
-      <section className="py-20">
+      <section className="bg-[#5b2333] py-10 sm:py-14 text-white">
         <Container>
-          <h1 className="text-5xl font-bold">
+          <h1 className="text-3xl font-bold sm:text-5xl">
             New Arrivals
           </h1>
 
-          <p className="mt-4 mb-10 text-[var(--muted)]">
+          <p className="mt-2 mb-8 text-white/80 sm:mt-4 sm:mb-10">
             Discover the latest additions to our collection.
           </p>
 

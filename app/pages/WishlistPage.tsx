@@ -65,14 +65,14 @@ export default function WishlistPage() {
           canonical="https://dresslikenawaabs.pages.dev/wishlist"
         />
 
-      <section className="py-20">
+      <section className="bg-[#5b2333] py-10 sm:py-14 text-white">
         <Container>
-          <div className="mb-12">
-            <h1 className="text-5xl font-bold">
+          <div className="mb-8 sm:mb-10">
+            <h1 className="text-3xl font-bold sm:text-5xl">
               Wishlist
             </h1>
 
-            <p className="mt-4 text-[var(--muted)]">
+            <p className="mt-2 text-white/80 sm:mt-4">
               Your saved products.
             </p>
           </div>

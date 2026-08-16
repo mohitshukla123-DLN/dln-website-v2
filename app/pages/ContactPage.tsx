@@ -100,7 +100,7 @@ export default function ContactPage() {
       />
 
       {/* Hero */}
-      <section className="bg-[var(--teal)] py-24 text-white">
+      <section className="bg-[var(--teal)] py-14 sm:py-20 text-white">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
             <p className="mb-4 uppercase tracking-[0.3em]">
