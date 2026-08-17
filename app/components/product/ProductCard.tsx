@@ -171,11 +171,11 @@ export default function ProductCard({
 
       {/* Product information */}
       <div className="bg-white p-2 sm:p-4">
-        <p className="mb-0.5 text-[8px] uppercase tracking-[0.1em] text-[var(--teal)] sm:mb-1 sm:text-[11px] sm:tracking-[0.2em]">
+        <p className="mb-0.5 text-[10px] uppercase tracking-[0.1em] text-[var(--teal)] sm:mb-1 sm:text-[11px] sm:tracking-[0.2em]">
           {product.category}
         </p>
 
-        <h3 className="line-clamp-2 text-[12px] font-semibold leading-4 text-black transition-colors group-hover:text-[var(--teal)] sm:text-base sm:leading-6">
+        <h3 className="line-clamp-2 text-[13px] font-semibold leading-5 text-black transition-colors group-hover:text-[var(--teal)] sm:text-base sm:leading-6">
           {product.name}
         </h3>
 
