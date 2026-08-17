@@ -1,41 +1,41 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { getSession, supabase } from "../../lib/auth";
+import { supabase } from "../../lib/auth";
 
 interface Props {
   children: React.ReactNode;
 }
 
-export default function ProtectedRoute({
-  children,
-}: Props) {
-  const [loading, setLoading] =
-    useState(true);
-
-  const [authenticated, setAuthenticated] =
-    useState(false);
+export default function ProtectedRoute({ children }: Props) {
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
     let mounted = true;
-
-    async function checkSession() {
-      const session = await getSession();
-
-      if (mounted) {
-        setAuthenticated(!!session);
-        setLoading(false);
-      }
-    }
-
-    checkSession();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
+
       setAuthenticated(!!session);
       setLoading(false);
     });
+
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (!mounted) return;
+
+        setAuthenticated(!!session);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!mounted) return;
+
+        setAuthenticated(false);
+        setLoading(false);
+      });
 
     return () => {
       mounted = false;
@@ -52,12 +52,7 @@ export default function ProtectedRoute({
   }
 
   if (!authenticated) {
-    return (
-      <Navigate
-        to="/admin/login"
-        replace
-      />
-    );
+    return <Navigate to="/admin/login" replace />;
   }
 
   return <>{children}</>;
