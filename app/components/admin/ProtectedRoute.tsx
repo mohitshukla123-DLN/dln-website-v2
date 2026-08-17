@@ -10,38 +10,23 @@ export default function ProtectedRoute({ children }: Props) {
   const [loading, setLoading] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
 
-  useEffect(() => {
-    let mounted = true;
+useEffect(() => {
+  let mounted = true;
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!mounted) return;
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (!mounted) return;
 
-      setAuthenticated(!!session);
-      setLoading(false);
-    });
+    setAuthenticated(!!session);
+    setLoading(false);
+  });
 
-    supabase.auth
-      .getSession()
-      .then(({ data: { session } }) => {
-        if (!mounted) return;
-
-        setAuthenticated(!!session);
-        setLoading(false);
-      })
-      .catch(() => {
-        if (!mounted) return;
-
-        setAuthenticated(false);
-        setLoading(false);
-      });
-
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
-  }, []);
+  return () => {
+    mounted = false;
+    subscription.unsubscribe();
+  };
+}, []);
 
   if (loading) {
     return (
