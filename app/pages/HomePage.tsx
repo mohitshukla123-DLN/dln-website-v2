@@ -79,7 +79,7 @@ export default function HomePage() {
                       loading="eager"
                       fetchPriority="high"
                       decoding="async"
-                      className="relative max-h-[560px] w-auto max-w-full object-contain max-sm:max-h-[390px]"
+                      className="relative max-h-[620px] w-auto max-w-full object-contain max-sm:max-h-[440px]"
                     />
                   </picture>
                 </div>
@@ -90,7 +90,7 @@ export default function HomePage() {
                   {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
 
-                <h1 className="hero-title mx-auto w-full max-w-none whitespace-nowrap text-[clamp(2.65rem,12.5vw,5.5rem)] font-extralight leading-[1.02] tracking-tight text-[var(--foreground)] lg:mx-0 lg:text-[clamp(3rem,5.2vw,5.5rem)]">
+                <h1 className="hero-title mx-auto w-full max-w-none whitespace-nowrap text-[clamp(3rem,14vw,6.25rem)] font-[200] leading-[1.02] tracking-tight text-[var(--foreground)] lg:mx-0 lg:text-[clamp(3.5rem,5.8vw,6rem)]">
                   {settings?.hero_title || "Dress Like Nawaabs"}
                 </h1>
 

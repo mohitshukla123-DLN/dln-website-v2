@@ -33,7 +33,7 @@ export default function Testimonials({ settings }: Props) {
   }
 
   return (
-    <section id="testimonials" className="scroll-mt-20 bg-[var(--background)] py-8 sm:py-10">
+    <section id="testimonials" className="scroll-mt-20 bg-[#f3eee8] py-10 sm:py-8 sm:py-12">
       <Container>
 
         <div className="mb-7 text-center sm:mb-7">

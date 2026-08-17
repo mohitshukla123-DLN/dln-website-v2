@@ -15,7 +15,7 @@ export default function Newsletter({ settings }: Props) {
   return (
     <section
       id="newsletter"
-      className="scroll-mt-20 bg-[var(--surface)] py-8 sm:py-10 text-[var(--foreground)]"
+      className="scroll-mt-20 bg-[var(--surface)] py-10 sm:py-8 sm:py-12 text-[var(--foreground)]"
     >
       <Container>
 

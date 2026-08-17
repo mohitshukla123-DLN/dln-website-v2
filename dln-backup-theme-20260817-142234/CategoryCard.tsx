@@ -9,7 +9,14 @@ interface Props {
 }
 
 const palette = [
-  "bg-[var(--surface)] hover:bg-[#f8eef1]",
+  "bg-[#f2e5d5] hover:bg-[#dfc4a7]",
+  "bg-[#eadce4] hover:bg-[#d6b7c8]",
+  "bg-[#efe3bf] hover:bg-[#dfca88]",
+  "bg-[#dfe9dc] hover:bg-[#bfd3b9]",
+  "bg-[#e7ddd3] hover:bg-[#d2bda8]",
+  "bg-[#e4e1d8] hover:bg-[#cfc9b8]",
+  "bg-[#eadfd2] hover:bg-[#d6c0a7]",
+  "bg-[#e7d9df] hover:bg-[#d1b4c2]",
 ];
 
 export default function CategoryCard({ category, productImages = [] }: Props) {

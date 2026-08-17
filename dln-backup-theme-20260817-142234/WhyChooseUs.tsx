@@ -39,7 +39,7 @@ export default function WhyChooseUs({ settings }: Props) {
   }
 
   return (
-    <section id="why-choose-us" className="scroll-mt-20 bg-[var(--surface)] py-8 sm:py-10">
+    <section id="why-choose-us" className="scroll-mt-20 bg-[#eee8df] py-10 sm:py-16">
       <Container>
 
         <div className="mb-7 text-center sm:mb-14">
