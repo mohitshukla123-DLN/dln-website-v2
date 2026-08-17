@@ -100,7 +100,7 @@ export default function ContactPage() {
       />
 
       {/* Hero */}
-      <section className="bg-[var(--teal)] py-14 sm:py-20 text-white">
+      <section className="bg-[var(--teal)] py-10 sm:py-14 text-white">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
             <p className="mb-4 uppercase tracking-[0.3em]">
@@ -120,9 +120,9 @@ export default function ContactPage() {
       </section>
 
       {/* Contact & Enquiry Side-by-Side */}
-      <section className="py-20">
+      <section className="py-10 sm:py-14">
         <Container>
-          <div className="grid gap-10 lg:grid-cols-2 items-start">
+          <div className="grid gap-6 lg:grid-cols-2 items-start">
             {/* Left Column: Contact Information */}
             <div>
               <h2 className="text-3xl font-bold">Contact Information</h2>

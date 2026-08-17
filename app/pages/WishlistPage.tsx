@@ -9,11 +9,8 @@ import ProductGrid from "../components/shop/ProductGrid";
 import SEO from "../components/common/SEO";
 
 export default function WishlistPage() {
-  const [products, setProducts] =
-    useState<Product[]>([]);
-
-  const [wishlist, setWishlist] =
-    useState<number[]>(getWishlist());
+  const [products, setProducts] = useState<Product[]>([]);
+  const [wishlist, setWishlist] = useState<number[]>(getWishlist());
 
   useEffect(() => {
     async function load() {
@@ -29,26 +26,12 @@ export default function WishlistPage() {
       setWishlist(getWishlist());
     }
 
-    window.addEventListener(
-      "wishlistUpdated",
-      updateWishlist
-    );
-
-    window.addEventListener(
-      "storage",
-      updateWishlist
-    );
+    window.addEventListener("wishlistUpdated", updateWishlist);
+    window.addEventListener("storage", updateWishlist);
 
     return () => {
-      window.removeEventListener(
-        "wishlistUpdated",
-        updateWishlist
-      );
-
-      window.removeEventListener(
-        "storage",
-        updateWishlist
-      );
+      window.removeEventListener("wishlistUpdated", updateWishlist);
+      window.removeEventListener("storage", updateWishlist);
     };
   }, []);
 
@@ -58,34 +41,33 @@ export default function WishlistPage() {
 
   return (
     <>
-
       <SEO
-          title="Wishlist"
-          description="View your saved Dress Like Nawaabs products."
-          canonical="https://dresslikenawaabs.pages.dev/wishlist"
-        />
+        title="Wishlist"
+        description="View your saved Dress Like Nawaabs products."
+        canonical="https://dresslikenawaabs.pages.dev/wishlist"
+      />
 
-      <>
-        <section className="bg-[#5b2333] py-10 sm:py-14 text-white">
-          <Container>
-            <div>
-              <h1 className="text-3xl font-bold sm:text-5xl">
-                Wishlist
-              </h1>
+      <section className="bg-[var(--teal)] py-8 text-white sm:py-10">
+        <Container>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold sm:text-5xl">
+              Wishlist
+            </h1>
 
-              <p className="mt-2 text-white/80 sm:mt-4">
-                Your saved products.
-              </p>
-            </div>
-          </Container>
-        </section>
+            <p className="mt-2 text-white/80 sm:mt-3">
+              Your saved products.
+            </p>
+          </div>
+        </Container>
+      </section>
 
-        <section className="bg-[var(--background)] py-8 sm:py-12">
-          <Container>
-            {wishlistProducts.length > 0 ? (
-              <ProductGrid products={wishlistProducts} />
-            ) : (
-              <div className="rounded-3xl border border-dashed p-10 text-center sm:p-16">
+      <section className="bg-[var(--background)] py-8 sm:py-12">
+        <Container>
+          {wishlistProducts.length > 0 ? (
+            <ProductGrid products={wishlistProducts} />
+          ) : (
+            <div className="flex min-h-[45vh] items-center justify-center rounded-3xl border border-dashed p-10 text-center sm:p-16">
+              <div>
                 <h2 className="text-2xl font-semibold">
                   Your wishlist is empty
                 </h2>
@@ -94,10 +76,10 @@ export default function WishlistPage() {
                   Save products by clicking the ❤️ icon.
                 </p>
               </div>
-            )}
-          </Container>
-        </section>
-      </>
+            </div>
+          )}
+        </Container>
+      </section>
     </>
   );
 }

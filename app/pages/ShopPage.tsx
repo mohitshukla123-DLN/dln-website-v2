@@ -142,9 +142,9 @@ export default function ShopPage() {
       canonical="https://dresslikenawaabs.pages.dev/shop"
     />
 
-    <section className="bg-[#5b2333] py-8 sm:py-12 lg:py-14 text-white">
+    <section className="bg-[var(--teal)] py-4 sm:py-6 text-white">
       <Container className="max-w-[1600px]">
-        <div className="mb-4 sm:mb-12">
+        <div className="mb-2 text-center sm:mb-3">
           <h1 className="text-3xl font-bold sm:text-5xl">
             Shop
           </h1>
@@ -154,6 +154,11 @@ export default function ShopPage() {
           </p>
         </div>
 
+      </Container>
+    </section>
+
+    <section className="bg-white">
+      <Container className="max-w-[1600px]">
         <SearchBar
           value={search}
           onChange={setSearch}
@@ -209,11 +214,11 @@ export default function ShopPage() {
             </p>
 
             {loading ? (
-              <div className="rounded-3xl border py-24 text-center">
+              <div className="rounded-3xl border py-14 sm:py-12 sm:py-16 text-center">
                 <p className="text-[var(--muted)]">Loading products...</p>
               </div>
             ) : loadError ? (
-              <div className="rounded-3xl border py-24 text-center">
+              <div className="rounded-3xl border py-14 sm:py-12 sm:py-16 text-center">
                 <h2 className="text-2xl font-bold">Unable to load products</h2>
                 <p className="mt-3 text-[var(--muted)]">Please check your connection and try again.</p>
                 <button

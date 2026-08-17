@@ -60,11 +60,11 @@ export default function WhyChooseUs({ settings }: Props) {
 
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => (
             <article
               key={feature.title}
-              className="rounded-3xl bg-white p-8 text-center shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
+              className="rounded-3xl bg-white p-6 text-center shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
             >
               <div className="text-5xl">
                 {feature.icon}

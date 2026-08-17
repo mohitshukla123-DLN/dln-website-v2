@@ -16,7 +16,7 @@ export default function AboutPage() {
 
       {/* Hero */}
 
-      <section className="bg-[var(--teal)] py-14 sm:py-20 text-white">
+      <section className="bg-[var(--teal)] py-10 sm:py-14 text-white">
         <Container>
           <div className="mx-auto max-w-4xl text-center">
             <p className="mb-4 uppercase tracking-[0.3em]">
@@ -40,7 +40,7 @@ export default function AboutPage() {
 
       {/* Our Story */}
 
-      <section className="py-14 sm:py-20">
+      <section className="py-10 sm:py-14">
         <Container>
           <div className="mx-auto max-w-4xl">
             <h2 className="text-4xl font-bold">
@@ -65,13 +65,13 @@ export default function AboutPage() {
 
       {/* Values */}
 
-      <section className="bg-black/5 py-14 sm:py-20">
+      <section className="bg-black/5 py-10 sm:py-14">
         <Container>
-          <h2 className="mb-8 sm:mb-10 text-center text-4xl font-bold">
+          <h2 className="mb-8 sm:mb-6 text-center text-4xl font-bold">
             Why Choose Dress Like Nawaabs
           </h2>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-3xl bg-white p-8 shadow-sm">
               <h3 className="text-xl font-semibold">
                 Premium Fabrics
@@ -120,7 +120,7 @@ export default function AboutPage() {
 
       {/* Promise */}
 
-      <section className="py-14 sm:py-20">
+      <section className="py-10 sm:py-14">
         <Container>
           <div className="mx-auto max-w-4xl text-center">
             <h2 className="text-4xl font-bold">

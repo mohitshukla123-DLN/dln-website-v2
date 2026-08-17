@@ -33,10 +33,10 @@ export default function Testimonials({ settings }: Props) {
   }
 
   return (
-    <section id="testimonials" className="scroll-mt-20 bg-[#f3eee8] py-10 sm:py-16">
+    <section id="testimonials" className="scroll-mt-20 bg-[#f3eee8] py-10 sm:py-8 sm:py-12">
       <Container>
 
-        <div className="mb-7 text-center sm:mb-14">
+        <div className="mb-7 text-center sm:mb-7">
 
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
             Testimonials
@@ -54,13 +54,13 @@ export default function Testimonials({ settings }: Props) {
 
         </div>
 
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
 
           {testimonials.map((item) => (
 
             <article
               key={item.name}
-              className="rounded-3xl bg-white p-8 shadow-sm transition hover:-translate-y-2 hover:shadow-xl"
+              className="rounded-3xl bg-white p-6 shadow-sm transition hover:-translate-y-2 hover:shadow-xl"
             >
 
               <div className="mb-5 text-3xl">
