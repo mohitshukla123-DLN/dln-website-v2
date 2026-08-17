@@ -15,9 +15,6 @@ export default function AnnouncementBar() {
         .eq("id", 1)
         .single();
 
-      console.log("ANNOUNCEMENT DB:", data);
-      console.log("ANNOUNCEMENT ERROR:", error);
-
       if (!mounted) return;
 
       setMessage(data?.announcement_text?.trim() || "");
@@ -34,7 +31,7 @@ export default function AnnouncementBar() {
   if (!enabled || !message) return null;
 
   return (
-    <div className="bg-[var(--teal)] px-4 py-3 text-center text-base font-bold leading-6 text-white sm:text-lg">
+    <div className="bg-[var(--teal)] px-4 py-3 text-center text-sm font-medium leading-6 tracking-wide text-white sm:text-base">
       {message}
     </div>
   );
