@@ -143,7 +143,7 @@ export default function ShopPage() {
     />
 
     <section className="bg-[var(--teal)] py-4 sm:py-6 text-white">
-      <Container className="max-w-[1600px]">
+      <Container className="max-w-[1680px]">
         <div className="mb-2 text-center sm:mb-3">
           <h1 className="text-3xl font-bold sm:text-5xl">
             Shop
@@ -158,7 +158,7 @@ export default function ShopPage() {
     </section>
 
     <section className="bg-white">
-      <Container className="max-w-[1600px]">
+      <Container className="max-w-[1680px]">
         <SearchBar
           value={search}
           onChange={setSearch}
@@ -177,23 +177,35 @@ export default function ShopPage() {
             </span>
           </button>
 
-          <div className={`grid grid-cols-1 gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start ${filtersOpen ? "" : ""}`}>
+          <div className={`grid grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10 lg:items-start ${filtersOpen ? "" : ""}`}>
           <aside className={`${filtersOpen ? "block" : "hidden"} space-y-5 rounded-3xl border border-black/5 bg-white p-5 shadow-sm lg:sticky lg:top-28 lg:block`}>
             <div>
               <h2 className="text-xl font-semibold">Filters</h2>
               <p className="mt-1 text-sm text-[var(--muted)]">Refine your collection.</p>
             </div>
 
-            <CategoryFilter
-              selected={category}
-              onSelect={handleCategory}
-            />
+            <div>
+              <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
+                Category
+              </h3>
+              <CategoryFilter
+                selected={category}
+                onSelect={handleCategory}
+              />
+            </div>
 
-            <SubcategoryFilter
-              category={category}
-              selected={subcategory}
-              onSelect={setSubcategory}
-            />
+            <div>
+              {category !== "All" && (
+                <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
+                  Subcategory
+                </h3>
+              )}
+              <SubcategoryFilter
+                category={category}
+                selected={subcategory}
+                onSelect={setSubcategory}
+              />
+            </div>
 
             <PriceFilter
               min={priceRange.min}
@@ -208,7 +220,7 @@ export default function ShopPage() {
           </aside>
 
           <div className="min-w-0">
-            <p className="mb-8 text-sm text-[var(--muted)]">
+            <p className="mb-6 text-sm text-[var(--muted)]">
               {filteredProducts.length} product
               {filteredProducts.length !== 1 ? "s" : ""} found
             </p>

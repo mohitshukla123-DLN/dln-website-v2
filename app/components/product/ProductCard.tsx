@@ -179,17 +179,17 @@ export default function ProductCard({
           {product.name}
         </h3>
 
-        <div className="mt-1.5 flex items-center justify-between gap-2 sm:mt-2 sm:gap-3">
-          <p className="text-base font-semibold text-black sm:text-lg">
+        <div className="mt-1.5 grid min-h-7 grid-cols-[1fr_auto] items-center gap-2 sm:mt-2 sm:min-h-8 sm:gap-3">
+          <p className="truncate text-base font-semibold text-black sm:text-lg">
             ₹{product.price.toLocaleString("en-IN")}
           </p>
 
           {product.stock === 0 && (
-            <p className="text-xs font-semibold text-red-600">Sold Out</p>
+            <p className="whitespace-nowrap text-right text-[11px] font-semibold text-red-600 sm:text-xs">Sold Out</p>
           )}
 
           {product.stock !== undefined && product.stock > 0 && product.stock <= 2 && (
-            <p className="text-xs font-semibold text-orange-600">
+            <p className="whitespace-nowrap text-right text-[11px] font-semibold text-orange-600 sm:text-xs">
               Only {product.stock} left
             </p>
           )}
