@@ -16,8 +16,8 @@ export default function CategoryFilter({
         onClick={() => onSelect("All")}
         className={`flex w-full items-center rounded-xl px-4 py-3 text-left text-sm transition ${
           selected === "All"
-            ? "bg-[var(--teal)] text-white"
-            : "border border-black/10 hover:border-[var(--teal)] hover:bg-[var(--teal)]/5"
+            ? "bg-[var(--burgundy)] text-white"
+            : "border border-black/10 hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)]/5"
         }`}
       >
         All
@@ -30,8 +30,8 @@ export default function CategoryFilter({
           onClick={() => onSelect(category.name)}
           className={`flex w-full items-center rounded-xl px-4 py-3 text-left text-sm transition ${
             selected === category.name
-              ? "bg-[var(--teal)] text-white"
-              : "border border-black/10 hover:border-[var(--teal)] hover:bg-[var(--teal)]/5"
+              ? "bg-[var(--burgundy)] text-white"
+              : "border border-black/10 hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)]/5"
           }`}
         >
           {category.name}

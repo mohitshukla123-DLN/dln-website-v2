@@ -39,8 +39,8 @@ export default function ProductSizes({
               className={`rounded-xl border px-5 py-3 transition
                 ${
                   selectedSize === size
-                    ? "border-[var(--teal)] bg-[var(--teal)] text-white"
-                    : "hover:border-[var(--teal)] hover:bg-[var(--teal)] hover:text-white"
+                    ? "border-[var(--burgundy)] bg-[var(--burgundy)] text-white"
+                    : "hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)] hover:text-white"
                 }
                 ${
                   stock === 0

@@ -15,7 +15,7 @@ export default function NotFoundPage() {
 
       <section className="py-24">
         <Container className="text-center">
-          <h1 className="text-7xl font-bold text-[var(--teal)]">
+          <h1 className="text-7xl font-bold text-[var(--burgundy)]">
             404
           </h1>
 

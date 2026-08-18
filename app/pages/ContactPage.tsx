@@ -100,7 +100,7 @@ export default function ContactPage() {
       />
 
       {/* Hero */}
-      <section className="bg-[var(--teal)] py-10 sm:py-14 text-white">
+      <section className="bg-[var(--burgundy)] py-10 sm:py-14 text-white">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
             <p className="mb-4 uppercase tracking-[0.3em]">
@@ -131,7 +131,7 @@ export default function ContactPage() {
                   <h3 className="font-semibold">📞 Phone</h3>
                   <a
                     href={`tel:${siteSettings.phone.replace(/\D/g, "")}`}
-                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
+                    className="font-medium text-[var(--burgundy)] underline underline-offset-4 transition hover:opacity-80"
                   >
                     {siteSettings.phone}
                   </a>
@@ -143,7 +143,7 @@ export default function ContactPage() {
                     href={`https://wa.me/${siteSettings.whatsapp.replace(/\D/g, "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
+                    className="font-medium text-[var(--burgundy)] underline underline-offset-4 transition hover:opacity-80"
                   >
                     {siteSettings.whatsapp}
                   </a>
@@ -153,7 +153,7 @@ export default function ContactPage() {
                   <h3 className="font-semibold">✉️ Email</h3>
                   <a
                     href={`mailto:${siteSettings.email}`}
-                    className="font-medium text-[var(--teal)] underline underline-offset-4 transition hover:opacity-80"
+                    className="font-medium text-[var(--burgundy)] underline underline-offset-4 transition hover:opacity-80"
                   >
                     {siteSettings.email}
                   </a>
@@ -235,7 +235,7 @@ export default function ContactPage() {
                 </Button>
 
                 {status && (
-                  <p className="text-center text-sm text-[var(--teal)]">
+                  <p className="text-center text-sm text-[var(--burgundy)]">
                     {status}
                   </p>
                 )}

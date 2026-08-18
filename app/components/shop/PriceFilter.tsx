@@ -35,7 +35,7 @@ export default function PriceFilter({ min, max, onChange }: Props) {
       <div className="relative h-8">
         <div className="absolute left-0 right-0 top-1/2 h-1 -translate-y-1/2 rounded-full bg-black/10" />
         <div
-          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-[var(--teal)]"
+          className="absolute top-1/2 h-1 -translate-y-1/2 rounded-full bg-[var(--burgundy)]"
           style={{
             left: `${((min - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}%`,
             right: `${100 - ((max - MIN_PRICE) / (MAX_PRICE - MIN_PRICE)) * 100}%`,

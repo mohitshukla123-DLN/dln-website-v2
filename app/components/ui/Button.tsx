@@ -13,8 +13,8 @@ export default function Button({
     <button
       {...props}
       className={clsx(
-        "inline-flex min-h-9 items-center justify-center rounded-full bg-[var(--teal)] px-4 py-1.5 text-xs leading-4 text-white font-semibold transition-all duration-300 sm:min-h-10 sm:px-5 sm:py-2 sm:text-sm sm:leading-5",
-        "hover:scale-105 hover:shadow-lg",
+        "inline-flex min-h-10 items-center justify-center rounded-full bg-[var(--burgundy)] px-5 py-2 text-sm font-semibold tracking-wide text-white shadow-sm transition-all duration-300 sm:min-h-11 sm:px-6 sm:text-base",
+        "hover:-translate-y-0.5 hover:shadow-lg",
         className
       )}
     >

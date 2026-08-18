@@ -15,7 +15,7 @@ export default function ColorFilter({
         onClick={() => onSelect("All")}
         className={`rounded-full px-4 py-2 transition ${
           selected === "All"
-            ? "bg-[var(--teal)] text-white"
+            ? "bg-[var(--burgundy)] text-white"
             : "border"
         }`}
       >
@@ -28,8 +28,8 @@ export default function ColorFilter({
           onClick={() => onSelect(color)}
           className={`rounded-full border px-4 py-2 transition ${
             selected === color
-              ? "bg-[var(--teal)] text-white"
-              : "hover:border-[var(--teal)]"
+              ? "bg-[var(--burgundy)] text-white"
+              : "hover:border-[var(--burgundy)]"
           }`}
         >
           {color}

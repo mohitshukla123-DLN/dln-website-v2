@@ -48,7 +48,7 @@ export default function EnquiryDrawer({
           />
 
           <button
-            className="w-full rounded-xl bg-[var(--teal)] py-4 text-white"
+            className="w-full rounded-xl bg-[var(--burgundy)] py-4 text-white"
           >
             Continue
           </button>

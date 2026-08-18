@@ -47,7 +47,7 @@ export default function WishlistPage() {
         canonical="https://dresslikenawaabs.pages.dev/wishlist"
       />
 
-      <section className="bg-[var(--teal)] py-8 text-white sm:py-10">
+      <section className="bg-[var(--burgundy)] py-8 text-white sm:py-10">
         <Container>
           <div className="text-center">
             <h1 className="text-3xl font-semibold sm:text-5xl">

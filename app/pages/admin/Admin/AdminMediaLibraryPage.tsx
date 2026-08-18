@@ -104,7 +104,7 @@ export default function AdminMediaLibraryPage() {
 
         <label
           htmlFor="media-upload"
-          className={`mb-8 inline-flex items-center rounded-lg bg-[var(--teal)] px-5 py-3 font-medium text-white transition ${
+          className={`mb-8 inline-flex items-center rounded-lg bg-[var(--burgundy)] px-5 py-3 font-medium text-white transition ${
             uploading
               ? "cursor-not-allowed opacity-60"
               : "cursor-pointer hover:opacity-90"

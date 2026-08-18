@@ -377,7 +377,7 @@ async function saveChanges() {
 
             <label
                 htmlFor="edit-product-images"
-                className="inline-flex cursor-pointer rounded-lg bg-[var(--teal)] px-5 py-3 font-medium text-white"
+                className="inline-flex cursor-pointer rounded-lg bg-[var(--burgundy)] px-5 py-3 font-medium text-white"
               >
                 Upload New Images
               </label>

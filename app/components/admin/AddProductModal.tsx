@@ -497,11 +497,11 @@ try {
 
   <label
         htmlFor="product-images"
-        className="group flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-[var(--teal)]/40 bg-[var(--background)] px-6 py-8 text-center transition-all duration-300 hover:border-[var(--teal)] hover:bg-[var(--teal)]/5"
+        className="group flex cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-[var(--burgundy)]/40 bg-[var(--background)] px-6 py-8 text-center transition-all duration-300 hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)]/5"
       >
         <div>
           <div className="mb-2 flex justify-center">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--teal)]/10 text-2xl text-[var(--teal)] transition-transform duration-300 group-hover:scale-110">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--burgundy)]/10 text-2xl text-[var(--burgundy)] transition-transform duration-300 group-hover:scale-110">
               ↑
             </span>
           </div>
@@ -580,7 +580,7 @@ try {
           }}
           className="flex cursor-move items-center gap-3 rounded-lg border bg-[var(--background)] p-3"
         >
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--teal)]/10 text-sm font-semibold text-[var(--teal)]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--burgundy)]/10 text-sm font-semibold text-[var(--burgundy)]">
             {index + 1}
           </div>
 

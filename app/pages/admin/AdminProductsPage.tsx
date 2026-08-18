@@ -237,7 +237,7 @@ async function bulkDelete() {
 
           <button
             onClick={() => setOpen(true)}
-            className="rounded-xl bg-[var(--teal)] px-6 py-3 font-semibold text-white"
+            className="rounded-xl bg-[var(--burgundy)] px-6 py-3 font-semibold text-white"
           >
             + Add Product
           </button>

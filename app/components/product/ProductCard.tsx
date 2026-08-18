@@ -130,7 +130,7 @@ export default function ProductCard({
           <span
             className={`absolute left-2 top-2 rounded-full px-2.5 py-1 text-[10px] font-medium sm:left-4 sm:top-4 sm:px-3 sm:text-xs ${
               product.badge === "NEW"
-                ? "bg-[var(--teal)] text-white"
+                ? "bg-[var(--burgundy)] text-white"
                 : product.badge === "BESTSELLER"
                 ? "bg-[#b08d57] text-white"
                 : product.badge === "LIMITED"
@@ -171,11 +171,11 @@ export default function ProductCard({
 
       {/* Product information */}
       <div className="bg-white p-2 sm:p-4">
-        <p className="mb-0.5 text-[10px] uppercase tracking-[0.1em] text-[var(--teal)] sm:mb-1 sm:text-[11px] sm:tracking-[0.2em]">
+        <p className="mb-0.5 text-[10px] uppercase tracking-[0.1em] text-[var(--burgundy)] sm:mb-1 sm:text-[11px] sm:tracking-[0.2em]">
           {product.category}
         </p>
 
-        <h3 className="line-clamp-2 text-[13px] font-semibold leading-5 text-black transition-colors group-hover:text-[var(--teal)] sm:text-base sm:leading-6">
+        <h3 className="line-clamp-2 text-[13px] font-semibold leading-5 text-black transition-colors group-hover:text-[var(--burgundy)] sm:text-base sm:leading-6">
           {product.name}
         </h3>
 
@@ -215,7 +215,7 @@ export default function ProductCard({
             className="min-w-0 flex-1"
           >
             <Button className="h-9 w-full gap-1 px-2 text-[10px] leading-4 sm:h-10 sm:gap-1.5 sm:px-3 sm:text-sm sm:leading-5">
-              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white text-[var(--teal)] sm:h-5 sm:w-5">
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-white text-[var(--burgundy)] sm:h-5 sm:w-5">
                 <svg
                   viewBox="0 0 24 24"
                   className="h-3.5 w-3.5 sm:h-4 sm:w-4"

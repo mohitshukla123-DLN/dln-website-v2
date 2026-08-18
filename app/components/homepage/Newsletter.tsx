@@ -45,7 +45,7 @@ export default function Newsletter({ settings }: Props) {
 
             <Button
               type="submit"
-              className="bg-[var(--teal)] !text-white hover:bg-[#641932]"
+              className="bg-[var(--burgundy)] !text-white hover:bg-[#641932]"
             >
               Subscribe
             </Button>

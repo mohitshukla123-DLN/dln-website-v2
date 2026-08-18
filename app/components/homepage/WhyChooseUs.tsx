@@ -44,7 +44,7 @@ export default function WhyChooseUs({ settings }: Props) {
 
         <div className="mb-7 text-center sm:mb-14">
 
-          <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
+          <p className="text-sm uppercase tracking-[0.35em] text-[var(--burgundy)]">
             Why Choose Us
           </p>
 

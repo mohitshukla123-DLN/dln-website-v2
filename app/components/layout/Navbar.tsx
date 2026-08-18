@@ -8,8 +8,8 @@ import { supabase } from "../../lib/supabase";
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `transition-colors ${
     isActive
-      ? "text-[var(--teal)] font-semibold"
-      : "hover:text-[var(--teal)]"
+      ? "text-[var(--burgundy)] font-semibold"
+      : "hover:text-[var(--burgundy)]"
   }`;
 
 export default function Navbar() {
@@ -33,7 +33,7 @@ export default function Navbar() {
   const currentLogo = logoUrl || fallbackLogo;
 
   return (
-  <header className="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
+  <header className="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur-md">
     <Container>
       <div className="flex h-20 items-center justify-between">
         <Link to="/" aria-label="Dress Like Nawaabs Home">

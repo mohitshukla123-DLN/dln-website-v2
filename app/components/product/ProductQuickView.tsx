@@ -62,7 +62,7 @@ export default function ProductQuickView({
 
           <div>
 
-            <p className="text-sm uppercase tracking-[0.3em] text-[var(--teal)]">
+            <p className="text-sm uppercase tracking-[0.3em] text-[var(--burgundy)]">
               {product.category}
             </p>
 
@@ -70,7 +70,7 @@ export default function ProductQuickView({
               {product.name}
             </h2>
 
-            <p className="mt-4 text-3xl font-bold text-[var(--teal)]">
+            <p className="mt-4 text-3xl font-bold text-[var(--burgundy)]">
               ₹{product.price.toLocaleString("en-IN")}
             </p>
 

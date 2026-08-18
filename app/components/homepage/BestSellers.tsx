@@ -43,7 +43,7 @@ export default function BestSellers({ settings }: Props) {
 
         <div className="mb-6 text-center sm:mb-10">
 
-          <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--teal)] sm:text-sm sm:tracking-[0.35em]">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--burgundy)] sm:text-sm sm:tracking-[0.35em]">
             Best Sellers
           </p>
 

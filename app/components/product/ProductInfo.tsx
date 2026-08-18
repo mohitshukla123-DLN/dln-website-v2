@@ -15,7 +15,7 @@ export default function ProductInfo({
 }: Props) {
   return (
     <>
-      <p className="text-sm uppercase tracking-[0.35em] text-[var(--teal)]">
+      <p className="text-sm uppercase tracking-[0.35em] text-[var(--burgundy)]">
         {category}
       </p>
 
@@ -33,7 +33,7 @@ export default function ProductInfo({
         </span>
       </div>
 
-      <p className="mt-6 text-4xl font-bold text-[var(--teal)]">
+      <p className="mt-6 text-4xl font-bold text-[var(--burgundy)]">
         ₹{price.toLocaleString("en-IN")}
       </p>
     </>

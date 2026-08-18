@@ -31,7 +31,7 @@ export default function AnnouncementBar() {
   if (!enabled || !message) return null;
 
   return (
-    <div className="bg-[var(--teal)] px-4 py-3 text-center text-sm font-medium leading-6 tracking-wide text-white sm:text-base">
+    <div className="bg-[var(--burgundy)] px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.16em] text-white sm:py-3 sm:text-sm">
       {message}
     </div>
   );

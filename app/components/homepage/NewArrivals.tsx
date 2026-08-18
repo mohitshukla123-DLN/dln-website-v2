@@ -47,7 +47,7 @@ export default function NewArrivals({ settings }: Props) {
       <Container>
 
         <div className="mb-6 text-center sm:mb-8">
-          <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--teal)] sm:text-sm sm:tracking-[0.35em]">
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--burgundy)] sm:text-sm sm:tracking-[0.35em]">
             {settings?.new_arrivals_subtitle ?? "Latest Collection"}
           </p>
 

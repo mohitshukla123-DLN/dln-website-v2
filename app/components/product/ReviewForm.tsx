@@ -99,7 +99,7 @@ export default function ReviewForm({
 
           <button
             disabled={loading}
-            className="rounded-xl bg-[var(--teal)] px-6 py-3 text-white"
+            className="rounded-xl bg-[var(--burgundy)] px-6 py-3 text-white"
           >
             {loading
               ? "Submitting..."

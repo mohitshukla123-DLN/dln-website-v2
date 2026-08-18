@@ -38,7 +38,7 @@ export default function ProductShare({
     <button
       type="button"
       onClick={handleShare}
-      className="rounded-xl border border-black/10 px-5 py-3 transition hover:border-[var(--teal)] hover:text-[var(--teal)]"
+      className="rounded-xl border border-black/10 px-5 py-3 transition hover:border-[var(--burgundy)] hover:text-[var(--burgundy)]"
     >
       {copied ? "✓ Link Copied" : "🔗 Share Product"}
     </button>

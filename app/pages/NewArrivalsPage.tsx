@@ -29,7 +29,7 @@ export default function NewArrivalsPage() {
         canonical="https://dresslikenawaabs.pages.dev/new-arrivals"
       />
 
-      <section className="bg-[var(--teal)] py-7 text-white sm:py-10">
+      <section className="bg-[var(--burgundy)] py-7 text-white sm:py-10">
         <Container>
           <div className="text-center">
             <h1 className="text-3xl font-bold sm:text-5xl">

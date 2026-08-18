@@ -142,7 +142,7 @@ export default function ShopPage() {
       canonical="https://dresslikenawaabs.pages.dev/shop"
     />
 
-    <section className="bg-[var(--teal)] py-4 sm:py-6 text-white">
+    <section className="bg-[var(--burgundy)] py-4 sm:py-6 text-white">
       <Container className="max-w-[1680px]">
         <div className="mb-2 text-center sm:mb-3">
           <h1 className="text-3xl font-bold sm:text-5xl">
@@ -236,7 +236,7 @@ export default function ShopPage() {
                 <button
                   type="button"
                   onClick={() => window.location.reload()}
-                  className="mt-6 rounded-full bg-[var(--teal)] px-6 py-3 text-white"
+                  className="mt-6 rounded-full bg-[var(--burgundy)] px-6 py-3 text-white"
                 >
                   Try Again
                 </button>

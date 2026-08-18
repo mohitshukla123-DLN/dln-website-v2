@@ -11,7 +11,7 @@ const faqs = [
         Please refer to our{" "}
         <a
           href="/size-guide"
-          className="font-semibold text-[var(--teal)] underline"
+          className="font-semibold text-[var(--burgundy)] underline"
         >
           Size Guide
         </a>{" "}

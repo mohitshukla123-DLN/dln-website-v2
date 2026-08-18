@@ -175,8 +175,8 @@ export default function ProductGallery({
               }}
               className={`shrink-0 overflow-hidden rounded-xl border-2 transition ${
                 activeImage === image
-                  ? "border-[var(--teal)]"
-                  : "border-transparent hover:border-[var(--teal)]"
+                  ? "border-[var(--burgundy)]"
+                  : "border-transparent hover:border-[var(--burgundy)]"
               }`}
               aria-label={`View image ${index + 1}`}
             >

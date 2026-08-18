@@ -16,7 +16,7 @@ export default function AboutPage() {
 
       {/* Hero */}
 
-      <section className="bg-[var(--teal)] py-10 sm:py-14 text-white">
+      <section className="bg-[var(--burgundy)] py-10 sm:py-14 text-white">
         <Container>
           <div className="mx-auto max-w-4xl text-center">
             <p className="mb-4 uppercase tracking-[0.3em]">
