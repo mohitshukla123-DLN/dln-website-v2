@@ -60,7 +60,7 @@ export default function HomePage() {
       {settings?.hero_enabled !== false && (
         <section className="relative overflow-hidden bg-white">
           <Container>
-            <div className="grid min-h-[680px] w-full items-center justify-items-center gap-8 py-10 sm:gap-10 sm:py-12 lg:-translate-x-16 lg:grid-cols-2 lg:justify-items-stretch lg:gap-20 lg:py-20">
+            <div className="grid min-h-[680px] w-full items-center justify-items-center gap-8 py-10 sm:gap-10 sm:py-12 lg:-translate-x-32 lg:grid-cols-2 lg:justify-items-stretch lg:gap-20 lg:py-20">
               <div className="order-1 flex w-full justify-center lg:order-none lg:justify-start">
                 <div className="relative">
                   <div className="absolute inset-10 rounded-full bg-[var(--burgundy)]/8 blur-3xl" />
@@ -90,7 +90,7 @@ export default function HomePage() {
                   {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
 
-                <h1 className="hero-title mx-auto w-full max-w-none whitespace-nowrap text-[clamp(2.4rem,11vw,6.25rem)] font-[200] leading-[1.02] tracking-tight text-[var(--foreground)] lg:mx-0 lg:text-[clamp(3.5rem,5.8vw,6rem)]">
+                <h1 className="hero-title mx-auto w-full max-w-none whitespace-nowrap text-[clamp(2.7rem,12vw,7rem)] text-[var(--foreground)] lg:mx-0 lg:text-[clamp(4rem,6.2vw,6.75rem)]">
                   {settings?.hero_title || "Dress Like Nawaabs"}
                 </h1>
 
