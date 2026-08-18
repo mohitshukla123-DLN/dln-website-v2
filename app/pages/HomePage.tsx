@@ -60,8 +60,8 @@ export default function HomePage() {
       {settings?.hero_enabled !== false && (
         <section className="relative overflow-hidden bg-white">
           <Container>
-            <div className="grid min-h-[680px] items-center gap-10 py-12 lg:grid-cols-2 lg:gap-20 lg:py-20">
-              <div className="order-1 flex justify-center lg:order-none lg:justify-start">
+            <div className="grid min-h-[680px] w-full items-center justify-items-center gap-8 py-10 sm:gap-10 sm:py-12 lg:grid-cols-2 lg:justify-items-stretch lg:gap-20 lg:py-20">
+              <div className="order-1 flex w-full justify-center lg:order-none lg:justify-start">
                 <div className="relative">
                   <div className="absolute inset-10 rounded-full bg-[var(--teal)]/8 blur-3xl" />
 
@@ -85,7 +85,7 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="order-2 flex max-w-2xl flex-col justify-center text-center lg:order-none lg:min-h-[560px] lg:justify-center lg:text-left">
+              <div className="order-2 flex w-full max-w-2xl flex-col items-center justify-center text-center lg:order-none lg:items-start lg:min-h-[560px] lg:justify-center lg:text-left">
                 <p className="mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-[var(--teal)] sm:mb-6">
                   {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
