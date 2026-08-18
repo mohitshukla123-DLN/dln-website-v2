@@ -29,7 +29,7 @@ export default function CategoryCard({ category, productImages = [] }: Props) {
 
     return () => window.clearInterval(interval);
   }, [images.length]);
-  const colorClass = "bg-[var(--surface)] hover:bg-[#f8eef1]";
+  const colorClass = "bg-[var(--surface)] hover:bg-[#f3e5e9]";
 
   return (
     <Link
