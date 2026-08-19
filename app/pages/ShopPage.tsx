@@ -27,18 +27,22 @@ export default function ShopPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
-  const params = new URLSearchParams();
+      const params = new URLSearchParams();
 
-  if (category !== "All") {
-    params.set("category", category);
-  }
+      if (category !== "All") {
+        params.set("category", category);
+      } else {
+        params.delete("category");
+      }
 
-  if (subcategory !== "All") {
-    params.set("subcategory", subcategory);
-  }
+      if (subcategory !== "All") {
+        params.set("subcategory", subcategory);
+      } else {
+        params.delete("subcategory");
+      }
 
-  setSearchParams(params);
-}, [category, subcategory, setSearchParams]);
+      setSearchParams(params, { replace: true });
+    }, [category, subcategory, searchParams, setSearchParams]);
 
 
   useEffect(() => {
@@ -132,6 +136,14 @@ export default function ShopPage() {
     setSubcategory("All");
   }
 
+  function resetFilters() {
+    setSearch("");
+    setCategory("All");
+    setSubcategory("All");
+    setSort("featured");
+    setPriceRange({ min: 100, max: 5000 });
+    setFiltersOpen(false);
+  }
 
   return (
 
@@ -169,12 +181,22 @@ export default function ShopPage() {
             type="button"
             onClick={() => setFiltersOpen((open) => !open)}
             aria-expanded={filtersOpen}
-            className="mb-3 flex w-full items-center justify-between rounded-xl border border-black/10 bg-white px-4 py-2.5 text-left shadow-sm lg:hidden"
+            className="mb-3 flex w-full items-center justify-between rounded-xl border border-black/10 bg-white px-4 py-2.5 text-left text-sm shadow-sm lg:hidden"
           >
             <span className="text-sm font-semibold">Filters & Sort</span>
             <span className="text-lg text-[var(--muted)]" aria-hidden="true">
               {filtersOpen ? "↑" : "↓"}
             </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-4 py-2 text-sm font-medium text-[var(--muted)] shadow-sm transition hover:border-[var(--burgundy)] hover:text-[var(--burgundy)] lg:hidden"
+            aria-label="Reset all filters"
+          >
+            <span aria-hidden="true">↻</span>
+            Reset Filters
           </button>
 
           <div className={`grid grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10 lg:items-start ${filtersOpen ? "" : ""}`}>

@@ -53,7 +53,7 @@ export default function SearchBar({
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         placeholder="Search by product, category, colour..."
-        className="w-full rounded-2xl border border-black/10 px-5 py-4 outline-none transition focus:border-[var(--burgundy)]"
+        className="w-full rounded-xl border border-black/10 px-4 py-2.5 text-sm outline-none transition focus:border-[var(--burgundy)] sm:px-5 sm:py-3"
       />
 
       {focused && value.trim() && suggestions.length > 0 && (
