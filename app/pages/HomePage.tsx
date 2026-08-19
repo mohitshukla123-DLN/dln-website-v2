@@ -60,7 +60,7 @@ export default function HomePage() {
       {settings?.hero_enabled !== false && (
         <section className="relative overflow-hidden bg-white">
           <Container>
-            <div className="grid min-h-[680px] w-full items-center justify-items-center gap-8 py-10 sm:gap-10 sm:py-12 lg:min-h-[720px] lg:grid-cols-2 lg:justify-items-stretch lg:gap-12 lg:py-20">
+            <div className="grid min-h-[680px] w-full items-center justify-items-center gap-8 py-10 sm:gap-10 sm:py-12 lg:min-h-[720px] lg:grid-cols-2 lg:justify-items-stretch lg:gap-16 lg:py-20">
               <div className="order-1 flex w-full justify-center lg:order-none lg:justify-start">
                 <div className="relative">
                   <div className="absolute inset-10 rounded-full bg-[var(--burgundy)]/8 blur-3xl" />
