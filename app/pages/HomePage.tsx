@@ -90,7 +90,7 @@ export default function HomePage() {
                   {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
                 </p>
 
-                <h1 className="hero-title mx-auto w-full max-w-none whitespace-nowrap text-[clamp(2.7rem,12vw,7rem)] text-[var(--foreground)] lg:mx-0 lg:text-[clamp(4rem,6.2vw,6.75rem)]">
+                <h1 className="hero-title mx-auto w-full max-w-none whitespace-nowrap text-[clamp(2.5rem,11vw,6.5rem)] text-[var(--foreground)] lg:mx-0 lg:text-[clamp(4rem,6.2vw,6.75rem)]">
                   {settings?.hero_title || "Dress Like Nawaabs"}
                 </h1>
 
