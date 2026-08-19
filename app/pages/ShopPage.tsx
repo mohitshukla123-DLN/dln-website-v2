@@ -173,15 +173,17 @@ export default function ShopPage() {
           >
             <span className="font-semibold">Filters & Sort</span>
             <span className="text-xl text-[var(--muted)]" aria-hidden="true">
-              {filtersOpen ? "−" : "+"}
+              {filtersOpen ? "↑" : "↓"}
             </span>
           </button>
 
           <div className={`grid grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10 lg:items-start ${filtersOpen ? "" : ""}`}>
-          <aside className={`${filtersOpen ? "block" : "hidden"} max-h-[55vh] overflow-y-auto space-y-5 rounded-3xl border border-black/5 bg-white p-4 shadow-sm lg:sticky lg:top-28 lg:max-h-none lg:overflow-visible lg:block`}>
-            <div>
-              <h2 className="text-xl font-semibold">Filters</h2>
-              <p className="mt-1 text-sm text-[var(--muted)]">Refine your collection.</p>
+          <aside className={`${filtersOpen ? "block" : "hidden"} space-y-4 rounded-3xl border border-black/5 bg-white p-4 shadow-sm lg:sticky lg:top-28 lg:block`}>
+           <div>
+              <h2 className="text-lg font-semibold">Filters</h2>
+              <p className="mt-1 hidden text-sm text-[var(--muted)] lg:block">
+                Refine your collection.
+              </p>
             </div>
 
             <div>
