@@ -27,22 +27,32 @@ export default function ShopPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
-      const params = new URLSearchParams();
+    const categoryFromUrl = searchParams.get("category");
+    const subcategoryFromUrl = searchParams.get("subcategory");
 
-      if (category !== "All") {
-        params.set("category", category);
-      } else {
-        params.delete("category");
-      }
+    if (categoryFromUrl) {
+      setCategory(categoryFromUrl);
+    }
 
-      if (subcategory !== "All") {
-        params.set("subcategory", subcategory);
-      } else {
-        params.delete("subcategory");
-      }
+    if (subcategoryFromUrl) {
+      setSubcategory(subcategoryFromUrl);
+    }
+  }, []);
 
-      setSearchParams(params, { replace: true });
-    }, [category, subcategory, searchParams, setSearchParams]);
+
+  useEffect(() => {
+  const params = new URLSearchParams();
+
+  if (category !== "All") {
+    params.set("category", category);
+  }
+
+  if (subcategory !== "All") {
+    params.set("subcategory", subcategory);
+  }
+
+  setSearchParams(params, { replace: true });
+}, [category, subcategory, setSearchParams]);
 
 
   useEffect(() => {
@@ -181,26 +191,16 @@ export default function ShopPage() {
             type="button"
             onClick={() => setFiltersOpen((open) => !open)}
             aria-expanded={filtersOpen}
-            className="mb-3 flex w-full items-center justify-between rounded-xl border border-black/10 bg-white px-4 py-2.5 text-left text-sm shadow-sm lg:hidden"
+            className="mb-1.5 flex w-full items-center justify-between rounded-lg border border-black/10 bg-white px-3 py-1.5 text-left text-[11px] shadow-sm lg:hidden"
           >
-            <span className="text-sm font-semibold">Filters & Sort</span>
-            <span className="text-lg text-[var(--muted)]" aria-hidden="true">
+            <span className="font-semibold">Filters & Sort</span>
+            <span className="text-sm text-[var(--muted)]" aria-hidden="true">
               {filtersOpen ? "↑" : "↓"}
             </span>
           </button>
 
-          <button
-            type="button"
-            onClick={resetFilters}
-            className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 bg-white px-4 py-2 text-sm font-medium text-[var(--muted)] shadow-sm transition hover:border-[var(--burgundy)] hover:text-[var(--burgundy)] lg:hidden"
-            aria-label="Reset all filters"
-          >
-            <span aria-hidden="true">↻</span>
-            Reset Filters
-          </button>
-
           <div className={`grid grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10 lg:items-start ${filtersOpen ? "" : ""}`}>
-          <aside className={`${filtersOpen ? "block" : "hidden"} space-y-4 rounded-3xl border border-black/5 bg-white p-4 shadow-sm lg:sticky lg:top-28 lg:block`}>
+          <aside className={`${filtersOpen ? "block" : "hidden"} space-y-2 rounded-2xl border border-black/5 bg-white p-3 shadow-sm lg:sticky lg:top-28 lg:block`}>
            <div>
               <h2 className="text-lg font-semibold">Filters</h2>
               <p className="mt-1 hidden text-sm text-[var(--muted)] lg:block">
@@ -241,6 +241,17 @@ export default function ShopPage() {
               value={sort}
               onChange={setSort}
             />
+
+            <button
+              type="button"
+              onClick={resetFilters}
+              aria-label="Reset filters"
+              className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 px-3 py-1.5 text-xs font-medium text-[var(--muted)] transition hover:border-[var(--burgundy)] hover:text-[var(--burgundy)]"
+            >
+              <span aria-hidden="true">↻</span>
+              Reset
+            </button>
+
           </aside>
 
           <div className="min-w-0">
