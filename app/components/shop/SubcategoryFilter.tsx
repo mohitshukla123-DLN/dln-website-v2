@@ -24,7 +24,7 @@ export default function SubcategoryFilter({
       <button
         type="button"
         onClick={() => onSelect("All")}
-        className={`flex w-full items-center rounded-xl px-2.5 py-1.5 text-left text-[11px] transition ${
+        className={`flex w-full items-center rounded-xl px-2 py-1 text-left text-[10px] transition ${
           selected === "All"
             ? "bg-[var(--burgundy)] text-white"
             : "border border-black/10 hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)]/5"
@@ -38,7 +38,7 @@ export default function SubcategoryFilter({
           type="button"
           key={item}
           onClick={() => onSelect(item)}
-          className={`flex w-full items-center rounded-xl px-2.5 py-1.5 text-left text-[11px] transition ${
+          className={`flex w-full items-center rounded-xl px-2 py-1 text-left text-[10px] transition ${
             selected === item
               ? "bg-[var(--burgundy)] text-white"
               : "border border-black/10 hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)]/5"
