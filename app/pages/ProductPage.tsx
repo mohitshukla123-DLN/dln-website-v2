@@ -229,9 +229,9 @@ export default function ProductPage() {
         ].join(", ")}
       />
 
-      <section className="py-20">
+      <section className="py-10 sm:py-14 lg:py-16">
         <Container>
-          <div className="grid gap-8 lg:grid-cols-2 lg:gap-16">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
 
             <div className="relative">
               <ProductGallery

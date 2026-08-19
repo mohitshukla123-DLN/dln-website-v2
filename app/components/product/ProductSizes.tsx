@@ -21,7 +21,7 @@ export default function ProductSizes({
   ];
 
   return (
-    <div className="mt-10">
+    <div className="mt-7">
       <p className="mb-4 font-semibold">
         Select Size
       </p>

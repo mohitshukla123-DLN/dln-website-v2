@@ -6,7 +6,7 @@ export default function ProductSpecifications({
   specifications,
 }: Props) {
   return (
-    <div className="mt-12">
+    <div className="mt-8">
       <h2 className="text-2xl font-semibold">
         Product Details
       </h2>

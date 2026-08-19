@@ -98,7 +98,7 @@ export default function ProductGallery({
     <div>
       {/* Main image */}
       <div
-          className="group relative aspect-[4/5] w-full max-w-[620px] overflow-hidden rounded-2xl bg-[var(--background)]"
+          className="group relative aspect-[4/5] w-full max-w-[560px] overflow-hidden rounded-2xl bg-[var(--background)]"
           onMouseMove={handleMouseMove}
           onMouseLeave={resetZoom}
         >
@@ -118,7 +118,7 @@ export default function ProductGallery({
             decoding="async"
             fetchPriority="high"
             onLoad={() => setImageLoaded(true)}
-            className="h-full w-full object-contain transition-all duration-500"
+            className="h-full w-full object-contain transition-transform duration-500"
             style={zoomStyle}
           />
         </button>

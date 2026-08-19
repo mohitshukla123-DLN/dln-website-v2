@@ -49,7 +49,7 @@ export default function ProductActions({
   : "#";
 
   return (
-    <div className="mt-10 flex flex-row gap-3">
+    <div className="mt-7 flex flex-row gap-3">
       <a
         className="min-w-0 flex-1"
         href={whatsappLink}
