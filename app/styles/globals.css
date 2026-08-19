@@ -115,13 +115,13 @@ button {
     Georgia,
     "Times New Roman",
     serif;
-  font-weight: 400;
+  font-weight: 300;
   font-style: normal;
   letter-spacing: 0.015em;
   white-space: nowrap;
   overflow-wrap: normal;
   text-wrap: nowrap;
-  line-height: 0.95;
+  line-height: 1;
   text-rendering: geometricPrecision;
 }
 

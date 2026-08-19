@@ -59,46 +59,54 @@ export default function HomePage() {
       {/* Hero Section */}
       {settings?.hero_enabled !== false && (
         <section className="relative overflow-hidden bg-white">
-          <Container>
-            <div className="grid min-h-[680px] w-full items-center justify-items-center gap-8 py-10 sm:gap-10 sm:py-12 lg:min-h-[720px] lg:grid-cols-2 lg:justify-items-stretch lg:gap-16 lg:py-20">
-              <div className="order-1 flex w-full justify-center lg:order-none lg:justify-start">
-                <div className="relative">
-                  <div className="absolute inset-10 rounded-full bg-[var(--burgundy)]/8 blur-3xl" />
+        <Container>
+          <div className="grid min-h-[680px] w-full items-center gap-8 py-10 sm:gap-10 sm:py-12 lg:min-h-[720px] lg:-translate-x-28 lg:grid-cols-2 lg:gap-16 lg:py-20">
 
-                  <picture>
-                    <source
-                      media="(max-width: 639px)"
-                      srcSet={heroImage400}
-                    />
+            {/* Hero image */}
+            <div className="flex w-full justify-center lg:justify-end">
+              <div className="relative">
+                <div className="absolute inset-10 rounded-full bg-[var(--burgundy)]/8 blur-3xl" />
 
-                    <img
-                      src={heroImage800}
-                      alt={settings?.hero_title || "Dress Like Nawaabs"}
-                      width={800}
-                      height={806}
-                      loading="eager"
-                      fetchPriority="high"
-                      decoding="async"
-                      className="relative max-h-[680px] w-auto max-w-full object-contain max-sm:max-h-[460px] lg:max-h-[700px]"
-                    />
-                  </picture>
-                </div>
+                <picture>
+                  <source
+                    media="(max-width: 639px)"
+                    srcSet={heroImage400}
+                  />
+
+                  <img
+                    src={heroImage800}
+                    alt={settings?.hero_title || "Dress Like Nawaabs"}
+                    width={800}
+                    height={806}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    className="relative max-h-[680px] w-auto max-w-full object-contain max-sm:max-h-[460px] lg:max-h-[700px]"
+                  />
+                </picture>
               </div>
+            </div>
 
-              <div className="order-2 flex w-full max-w-2xl flex-col items-center justify-center text-center lg:order-none lg:items-start lg:min-h-[560px] lg:justify-center lg:text-left">
-                <p className="mb-5 text-sm font-bold uppercase tracking-[0.28em] text-[var(--burgundy)] sm:mb-6">
-                  {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
-                </p>
+            {/* Hero content */}
+            <div className="flex w-full justify-center lg:justify-start">
+             <div className="flex w-full max-w-2xl flex-col items-center text-center">
+                <p className="w-full text-center text-sm font-bold uppercase tracking-[0.28em] text-[var(--burgundy)] sm:text-base">
+                    {settings?.hero_subtitle || "Luxury Indian Ethnic Wear"}
+                  </p>
 
-                <h1 className="hero-title mx-auto w-full max-w-none whitespace-nowrap text-[clamp(2.7rem,11vw,6.8rem)] text-[var(--foreground)] lg:mx-0 lg:text-[clamp(4.25rem,6.4vw,7rem)]">
-                  {settings?.hero_title || "Dress Like Nawaabs"}
-                </h1>
+                  <div className="mt-8 flex w-full justify-center">
+                    <h1 className="hero-title relative top-[18px] w-full text-center whitespace-nowrap text-[clamp(2.7rem,11vw,6.8rem)] font-normal leading-none tracking-[0.025em] text-black lg:text-[clamp(3.75rem,5.6vw,6.2rem)]">
+                      {settings?.hero_title || "Dress Like Nawaabs"}
+                    </h1>
+                  </div>
 
-                <p className="mx-auto mt-2 max-w-xl text-base leading-7 text-[var(--muted)] sm:mt-3 sm:text-lg sm:leading-8 lg:mx-0 lg:mt-3 lg:text-xl lg:leading-9">
-                  Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions.
-                </p>
+                  <div className="mt-8 w-full max-w-xl text-center">
+                    <p className="text-base leading-7 text-[var(--muted)] sm:text-lg sm:leading-8 lg:text-xl lg:leading-9">
+                      Timeless craftsmanship inspired by royal heritage. Discover handcrafted ethnic wear designed for weddings, celebrations and unforgettable occasions.
+                    </p>
+                  </div>
 
-                <div className="mt-10">
+                <div className="mt-10 flex w-full justify-center">
                   <Button
                     onClick={() => navigate(settings?.hero_button_url || "/shop")}
                   >
@@ -107,8 +115,10 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          </Container>
-        </section>
+
+          </div>
+        </Container>
+      </section>
       )}
 
       {/* Below-the-fold sections */}
