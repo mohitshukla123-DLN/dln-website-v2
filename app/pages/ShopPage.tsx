@@ -178,7 +178,7 @@ export default function ShopPage() {
           </button>
 
           <div className={`grid grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10 lg:items-start ${filtersOpen ? "" : ""}`}>
-          <aside className={`${filtersOpen ? "block" : "hidden"} space-y-5 rounded-3xl border border-black/5 bg-white p-5 shadow-sm lg:sticky lg:top-28 lg:block`}>
+          <aside className={`${filtersOpen ? "block" : "hidden"} max-h-[55vh] overflow-y-auto space-y-5 rounded-3xl border border-black/5 bg-white p-4 shadow-sm lg:sticky lg:top-28 lg:max-h-none lg:overflow-visible lg:block`}>
             <div>
               <h2 className="text-xl font-semibold">Filters</h2>
               <p className="mt-1 text-sm text-[var(--muted)]">Refine your collection.</p>
