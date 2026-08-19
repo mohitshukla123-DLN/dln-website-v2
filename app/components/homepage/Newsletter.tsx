@@ -7,48 +7,47 @@ interface Props {
 }
 
 export default function Newsletter({ settings }: Props) {
-
   if (settings?.newsletter_enabled === false) {
     return null;
   }
 
-    return (
-    <section
-      id="newsletter"
-      className="scroll-mt-20 bg-[var(--surface)] py-8 text-[var(--foreground)] sm:py-10"
-    >
-      <Container>
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="uppercase tracking-[0.35em]">
-            Stay Updated
-          </p>
+  return (
+   <section
+  id="newsletter"
+  className="scroll-mt-20 bg-[var(--background)] py-14 text-[var(--foreground)] sm:py-20 lg:py-24"
+>
+  <Container>
+    <div className="mx-auto max-w-3xl text-center">
+      <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[var(--burgundy)] sm:text-sm">
+        Stay Updated
+      </p>
 
-          <h2 className="mt-5 text-2xl font-bold sm:text-4xl">
-            {settings?.newsletter_title ??
-              "Join the Dress Like Nawaabs Family"}
-          </h2>
+      <h2 className="mt-4 font-serif text-3xl font-normal leading-tight tracking-wide sm:mt-5 sm:text-5xl">
+        {settings?.newsletter_title ??
+          "Join the Dress Like Nawaabs Family"}
+      </h2>
 
-          <p className="mt-6 text-[1.05rem] leading-8 text-[var(--muted)]">
-            {settings?.newsletter_subtitle ??
-              "Be the first to know about new arrivals, exclusive collections, wedding style inspiration and special offers."}
-          </p>
+      <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-[var(--muted)] sm:mt-6 sm:text-base sm:leading-8">
+        {settings?.newsletter_subtitle ??
+          "Be the first to know about new arrivals, exclusive collections, wedding style inspiration and special offers."}
+      </p>
 
-          <form className="mx-auto mt-10 flex max-w-xl flex-col gap-4 sm:flex-row">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 rounded-full px-6 py-4 text-black outline-none"
-            />
+      <form className="mx-auto mt-8 flex max-w-xl flex-col gap-3 sm:mt-10 sm:flex-row">
+        <input
+          type="email"
+          placeholder="Enter your email"
+          className="min-h-12 flex-1 rounded-full border border-black/10 bg-white px-5 text-sm text-black placeholder:text-black/40 outline-none transition focus:border-[var(--burgundy)] focus:ring-2 focus:ring-[var(--burgundy)]/10 sm:px-6"
+        />
 
-            <Button
-              type="submit"
-              className="bg-[var(--burgundy)] !text-white hover:bg-[#641932]"
-            >
-              Subscribe
-            </Button>
-          </form>
-        </div>
-      </Container>
-    </section>
+        <Button
+          type="submit"
+          className="min-h-12 bg-[var(--burgundy)] !text-white hover:bg-[#641932]"
+        >
+          Subscribe
+        </Button>
+      </form>
+    </div>
+  </Container>
+</section>
   );
 }

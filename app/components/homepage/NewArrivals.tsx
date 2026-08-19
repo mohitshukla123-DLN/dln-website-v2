@@ -43,7 +43,7 @@ export default function NewArrivals({ settings }: Props) {
   }
 
   return (
-    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--background)] py-10 sm:py-16">
+    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--surface)] py-10 sm:py-16">
       <Container>
 
         <div className="mb-6 text-center sm:mb-8">
