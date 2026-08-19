@@ -29,12 +29,12 @@ export default function CategoryCard({ category, productImages = [] }: Props) {
 
     return () => window.clearInterval(interval);
   }, [images.length]);
-  const colorClass = "bg-[var(--surface)] hover:bg-[#f3e5e9]";
+  const colorClass = "bg-[#f8eef1] sm:bg-[var(--surface)] sm:hover:bg-[#f3e5e9]";
 
   return (
     <Link
       to={`/category/${category.slug}`}
-      className="group overflow-hidden rounded-2xl sm:rounded-3xl"
+      className="group overflow-hidden rounded-2xl border border-black/10 sm:rounded-3xl"
     >
       <div className="overflow-hidden">
         <img
