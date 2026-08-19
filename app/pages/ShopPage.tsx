@@ -157,22 +157,22 @@ export default function ShopPage() {
       </Container>
     </section>
 
-    <section className="bg-white">
+    <section className="bg-white pt-4 sm:pt-6">
       <Container className="max-w-[1680px]">
         <SearchBar
           value={search}
           onChange={setSearch}
         />
 
-        <div className="mb-8 lg:mb-10">
+        <div className="mb-6 lg:mb-10">
           <button
             type="button"
             onClick={() => setFiltersOpen((open) => !open)}
             aria-expanded={filtersOpen}
-            className="mb-4 flex w-full items-center justify-between rounded-2xl border border-black/10 bg-white px-5 py-4 text-left shadow-sm lg:hidden"
+            className="mb-3 flex w-full items-center justify-between rounded-xl border border-black/10 bg-white px-4 py-2.5 text-left shadow-sm lg:hidden"
           >
-            <span className="font-semibold">Filters & Sort</span>
-            <span className="text-xl text-[var(--muted)]" aria-hidden="true">
+            <span className="text-sm font-semibold">Filters & Sort</span>
+            <span className="text-lg text-[var(--muted)]" aria-hidden="true">
               {filtersOpen ? "↑" : "↓"}
             </span>
           </button>
