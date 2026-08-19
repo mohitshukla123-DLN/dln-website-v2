@@ -19,7 +19,7 @@ export default function Newsletter({ settings }: Props) {
     >
       <Container>
 
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="mx-auto max-w-4xl rounded-3xl border border-black/10 bg-[var(--background)] px-6 py-10 text-center shadow-sm sm:px-12 sm:py-14"></div><div className="mx-auto max-w-3xl text-center">
 
           <p className="uppercase tracking-[0.35em]">
             Stay Updated
@@ -40,7 +40,7 @@ export default function Newsletter({ settings }: Props) {
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 rounded-full px-6 py-4 text-black outline-none"
+              className="flex-1 rounded-full border border-black/10 bg-white px-6 py-4 text-[var(--foreground)] outline-none transition focus:border-[var(--burgundy)] focus:ring-2 focus:ring-[var(--burgundy)]/10"
             />
 
             <Button
