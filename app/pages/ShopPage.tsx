@@ -191,10 +191,10 @@ export default function ShopPage() {
             type="button"
             onClick={() => setFiltersOpen((open) => !open)}
             aria-expanded={filtersOpen}
-            className="mb-1 flex w-full items-center justify-between rounded-lg border border-black/10 bg-white px-2.5 py-1 text-left text-[10px] shadow-sm lg:hidden"
+            className="mb-1 flex w-full items-center justify-between rounded-lg border border-black/10 bg-white px-2 py-0.5 text-left text-[9px] shadow-sm lg:hidden"
           >
             <span className="font-semibold">Filters & Sort</span>
-            <span className="text-xs text-[var(--muted)]" aria-hidden="true">
+            <span className="text-[10px] text-[var(--muted)]" aria-hidden="true">
               {filtersOpen ? "↑" : "↓"}
             </span>
           </button>
