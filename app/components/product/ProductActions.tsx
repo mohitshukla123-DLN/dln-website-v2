@@ -22,12 +22,17 @@ export default function ProductActions({
   selectedSize,
 }: Props) {
   const [wishlisted, setWishlisted] = useState(
-    getWishlist().includes(product.id)
-  );
+  getWishlist().includes(product.id)
+);
+const [sizeError, setSizeError] = useState(false);
 
   function requireSize() {
-    alert("Please select a size.");
-  }
+  setSizeError(true);
+
+  setTimeout(() => {
+    setSizeError(false);
+  }, 2500);
+}
 
   function handleWishlist() {
     const next = toggleWishlist(product.id);
@@ -49,7 +54,14 @@ export default function ProductActions({
   : "#";
 
   return (
-    <div className="mt-7 flex flex-row gap-3">
+  <div className="mt-10">
+    {sizeError && (
+      <p className="mb-3 text-sm font-medium text-red-600">
+        Please select a size
+      </p>
+    )}
+
+    <div className="flex flex-row gap-3">
       <a
         className="min-w-0 flex-1"
         href={whatsappLink}
@@ -84,6 +96,7 @@ export default function ProductActions({
           ? "Remove from Wishlist"
           : "Add to Wishlist"}
       </Button>
+    </div>
     </div>
   );
 }
