@@ -98,7 +98,7 @@ export default function ProductGallery({
     <div>
       {/* Main image */}
       <div
-          className="group relative aspect-[4/5] overflow-hidden rounded-2xl bg-[var(--background)]"
+          className="group relative aspect-[4/5] w-full max-w-[620px] overflow-hidden rounded-2xl bg-[var(--background)]"
           onMouseMove={handleMouseMove}
           onMouseLeave={resetZoom}
         >
