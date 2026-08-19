@@ -20,11 +20,11 @@ export default function SubcategoryFilter({
   if (items.length === 0) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-1">
       <button
         type="button"
         onClick={() => onSelect("All")}
-        className={`flex w-full items-center rounded-xl px-4 py-3 text-left text-sm transition ${
+        className={`flex w-full items-center rounded-xl px-3 py-2 text-left text-xs transition ${
           selected === "All"
             ? "bg-[var(--burgundy)] text-white"
             : "border border-black/10 hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)]/5"
@@ -38,7 +38,7 @@ export default function SubcategoryFilter({
           type="button"
           key={item}
           onClick={() => onSelect(item)}
-          className={`flex w-full items-center rounded-xl px-4 py-3 text-left text-sm transition ${
+          className={`flex w-full items-center rounded-xl px-3 py-2 text-left text-xs transition ${
             selected === item
               ? "bg-[var(--burgundy)] text-white"
               : "border border-black/10 hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)]/5"
