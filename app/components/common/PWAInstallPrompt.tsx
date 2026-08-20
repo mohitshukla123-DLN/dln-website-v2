@@ -24,14 +24,16 @@ declare global {
 }
 
 const INSTALLED_KEY = "dln-pwa-installed";
+const DISMISSED_KEY = "dln-pwa-install-dismissed";
 
 export default function PWAInstallPrompt() {
   const [installEvent, setInstallEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
 
-  const [showHelp, setShowHelp] = useState(false);
   const [installed, setInstalled] = useState(false);
-  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
+  const [isMobileOrTablet, setIsMobileOrTablet] =
+    useState(false);
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -45,7 +47,7 @@ export default function PWAInstallPrompt() {
 
     /*
      * Desktop:
-     * Never show this installation prompt.
+     * Never show the PWA installation prompt.
      */
     if (!mobileOrTablet) {
       return;
@@ -72,10 +74,8 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * Local fallback.
-     *
-     * This prevents the popup from repeatedly appearing
-     * on the same browser/device after installation.
+     * If the user has already installed the app
+     * on this browser/device, don't show the prompt.
      */
     if (
       localStorage.getItem(INSTALLED_KEY) === "true"
@@ -85,22 +85,31 @@ export default function PWAInstallPrompt() {
     }
 
     /*
+     * If the user previously pressed Cancel,
+     * don't show the prompt again.
+     */
+    if (
+      localStorage.getItem(DISMISSED_KEY) === "true"
+    ) {
+      setDismissed(true);
+      return;
+    }
+
+    /*
      * Check whether the browser can detect an
      * already-installed related PWA.
-     *
-     * Supported mainly by Chromium-based browsers.
      */
     if (navigator.getInstalledRelatedApps) {
       navigator
         .getInstalledRelatedApps()
         .then((apps) => {
           if (apps.length > 0) {
-            setInstalled(true);
-
             localStorage.setItem(
               INSTALLED_KEY,
               "true"
             );
+
+            setInstalled(true);
           }
         })
         .catch(() => {
@@ -109,7 +118,7 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * Capture Chrome/Android's native install event.
+     * Capture Chrome/Android's native installation event.
      */
     const handleBeforeInstallPrompt = (
       event: Event
@@ -122,8 +131,7 @@ export default function PWAInstallPrompt() {
     };
 
     /*
-     * When installation completes, Chrome fires
-     * appinstalled.
+     * Fired when the PWA has been installed.
      */
     const handleAppInstalled = () => {
       localStorage.setItem(
@@ -131,9 +139,10 @@ export default function PWAInstallPrompt() {
         "true"
       );
 
+      localStorage.removeItem(DISMISSED_KEY);
+
       setInstalled(true);
       setInstallEvent(null);
-      setShowHelp(false);
     };
 
     window.addEventListener(
@@ -160,16 +169,23 @@ export default function PWAInstallPrompt() {
   }, []);
 
   /*
-   * Never render on desktop.
+   * Never show on desktop.
    */
   if (!isMobileOrTablet) {
     return null;
   }
 
   /*
-   * Never render after installation.
+   * Never show inside the installed PWA.
    */
   if (installed) {
+    return null;
+  }
+
+  /*
+   * Don't show after the user pressed Cancel.
+   */
+  if (dismissed) {
     return null;
   }
 
@@ -188,6 +204,8 @@ export default function PWAInstallPrompt() {
             "true"
           );
 
+          localStorage.removeItem(DISMISSED_KEY);
+
           setInstalled(true);
         }
 
@@ -203,75 +221,53 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * No native prompt available.
-     *
-     * Send the user to the dedicated installation
-     * instructions page.
+     * If Chrome hasn't provided the native
+     * installation prompt, open the dedicated
+     * installation guide.
      */
     window.location.href = "/install";
   }
 
+  function handleCancel() {
+    localStorage.setItem(
+      DISMISSED_KEY,
+      "true"
+    );
+
+    setDismissed(true);
+  }
+
   return (
-    <>
-      <button
-        type="button"
-        onClick={handleInstall}
-        className="fixed bottom-4 right-4 z-50 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-800"
-      >
-        Install App
-      </button>
+    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl bg-white p-4 shadow-2xl ring-1 ring-black/10">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="font-semibold text-gray-900">
+            Install Dress Like Nawaabs
+          </h3>
 
-      {showHelp && (
-        <div
-          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 p-4 sm:items-center"
-          onClick={() => setShowHelp(false)}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
-            onClick={(event) =>
-              event.stopPropagation()
-            }
-          >
-            <div className="flex items-start justify-between gap-4">
-              <h2 className="text-xl font-semibold">
-                Install Dress Like Nawaabs
-              </h2>
-
-              <button
-                type="button"
-                onClick={() => setShowHelp(false)}
-                className="text-2xl leading-none text-gray-400 hover:text-gray-700"
-                aria-label="Close"
-              >
-                ×
-              </button>
-            </div>
-
-            <p className="mt-3 text-sm leading-6 text-gray-600">
-              Install Dress Like Nawaabs on your phone
-              or tablet for quick access.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => {
-                window.location.href = "/install";
-              }}
-              className="mt-5 w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white"
-            >
-              Open Installation Guide
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowHelp(false)}
-              className="mt-3 w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700"
-            >
-              Not now
-            </button>
-          </div>
+          <p className="mt-1 text-sm text-gray-600">
+            Install the app for quick access.
+          </p>
         </div>
-      )}
-    </>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            onClick={handleInstall}
+            className="rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
+          >
+            Install App
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
