@@ -30,30 +30,42 @@ export default function PWAInstallPrompt() {
     useState<BeforeInstallPromptEvent | null>(null);
 
   const [installed, setInstalled] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+
+  const [dismissed, setDismissed] =
+    useState(false);
+
   const [isMobileOrTablet, setIsMobileOrTablet] =
     useState(false);
 
+  const [showHelp, setShowHelp] =
+    useState(false);
+
   useEffect(() => {
-    const userAgent = navigator.userAgent.toLowerCase();
+    const userAgent =
+      navigator.userAgent.toLowerCase();
 
-    const isAndroid = /android/.test(userAgent);
-    const isIOS = /iphone|ipad|ipod/.test(userAgent);
+    const isAndroid =
+      /android/.test(userAgent);
 
-    const mobileOrTablet = isAndroid || isIOS;
+    const isIOS =
+      /iphone|ipad|ipod/.test(userAgent);
+
+    const mobileOrTablet =
+      isAndroid || isIOS;
 
     setIsMobileOrTablet(mobileOrTablet);
 
     /*
-     * Only show the PWA prompt on phones/tablets.
+     * PWA installation prompt is only for
+     * phones and tablets.
      */
     if (!mobileOrTablet) {
       return;
     }
 
     /*
-     * If the website is already running as an installed PWA,
-     * don't show the installation prompt.
+     * If already running as the installed PWA,
+     * never show the installation prompt.
      */
     const isStandalone =
       window.matchMedia(
@@ -72,22 +84,27 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * Local fallback.
+     * Local installation flag.
      *
-     * If this browser has already completed an installation,
-     * don't show the prompt again.
+     * This is only a fallback. The appinstalled
+     * event below is the primary way to set it.
      */
     if (
-      localStorage.getItem(INSTALLED_KEY) === "true"
+      localStorage.getItem(
+        INSTALLED_KEY
+      ) === "true"
     ) {
       setInstalled(true);
       return;
     }
 
     /*
-     * Try to detect an already-installed related PWA.
+     * Detect an already-installed related PWA
+     * where the browser supports this API.
      */
-    if (navigator.getInstalledRelatedApps) {
+    if (
+      navigator.getInstalledRelatedApps
+    ) {
       navigator
         .getInstalledRelatedApps()
         .then((apps) => {
@@ -101,13 +118,13 @@ export default function PWAInstallPrompt() {
           }
         })
         .catch(() => {
-          // Ignore unsupported/failed detection.
+          // Ignore unsupported browsers.
         });
     }
 
     /*
-     * Chrome/Android provides this event when
-     * the website is eligible for native installation.
+     * Chrome fires this when its native
+     * installation prompt becomes available.
      */
     const handleBeforeInstallPrompt = (
       event: Event
@@ -120,7 +137,8 @@ export default function PWAInstallPrompt() {
     };
 
     /*
-     * Fired after the PWA is successfully installed.
+     * Chrome fires this after the PWA
+     * has actually been installed.
      */
     const handleAppInstalled = () => {
       localStorage.setItem(
@@ -130,6 +148,7 @@ export default function PWAInstallPrompt() {
 
       setInstalled(true);
       setInstallEvent(null);
+      setShowHelp(false);
     };
 
     window.addEventListener(
@@ -156,40 +175,51 @@ export default function PWAInstallPrompt() {
   }, []);
 
   /*
-   * Never show on desktop.
+   * Desktop: no PWA popup.
    */
   if (!isMobileOrTablet) {
     return null;
   }
 
   /*
-   * Never show inside the installed PWA.
+   * Installed PWA: no PWA popup.
    */
   if (installed) {
     return null;
   }
 
   /*
-   * User closed the popup.
+   * × only closes the popup for the current
+   * page/component lifecycle.
    *
-   * This is intentionally NOT stored in localStorage.
-   * Therefore it can appear again on a future visit/reload
-   * if the app has not been installed.
+   * Nothing is stored in localStorage.
+   * Therefore a fresh page load can show it again.
    */
   if (dismissed) {
     return null;
   }
 
+  const userAgent =
+    navigator.userAgent.toLowerCase();
+
+  const isAndroid =
+    /android/.test(userAgent);
+
+  const isIOS =
+    /iphone|ipad|ipod/.test(userAgent);
+
   async function handleInstall() {
     /*
-     * Use Chrome's native installation prompt when available.
+     * Android Chrome native installation.
      */
     if (installEvent) {
       try {
         const result =
           await installEvent.prompt();
 
-        if (result.outcome === "accepted") {
+        if (
+          result.outcome === "accepted"
+        ) {
           localStorage.setItem(
             INSTALLED_KEY,
             "true"
@@ -210,10 +240,10 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * If Chrome has not supplied the native prompt,
-     * send the user to the dedicated installation guide.
+     * Native prompt is not available.
+     * Open the dedicated installation guide.
      */
-    window.location.href = "/install";
+    setShowHelp(true);
   }
 
   function handleClose() {
@@ -221,34 +251,152 @@ export default function PWAInstallPrompt() {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-black/10">
-      {/* Close button */}
-      <button
-        type="button"
-        onClick={handleClose}
-        aria-label="Close install prompt"
-        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-2xl font-bold leading-none text-gray-700 shadow-sm hover:bg-gray-300 hover:text-black"
-      >
-        ×
-      </button>
+    <>
+      {/* Compact install banner */}
+      <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md">
+        <div className="relative flex items-center gap-3 rounded-2xl bg-[#f5ebe7] px-4 py-3 shadow-xl ring-1 ring-[#7a1f2b]/20">
+          {/* Close */}
+          <button
+            type="button"
+            onClick={handleClose}
+            aria-label="Close install prompt"
+            className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#7a1f2b] text-lg font-bold leading-none text-white shadow-md hover:bg-[#641923]"
+          >
+            ×
+          </button>
 
-      <div className="pr-10">
-        <h3 className="font-semibold text-gray-900">
-          Install Dress Like Nawaabs
-        </h3>
+          {/* Text */}
+          <p className="min-w-0 flex-1 text-sm font-semibold leading-5 text-gray-900">
+            Install Dress Like Nawaabs App
+            <span className="font-normal text-gray-700">
+              {" "}
+              for quick access.
+            </span>
+          </p>
 
-        <p className="mt-1 text-sm leading-5 text-gray-600">
-          Install the app for quick access.
-        </p>
+          {/* Install */}
+          <button
+            type="button"
+            onClick={handleInstall}
+            className="shrink-0 rounded-xl bg-[#7a1f2b] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#641923]"
+          >
+            Install App
+          </button>
+        </div>
       </div>
 
-      <button
-        type="button"
-        onClick={handleInstall}
-        className="mt-4 w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-gray-800"
-      >
-        Install App
-      </button>
-    </div>
+      {/* Installation instructions */}
+      {showHelp && (
+        <div
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 p-4 sm:items-center"
+          onClick={() => setShowHelp(false)}
+        >
+          <div
+            className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+            {/* Close */}
+            <button
+              type="button"
+              onClick={() =>
+                setShowHelp(false)
+              }
+              aria-label="Close"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a1f2b] text-2xl font-bold leading-none text-white"
+            >
+              ×
+            </button>
+
+            <h2 className="pr-10 text-xl font-semibold text-gray-900">
+              Install Dress Like Nawaabs
+            </h2>
+
+            {isAndroid && (
+              <>
+                <p className="mt-3 text-sm leading-6 text-gray-600">
+                  Install the app on your Android
+                  phone or tablet:
+                </p>
+
+                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open this website in{" "}
+                    <strong>
+                      Google Chrome
+                    </strong>
+                    .
+                  </li>
+
+                  <li>
+                    Tap the{" "}
+                    <strong>⋮</strong>{" "}
+                    menu in the top-right corner.
+                  </li>
+
+                  <li>
+                    Select{" "}
+                    <strong>
+                      Install and Create Shortcut
+                    </strong>
+                    .
+                  </li>
+
+                  <li>
+                    Confirm the installation.
+                  </li>
+                </ol>
+              </>
+            )}
+
+            {isIOS && (
+              <>
+                <p className="mt-3 text-sm leading-6 text-gray-600">
+                  Install the app on your
+                  iPhone or iPad:
+                </p>
+
+                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open this website in{" "}
+                    <strong>Safari</strong>.
+                  </li>
+
+                  <li>
+                    Tap the{" "}
+                    <strong>Share</strong>{" "}
+                    button.
+                  </li>
+
+                  <li>
+                    Select{" "}
+                    <strong>
+                      Add to Home Screen
+                    </strong>
+                    .
+                  </li>
+
+                  <li>
+                    Tap{" "}
+                    <strong>Add</strong>.
+                  </li>
+                </ol>
+              </>
+            )}
+
+            <button
+              type="button"
+              onClick={() =>
+                setShowHelp(false)
+              }
+              className="mt-5 w-full rounded-xl bg-[#7a1f2b] px-4 py-3 text-sm font-semibold text-white hover:bg-[#641923]"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
