@@ -16,11 +16,29 @@ export default function PWAInstallPrompt() {
 
   const [showHelp, setShowHelp] = useState(false);
 
-  useEffect(() => {
-    const isAndroid =
-      /android/i.test(navigator.userAgent);
+  const [isMobileOrTablet, setIsMobileOrTablet] =
+    useState(false);
 
-    if (!isAndroid) {
+  const [isStandalone, setIsStandalone] =
+    useState(false);
+
+  useEffect(() => {
+    const userAgent =
+      navigator.userAgent.toLowerCase();
+
+    const mobileOrTablet =
+      /android|iphone|ipad|ipod/.test(userAgent);
+
+    setIsMobileOrTablet(mobileOrTablet);
+
+    const standalone =
+      window.matchMedia(
+        "(display-mode: standalone)"
+      ).matches;
+
+    setIsStandalone(standalone);
+
+    if (!mobileOrTablet || standalone) {
       return;
     }
 
@@ -29,14 +47,13 @@ export default function PWAInstallPrompt() {
     ) => {
       event.preventDefault();
 
-      const installEvent =
-        event as BeforeInstallPromptEvent;
-
       console.log(
         "PWA: beforeinstallprompt captured"
       );
 
-      setInstallPrompt(installEvent);
+      setInstallPrompt(
+        event as BeforeInstallPromptEvent
+      );
     };
 
     const handleAppInstalled = () => {
@@ -57,6 +74,19 @@ export default function PWAInstallPrompt() {
       handleAppInstalled
     );
 
+    const mediaQuery = window.matchMedia(
+      "(display-mode: standalone)"
+    );
+
+    const handleDisplayModeChange = () => {
+      setIsStandalone(mediaQuery.matches);
+    };
+
+    mediaQuery.addEventListener(
+      "change",
+      handleDisplayModeChange
+    );
+
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
@@ -67,48 +97,73 @@ export default function PWAInstallPrompt() {
         "appinstalled",
         handleAppInstalled
       );
+
+      mediaQuery.removeEventListener(
+        "change",
+        handleDisplayModeChange
+      );
     };
   }, []);
 
   const handleInstall = async () => {
-    if (!installPrompt) {
-      console.log(
-        "PWA: native install prompt unavailable"
-      );
+    if (installPrompt) {
+      try {
+        console.log(
+          "PWA: showing native install prompt"
+        );
 
-      setShowHelp(true);
+        await installPrompt.prompt();
+
+        const choice =
+          await installPrompt.userChoice;
+
+        console.log(
+          "PWA install result:",
+          choice.outcome
+        );
+
+        if (choice.outcome === "accepted") {
+          setInstalled(true);
+          setShowHelp(false);
+        }
+
+        setInstallPrompt(null);
+      } catch (error) {
+        console.error(
+          "PWA install failed:",
+          error
+        );
+
+        setShowHelp(true);
+      }
+
       return;
     }
 
-    try {
-      console.log(
-        "PWA: showing native install prompt"
-      );
-
-      await installPrompt.prompt();
-
-      const choice =
-        await installPrompt.userChoice;
-
-      console.log(
-        "PWA install result:",
-        choice.outcome
-      );
-
-      if (choice.outcome === "accepted") {
-        setInstalled(true);
-      }
-
-      setInstallPrompt(null);
-    } catch (error) {
-      console.error(
-        "PWA install prompt failed:",
-        error
-      );
-    }
+    /*
+     * Android Chrome may not expose
+     * beforeinstallprompt even though the
+     * browser provides its own installation
+     * option.
+     *
+     * iOS/iPadOS also uses the manual flow.
+     */
+    setShowHelp(true);
   };
 
-  if (installed) {
+  /*
+   * Desktop/laptop:
+   * Never show the PWA installation prompt.
+   */
+  if (!isMobileOrTablet) {
+    return null;
+  }
+
+  /*
+   * Installed PWA:
+   * Never show the installation prompt.
+   */
+  if (isStandalone || installed) {
     return null;
   }
 
@@ -137,8 +192,16 @@ export default function PWAInstallPrompt() {
       </div>
 
       {showHelp && (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+        <div
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 p-4 sm:items-center"
+          onClick={() => setShowHelp(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">
                 Install Dress Like Nawaabs
@@ -154,37 +217,85 @@ export default function PWAInstallPrompt() {
               </button>
             </div>
 
-            <p className="mt-3 text-sm leading-6 text-gray-600">
-              Chrome has not provided the automatic
-              installation prompt yet.
-            </p>
+            {/android/i.test(
+              navigator.userAgent
+            ) && (
+              <>
+                <p className="mt-3 text-sm leading-6 text-gray-600">
+                  Install on Android:
+                </p>
 
-            <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
-              <li>
-                Tap Chrome's <strong>⋮</strong> menu.
-              </li>
+                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Tap Chrome's{" "}
+                    <strong>⋮</strong> menu.
+                  </li>
 
-              <li>
-                Tap{" "}
-                <strong>
-                  Install app
-                </strong>{" "}
-                or{" "}
-                <strong>
-                  Add to Home screen
-                </strong>
-                .
-              </li>
+                  <li>
+                    Tap{" "}
+                    <strong>
+                      Install &amp; Create Shortcut
+                    </strong>
+                    .
+                  </li>
 
-              <li>
-                Follow Chrome's installation prompt.
-              </li>
-            </ol>
+                  <li>
+                    Tap{" "}
+                    <strong>Install</strong>.
+                  </li>
+                </ol>
+
+                <p className="mt-4 text-xs leading-5 text-gray-500">
+                  If Chrome says the app is already
+                  installed, open{" "}
+                  <strong>
+                    Dress Like Nawaabs
+                  </strong>{" "}
+                  from your Android app drawer.
+                </p>
+              </>
+            )}
+
+            {/iphone|ipad|ipod/i.test(
+              navigator.userAgent
+            ) && (
+              <>
+                <p className="mt-3 text-sm leading-6 text-gray-600">
+                  Install on iPhone or iPad:
+                </p>
+
+                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open this website in{" "}
+                    <strong>Safari</strong>.
+                  </li>
+
+                  <li>
+                    Tap the{" "}
+                    <strong>Share</strong>{" "}
+                    button.
+                  </li>
+
+                  <li>
+                    Tap{" "}
+                    <strong>
+                      Add to Home Screen
+                    </strong>
+                    .
+                  </li>
+
+                  <li>
+                    Tap{" "}
+                    <strong>Add</strong>.
+                  </li>
+                </ol>
+              </>
+            )}
 
             <button
               type="button"
               onClick={() => setShowHelp(false)}
-              className="mt-6 w-full rounded-xl bg-gray-100 py-3 text-sm font-semibold"
+              className="mt-6 w-full rounded-xl bg-gray-100 py-3 text-sm font-semibold text-gray-900"
             >
               Close
             </button>
