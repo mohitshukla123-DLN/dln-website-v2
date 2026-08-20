@@ -4,6 +4,9 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<{
     outcome: "accepted" | "dismissed";
   }>;
+  userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+  }>;
 }
 
 export default function PWAInstallPrompt() {
@@ -11,8 +14,8 @@ export default function PWAInstallPrompt() {
     useState<BeforeInstallPromptEvent | null>(null);
 
   const [installed, setInstalled] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
   const [ready, setReady] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
     function checkInstalled() {
@@ -29,13 +32,17 @@ export default function PWAInstallPrompt() {
     function handleBeforeInstallPrompt(event: Event) {
       event.preventDefault();
 
+      console.log("PWA: beforeinstallprompt fired");
+
       setInstallEvent(
         event as BeforeInstallPromptEvent
       );
     }
 
     function handleInstalled() {
-      checkInstalled();
+      console.log("PWA: app installed");
+
+      setInstalled(true);
       setInstallEvent(null);
       setShowHelp(false);
     }
@@ -51,19 +58,6 @@ export default function PWAInstallPrompt() {
       "appinstalled",
       handleInstalled
     );
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js", {
-          scope: "/",
-        })
-        .catch((error) => {
-          console.error(
-            "Service worker registration failed:",
-            error
-          );
-        });
-    }
 
     return () => {
       window.removeEventListener(
@@ -83,9 +77,7 @@ export default function PWAInstallPrompt() {
   }
 
   const isIOS =
-    /iPad|iPhone|iPod/.test(
-      navigator.userAgent
-    ) &&
+    /iPad|iPhone|iPod/.test(navigator.userAgent) &&
     !(window as Window & {
       MSStream?: unknown;
     }).MSStream;
@@ -96,10 +88,24 @@ export default function PWAInstallPrompt() {
       return;
     }
 
-    const result = await installEvent.prompt();
+    try {
+      const result = await installEvent.prompt();
 
-    if (result.outcome === "dismissed") {
+      console.log(
+        "PWA install result:",
+        result.outcome
+      );
+
+      if (result.outcome === "accepted") {
+        setInstalled(true);
+      }
+
       setInstallEvent(null);
+    } catch (error) {
+      console.error(
+        "PWA install failed:",
+        error
+      );
     }
   }
 
@@ -127,21 +133,17 @@ export default function PWAInstallPrompt() {
                 </p>
 
                 <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-gray-700">
-                  <li>
-                    Tap the Share button in Safari.
-                  </li>
-                  <li>
-                    Choose "Add to Home Screen".
-                  </li>
-                  <li>
-                    Tap "Add".
-                  </li>
+                  <li>Tap the Share button in Safari.</li>
+                  <li>Choose "Add to Home Screen".</li>
+                  <li>Tap "Add".</li>
                 </ol>
               </>
             ) : (
               <p className="mt-3 text-sm leading-6 text-gray-600">
-                Open your browser menu and choose
-                "Install app" or "Add to Home screen".
+                Chrome has not made the native install
+                prompt available yet. Try opening this
+                website directly in Chrome and wait a
+                few seconds before tapping Install App.
               </p>
             )}
 
