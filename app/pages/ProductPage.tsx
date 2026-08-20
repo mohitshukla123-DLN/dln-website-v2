@@ -107,7 +107,8 @@ export default function ProductPage() {
       }
 
       console.log("PRODUCT PRICE:", data.price, typeof data.price);
-      
+      console.log("PRODUCT COLOR:", data.color);
+
       const normalizedProduct: Product = {
           ...data,
           price: Number(data.price) || 0,
@@ -117,7 +118,13 @@ export default function ProductPage() {
               ? [data.image]
               : [],
           sizes: data.sizes ?? {},
-          specifications: data.specifications ?? {},
+          specifications: {
+              fabric: data.fabric ?? "",
+              embroidery: data.embroidery ?? "",
+              fit: data.fit ?? "",
+              occasion: data.occasion ?? "",
+              care: data.care ?? "",
+            },
         };
 
         setProduct(normalizedProduct);

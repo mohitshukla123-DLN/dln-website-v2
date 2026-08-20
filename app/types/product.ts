@@ -61,11 +61,17 @@ stock?: number;
 
   sizes: Record<string, number>;
 
-  specifications: {
-    fabric: string;
+    fabric?: string;
     embroidery?: string;
-    fit: string;
-    occasion: string;
-    care: string;
-  };
+    fit?: string;
+    occasion?: string;
+    care?: string;
+
+    specifications: {
+      fabric: string;
+      embroidery?: string;
+      fit: string;
+      occasion: string;
+      care: string;
+    };
 }
