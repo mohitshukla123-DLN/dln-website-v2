@@ -23,11 +23,8 @@ export default function PWAInstallPrompt() {
     const checkInstalled = () => {
       const standalone =
         window.matchMedia(
-          "(display-mode: standalone)"
-        ).matches ||
-        (window.navigator as Navigator & {
-          standalone?: boolean;
-        }).standalone === true;
+            "(display-mode: standalone)"
+        ).matches;
 
       setInstalled(standalone);
       setReady(true);
