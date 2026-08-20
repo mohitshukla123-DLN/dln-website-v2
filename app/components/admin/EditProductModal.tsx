@@ -24,6 +24,7 @@ export default function EditProductModal({
   const [category, setCategory] = useState("");
   const [subcategory, setSubcategory] = useState("");
 
+  const [color, setColor] = useState("");
   const [price, setPrice] = useState("");
   const [sizes, setSizes] = useState({
   "32": "",
@@ -62,6 +63,7 @@ export default function EditProductModal({
 
       setCategory(product.category);
       setSubcategory(product.subcategory ?? "");
+      setColor(product.color ?? "");
 
       setPrice(product.price.toString());
       setSizes({
@@ -185,6 +187,7 @@ async function saveChanges() {
           name,
           category,
           subcategory,
+          color: color.trim(),
 
           price: Number(price),
           stock: Object.values(sizes).reduce(
@@ -243,6 +246,13 @@ async function saveChanges() {
           onChange={(e) =>
             setName(e.target.value)
           }
+        />
+
+        <input
+          className="mb-4 w-full rounded-lg border p-3"
+          placeholder="Color"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
         />
 
       <select

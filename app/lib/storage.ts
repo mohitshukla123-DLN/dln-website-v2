@@ -25,9 +25,6 @@ export async function uploadProductImage({
   view,
   sku,
 }: UploadProductImageOptions) {
-  const extension =
-    file.name.split(".").pop()?.toLowerCase() || "jpg";
-
   const baseFileName =
     `${slugify(category)}-` +
     `${slugify(productName)}-` +
@@ -38,22 +35,21 @@ export async function uploadProductImage({
   const uniqueSuffix =
     `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
-  const fileName =
-    `${baseFileName}-${uniqueSuffix}.${extension}`;
+  const fileName = `${baseFileName}-${uniqueSuffix}.webp`;
 
   const filePath = `products/${fileName}`;
 
   const { error } = await supabase.storage
     .from("products")
     .upload(filePath, file, {
-      upsert: true,
-      contentType: file.type,
+      upsert: false,
+      contentType: "image/webp",
       cacheControl: "3600",
     });
 
   if (error) {
     throw new Error(
-      `Image upload failed for "${file.name}". Storage path: ${filePath}. ${error.message}`
+      `Image upload failed for "${file.name}". ${error.message}`
     );
   }
 
@@ -65,4 +61,26 @@ export async function uploadProductImage({
     path: filePath,
     url: data.publicUrl,
   };
+}
+
+export async function deleteProductImage(url: string) {
+  const marker = "/storage/v1/object/public/products/";
+
+  const index = url.indexOf(marker);
+
+  if (index === -1) {
+    return;
+  }
+
+  const path = decodeURIComponent(
+    url.substring(index + marker.length)
+  );
+
+  const { error } = await supabase.storage
+    .from("products")
+    .remove([path]);
+
+  if (error) {
+    console.error("Storage image deletion failed:", error);
+  }
 }

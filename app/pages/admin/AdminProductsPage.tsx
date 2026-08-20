@@ -35,6 +35,7 @@ export default function AdminProductsPage() {
             sku,
             category,
             subcategory,
+            color,
             price,
             stock,
             featured,

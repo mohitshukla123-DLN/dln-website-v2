@@ -11,6 +11,8 @@ export interface AdminProduct {
 
   subcategory: string | null;
 
+  color: string | null;
+
   price: number;
 
   stock: number;
