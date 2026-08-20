@@ -1,123 +1,199 @@
 import { useEffect, useState } from "react";
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
+}
+
 export default function PWAInstallPrompt() {
+  const [installEvent, setInstallEvent] =
+    useState<BeforeInstallPromptEvent | null>(null);
+
+  const [showPrompt, setShowPrompt] = useState(false);
   const [installed, setInstalled] = useState(false);
-  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
-    const checkInstalled = async () => {
-      const standalone =
-        window.matchMedia("(display-mode: standalone)").matches ||
-        window.matchMedia("(display-mode: fullscreen)").matches ||
-        window.matchMedia("(display-mode: minimal-ui)").matches ||
-        (window.navigator as Navigator & {
-          standalone?: boolean;
-        }).standalone === true;
+    const ua = navigator.userAgent.toLowerCase();
 
-      let relatedAppInstalled = false;
+    const isAndroid = /android/.test(ua);
 
-      try {
-        if ("getInstalledRelatedApps" in navigator) {
-          const apps =
-            await navigator.getInstalledRelatedApps();
+    const isIOS =
+      /iphone|ipad|ipod/.test(ua) ||
+      (/macintosh/.test(ua) &&
+        "ontouchend" in document);
 
-          relatedAppInstalled = apps.length > 0;
-        }
-      } catch {
-        // Ignore unsupported browsers
-      }
+    const isMobileOrTablet =
+      isAndroid || isIOS;
 
-      setInstalled(
-        standalone || relatedAppInstalled
-      );
+    // Never show anything on desktop/laptop.
+    if (!isMobileOrTablet) {
+      return;
+    }
+
+    const isStandalone =
+      window.matchMedia(
+        "(display-mode: standalone)"
+      ).matches ||
+      window.matchMedia(
+        "(display-mode: fullscreen)"
+      ).matches ||
+      window.matchMedia(
+        "(display-mode: minimal-ui)"
+      ).matches ||
+      (window.navigator as Navigator & {
+        standalone?: boolean;
+      }).standalone === true;
+
+    if (isStandalone) {
+      setInstalled(true);
+      return;
+    }
+
+    const handleBeforeInstallPrompt = (
+      event: Event
+    ) => {
+      event.preventDefault();
+
+      const promptEvent =
+        event as BeforeInstallPromptEvent;
+
+      setInstallEvent(promptEvent);
+      setShowPrompt(true);
     };
 
-    checkInstalled();
+    const handleAppInstalled = () => {
+      setInstalled(true);
+      setShowPrompt(false);
+      setInstallEvent(null);
+    };
 
-    const media = window.matchMedia(
-      "(display-mode: standalone)"
+    window.addEventListener(
+      "beforeinstallprompt",
+      handleBeforeInstallPrompt
     );
-
-    const handleChange = () => {
-      checkInstalled();
-    };
-
-    media.addEventListener("change", handleChange);
 
     window.addEventListener(
       "appinstalled",
-      checkInstalled
+      handleAppInstalled
     );
 
-    window.addEventListener(
-      "pageshow",
-      checkInstalled
-    );
-
-    document.addEventListener(
-      "visibilitychange",
-      checkInstalled
-    );
+    // Android may not fire beforeinstallprompt
+    // immediately. Give Chrome a little time.
+    const timer = window.setTimeout(() => {
+      setShowPrompt(true);
+    }, 1500);
 
     return () => {
-      media.removeEventListener(
-        "change",
-        handleChange
+      window.clearTimeout(timer);
+
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
       );
 
       window.removeEventListener(
         "appinstalled",
-        checkInstalled
-      );
-
-      window.removeEventListener(
-        "pageshow",
-        checkInstalled
-      );
-
-      document.removeEventListener(
-        "visibilitychange",
-        checkInstalled
+        handleAppInstalled
       );
     };
   }, []);
 
-  if (installed) {
+  if (installed || !showPrompt) {
     return null;
   }
 
   const ua = navigator.userAgent.toLowerCase();
 
+  const isAndroid = /android/.test(ua);
+
   const isIOS =
-    /iphone|ipad|ipod/.test(ua);
+    /iphone|ipad|ipod/.test(ua) ||
+    (/macintosh/.test(ua) &&
+      "ontouchend" in document);
 
-  const isAndroid =
-    /android/.test(ua);
+  async function handleInstall() {
+    if (installEvent) {
+      try {
+        await installEvent.prompt();
 
-  const isMac =
-    /macintosh|mac os x/.test(ua);
+        const result =
+          await installEvent.userChoice;
 
-  const isDesktop =
-    !isIOS && !isAndroid;
+        if (result.outcome === "accepted") {
+          setInstalled(true);
+          setShowPrompt(false);
+        }
+
+        setInstallEvent(null);
+      } catch (error) {
+        console.error(
+          "PWA installation failed:",
+          error
+        );
+      }
+
+      return;
+    }
+
+    // iOS and browsers without native prompt
+    // use the instruction modal below.
+  }
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setShowHelp(true)}
-        className="fixed bottom-5 right-5 z-50 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:scale-105"
-      >
-        Install App
-      </button>
+      <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
+        <div className="rounded-2xl bg-black p-4 text-white shadow-2xl">
+          <div className="flex items-start gap-3">
+            <div className="flex-1">
+              <p className="text-sm font-semibold">
+                Install Dress Like Nawaabs
+              </p>
 
-      {showHelp && (
+              <p className="mt-1 text-xs leading-5 text-gray-300">
+                Add our app to your home screen for
+                quick access.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowPrompt(false)}
+              className="text-xl leading-none text-gray-400"
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (installEvent) {
+                handleInstall();
+              } else {
+                setShowPrompt(true);
+              }
+            }}
+            className="mt-3 w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-black"
+          >
+            Install App
+          </button>
+        </div>
+      </div>
+
+      {!installEvent && (
         <div
           className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-4 sm:items-center"
-          onClick={() => setShowHelp(false)}
+          onClick={() => setShowPrompt(false)}
         >
           <div
             className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) =>
+              event.stopPropagation()
+            }
           >
             <div className="flex items-start justify-between">
               <h2 className="text-xl font-semibold">
@@ -126,8 +202,9 @@ export default function PWAInstallPrompt() {
 
               <button
                 type="button"
-                onClick={() => setShowHelp(false)}
+                onClick={() => setShowPrompt(false)}
                 className="text-2xl text-gray-400"
+                aria-label="Close"
               >
                 ×
               </button>
@@ -136,21 +213,29 @@ export default function PWAInstallPrompt() {
             {isAndroid && (
               <>
                 <p className="mt-3 text-sm text-gray-600">
-                  Install on Android:
+                  Install on your Android phone or
+                  tablet:
                 </p>
 
                 <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
                   <li>
-                    Open this website in Chrome.
+                    Open this website in{" "}
+                    <strong>Google Chrome</strong>.
                   </li>
+
                   <li>
                     Tap the <strong>⋮</strong> menu.
                   </li>
+
                   <li>
                     Select{" "}
                     <strong>Install app</strong> or{" "}
-                    <strong>Add to Home screen</strong>.
+                    <strong>
+                      Add to Home screen
+                    </strong>
+                    .
                   </li>
+
                   <li>
                     Confirm the installation.
                   </li>
@@ -161,20 +246,28 @@ export default function PWAInstallPrompt() {
             {isIOS && (
               <>
                 <p className="mt-3 text-sm text-gray-600">
-                  Install on iPhone or iPad:
+                  Install on your iPhone or iPad:
                 </p>
 
                 <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
                   <li>
-                    Open this website in Safari.
+                    Open this website in{" "}
+                    <strong>Safari</strong>.
                   </li>
+
                   <li>
-                    Tap the <strong>Share</strong> button.
+                    Tap the{" "}
+                    <strong>Share</strong> button.
                   </li>
+
                   <li>
                     Select{" "}
-                    <strong>Add to Home Screen</strong>.
+                    <strong>
+                      Add to Home Screen
+                    </strong>
+                    .
                   </li>
+
                   <li>
                     Tap <strong>Add</strong>.
                   </li>
@@ -182,45 +275,9 @@ export default function PWAInstallPrompt() {
               </>
             )}
 
-            {isMac && isDesktop && (
-              <>
-                <p className="mt-3 text-sm text-gray-600">
-                  Install on your Mac:
-                </p>
-
-                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
-                  <li>
-                    Open this website in Google Chrome.
-                  </li>
-                  <li>
-                    Click the <strong>Install</strong>{" "}
-                    icon in the address bar.
-                  </li>
-                  <li>
-                    Click <strong>Install</strong>.
-                  </li>
-                </ol>
-
-                <p className="mt-4 rounded-lg bg-gray-50 p-3 text-xs leading-5 text-gray-500">
-                  If Chrome does not show the install
-                  icon, open the Chrome menu and look for
-                  "Install Dress Like Nawaabs".
-                </p>
-              </>
-            )}
-
-            {!isAndroid &&
-              !isIOS &&
-              !isMac && (
-                <p className="mt-3 text-sm leading-6 text-gray-600">
-                  Open the browser menu and choose the
-                  option to install Dress Like Nawaabs.
-                </p>
-              )}
-
             <button
               type="button"
-              onClick={() => setShowHelp(false)}
+              onClick={() => setShowPrompt(false)}
               className="mt-6 w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white"
             >
               Done
