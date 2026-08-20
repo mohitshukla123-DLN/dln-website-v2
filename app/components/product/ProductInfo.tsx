@@ -1,6 +1,7 @@
 interface Props {
   category: string;
   name: string;
+  color: string | null;
   rating: number;
   reviews: number;
   price: number;
@@ -9,6 +10,7 @@ interface Props {
 export default function ProductInfo({
   category,
   name,
+  color,
   rating,
   reviews,
   price,
@@ -22,6 +24,12 @@ export default function ProductInfo({
       <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
         {name}
       </h1>
+
+      {color && (
+        <p className="mt-2 text-sm font-medium text-[var(--muted)]">
+          Color: <span className="font-semibold text-[var(--foreground)]">{color}</span>
+        </p>
+      )}
 
       <div className="mt-4 flex items-center gap-3">
         <span className="text-xl text-yellow-500">

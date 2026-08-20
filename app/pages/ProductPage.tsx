@@ -276,6 +276,7 @@ export default function ProductPage() {
               <ProductInfo
                 category={product.category}
                 name={product.name}
+                color={product.color}
                 rating={product.rating}
                 reviews={product.reviews}
                 price={product.price}
