@@ -156,36 +156,38 @@ export default function PWAInstallPrompt() {
             )}
 
             {/* MAC */}
-            {isMac && isDesktop && (
-              <>
-                <p className="mt-3 text-sm text-gray-600">
-                  Install on your Mac:
-                </p>
-
-                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
-                  <li>
-                    Open this website in{" "}
-                    <strong>Google Chrome</strong>.
-                  </li>
-                  <li>
-                    Look for the{" "}
-                    <strong>Install</strong> icon on the
-                    right side of the address bar.
-                  </li>
-                  <li>
-                    Click it and choose{" "}
-                    <strong>Install</strong>.
-                  </li>
-                </ol>
-
-                {!isChrome && (
-                  <p className="mt-4 rounded-lg bg-yellow-50 p-3 text-xs text-yellow-800">
-                    Open this website in Google Chrome to
-                    install the app.
+              {isMac && isDesktop && (
+                <>
+                  <p className="mt-3 text-sm text-gray-600">
+                    Install on your Mac:
                   </p>
-                )}
-              </>
-            )}
+
+                  <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
+                    <li>
+                      Open this website in{" "}
+                      <strong>Google Chrome</strong>.
+                    </li>
+                    <li>
+                      Click the <strong>⋮</strong> menu in the
+                      top-right corner.
+                    </li>
+                    <li>
+                      Look for{" "}
+                      <strong>Install Dress Like Nawaabs</strong>.
+                    </li>
+                    <li>
+                      Click it and confirm{" "}
+                      <strong>Install</strong>.
+                    </li>
+                  </ol>
+
+                  <p className="mt-4 rounded-lg bg-gray-50 p-3 text-xs leading-5 text-gray-500">
+                    If "Install Dress Like Nawaabs" is not shown,
+                    Chrome has not made the site available for
+                    installation on this browser yet.
+                  </p>
+                </>
+              )}
 
             {/* OTHER DESKTOP */}
             {!isAndroid && !isIOS && !isMac && (
