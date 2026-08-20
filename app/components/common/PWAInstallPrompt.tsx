@@ -1,150 +1,214 @@
 import { useEffect, useState } from "react";
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<{
-    outcome: "accepted" | "dismissed";
-  }>;
-  userChoice: Promise<{
-    outcome: "accepted" | "dismissed";
-  }>;
-}
-
 export default function PWAInstallPrompt() {
-  const [installEvent, setInstallEvent] =
-    useState<BeforeInstallPromptEvent | null>(null);
-
   const [installed, setInstalled] = useState(false);
-  const [ready, setReady] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
-    function checkInstalled() {
+    const checkInstalled = () => {
       const standalone =
         window.matchMedia("(display-mode: standalone)").matches ||
-        (window.navigator as Navigator & {
-          standalone?: boolean;
-        }).standalone === true;
+        (window.navigator as Navigator & { standalone?: boolean })
+          .standalone === true;
 
       setInstalled(standalone);
-      setReady(true);
-    }
-
-    function handleBeforeInstallPrompt(event: Event) {
-      event.preventDefault();
-
-      console.log("PWA: beforeinstallprompt fired");
-
-      setInstallEvent(
-        event as BeforeInstallPromptEvent
-      );
-    }
-
-    function handleInstalled() {
-      console.log("PWA: app installed");
-
-      setInstalled(true);
-      setInstallEvent(null);
-      setShowHelp(false);
-    }
+    };
 
     checkInstalled();
 
-    window.addEventListener(
-      "beforeinstallprompt",
-      handleBeforeInstallPrompt
-    );
+    window.addEventListener("appinstalled", checkInstalled);
 
-    window.addEventListener(
-      "appinstalled",
-      handleInstalled
-    );
+    const media = window.matchMedia("(display-mode: standalone)");
+    media.addEventListener("change", checkInstalled);
 
     return () => {
-      window.removeEventListener(
-        "beforeinstallprompt",
-        handleBeforeInstallPrompt
-      );
-
-      window.removeEventListener(
-        "appinstalled",
-        handleInstalled
-      );
+      window.removeEventListener("appinstalled", checkInstalled);
+      media.removeEventListener("change", checkInstalled);
     };
   }, []);
 
-  if (!ready || installed) {
-    return null;
-  }
+  if (installed) return null;
 
-  const isIOS =
-    /iPad|iPhone|iPod/.test(navigator.userAgent) &&
-    !(window as Window & {
-      MSStream?: unknown;
-    }).MSStream;
+  const ua = navigator.userAgent.toLowerCase();
 
-  async function handleInstall() {
-    if (!installEvent) {
-      setShowHelp(true);
-      return;
-    }
+  const isIOS = /iphone|ipad|ipod/.test(ua);
+  const isAndroid = /android/.test(ua);
+  const isMac = /macintosh|mac os x/.test(ua);
 
-    try {
-      const result = await installEvent.prompt();
+  const isChrome =
+    /chrome|crios/.test(ua) &&
+    !/edg|opr|opera/.test(ua);
 
-      console.log(
-        "PWA install result:",
-        result.outcome
-      );
+  const isSafari =
+    /safari/.test(ua) &&
+    !/chrome|crios|android/.test(ua);
 
-      if (result.outcome === "accepted") {
-        setInstalled(true);
-      }
+  const isDesktop = !isIOS && !isAndroid;
 
-      setInstallEvent(null);
-    } catch (error) {
-      console.error(
-        "PWA install failed:",
-        error
-      );
-    }
-  }
+  const handleInstall = () => {
+    setShowHelp(true);
+  };
 
   return (
     <>
       <button
         type="button"
         onClick={handleInstall}
-        className="fixed bottom-5 right-5 z-50 rounded-full bg-[var(--burgundy)] px-5 py-3 text-sm font-semibold text-white shadow-xl transition hover:opacity-90"
+        className="fixed bottom-5 right-5 z-50 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:scale-105"
       >
         Install App
       </button>
 
       {showHelp && (
-        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 p-4 sm:items-center">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-            <h2 className="text-xl font-semibold">
-              Install Dress Like Nawaabs
-            </h2>
+        <div
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-4 sm:items-center"
+          onClick={() => setShowHelp(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between">
+              <h2 className="text-xl font-semibold">
+                Install Dress Like Nawaabs
+              </h2>
 
-            {isIOS ? (
+              <button
+                type="button"
+                onClick={() => setShowHelp(false)}
+                className="text-2xl text-gray-400"
+              >
+                ×
+              </button>
+            </div>
+
+            {/* ANDROID */}
+            {isAndroid && (
               <>
-                <p className="mt-3 text-sm leading-6 text-gray-600">
-                  On your iPhone or iPad:
+                <p className="mt-3 text-sm text-gray-600">
+                  Install on your Android phone:
                 </p>
 
-                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-gray-700">
-                  <li>Tap the Share button in Safari.</li>
-                  <li>Choose "Add to Home Screen".</li>
-                  <li>Tap "Add".</li>
+                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open Dress Like Nawaabs in{" "}
+                    <strong>Google Chrome</strong>.
+                  </li>
+                  <li>
+                    Tap the <strong>⋮</strong> menu.
+                  </li>
+                  <li>
+                    Select{" "}
+                    <strong>
+                      Install app
+                    </strong>{" "}
+                    or{" "}
+                    <strong>
+                      Add to Home screen
+                    </strong>
+                    .
+                  </li>
+                  <li>Confirm the installation.</li>
+                </ol>
+
+                {!isChrome && (
+                  <p className="mt-4 rounded-lg bg-yellow-50 p-3 text-xs text-yellow-800">
+                    For the best installation experience,
+                    open this website in Google Chrome.
+                  </p>
+                )}
+              </>
+            )}
+
+            {/* IPHONE / IPAD */}
+            {isIOS && (
+              <>
+                <p className="mt-3 text-sm text-gray-600">
+                  Install on your iPhone or iPad:
+                </p>
+
+                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open this website in{" "}
+                    <strong>Safari</strong>.
+                  </li>
+                  <li>
+                    Tap the <strong>Share</strong> button.
+                  </li>
+                  <li>
+                    Select{" "}
+                    <strong>
+                      Add to Home Screen
+                    </strong>
+                    .
+                  </li>
+                  <li>
+                    Tap <strong>Add</strong>.
+                  </li>
+                </ol>
+
+                {!isSafari && (
+                  <p className="mt-4 rounded-lg bg-yellow-50 p-3 text-xs text-yellow-800">
+                    iPhone/iPad installation requires Safari.
+                  </p>
+                )}
+              </>
+            )}
+
+            {/* MAC */}
+            {isMac && isDesktop && (
+              <>
+                <p className="mt-3 text-sm text-gray-600">
+                  Install on your Mac:
+                </p>
+
+                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open this website in{" "}
+                    <strong>Google Chrome</strong>.
+                  </li>
+                  <li>
+                    Look for the{" "}
+                    <strong>Install</strong> icon on the
+                    right side of the address bar.
+                  </li>
+                  <li>
+                    Click it and choose{" "}
+                    <strong>Install</strong>.
+                  </li>
+                </ol>
+
+                {!isChrome && (
+                  <p className="mt-4 rounded-lg bg-yellow-50 p-3 text-xs text-yellow-800">
+                    Open this website in Google Chrome to
+                    install the app.
+                  </p>
+                )}
+              </>
+            )}
+
+            {/* OTHER DESKTOP */}
+            {!isAndroid && !isIOS && !isMac && (
+              <>
+                <p className="mt-3 text-sm text-gray-600">
+                  Install Dress Like Nawaabs from your
+                  browser.
+                </p>
+
+                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open the browser menu.
+                  </li>
+                  <li>
+                    Look for{" "}
+                    <strong>Install Dress Like Nawaabs</strong>{" "}
+                    or <strong>Install app</strong>.
+                  </li>
+                  <li>
+                    Confirm the installation.
+                  </li>
                 </ol>
               </>
-            ) : (
-              <p className="mt-3 text-sm leading-6 text-gray-600">
-                Chrome has not made the native install
-                prompt available yet. Try opening this
-                website directly in Chrome and wait a
-                few seconds before tapping Install App.
-              </p>
             )}
 
             <button
@@ -152,7 +216,7 @@ export default function PWAInstallPrompt() {
               onClick={() => setShowHelp(false)}
               className="mt-6 w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white"
             >
-              Close
+              Done
             </button>
           </div>
         </div>
