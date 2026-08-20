@@ -10,31 +10,23 @@ export default function PWAInstallPrompt() {
   const [installEvent, setInstallEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
 
-  const [installed, setInstalled] =
-    useState(false);
-
-  const [showHelp, setShowHelp] =
-    useState(false);
-
-  const [ready, setReady] =
-    useState(false);
+  const [installed, setInstalled] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const checkInstalled = () => {
+    function checkInstalled() {
       const standalone =
-        window.matchMedia(
-            "(display-mode: standalone)"
-        ).matches;
+        window.matchMedia("(display-mode: standalone)").matches ||
+        (window.navigator as Navigator & {
+          standalone?: boolean;
+        }).standalone === true;
 
       setInstalled(standalone);
       setReady(true);
-    };
+    }
 
-    checkInstalled();
-
-    function handleBeforeInstallPrompt(
-      event: Event
-    ) {
+    function handleBeforeInstallPrompt(event: Event) {
       event.preventDefault();
 
       setInstallEvent(
@@ -43,10 +35,12 @@ export default function PWAInstallPrompt() {
     }
 
     function handleInstalled() {
-      setInstalled(true);
+      checkInstalled();
       setInstallEvent(null);
       setShowHelp(false);
     }
+
+    checkInstalled();
 
     window.addEventListener(
       "beforeinstallprompt",
@@ -97,18 +91,16 @@ export default function PWAInstallPrompt() {
     }).MSStream;
 
   async function handleInstall() {
-    if (installEvent) {
-      const result =
-        await installEvent.prompt();
-
-      if (result.outcome === "accepted") {
-        setInstalled(true);
-      }
-
+    if (!installEvent) {
+      setShowHelp(true);
       return;
     }
 
-    setShowHelp(true);
+    const result = await installEvent.prompt();
+
+    if (result.outcome === "dismissed") {
+      setInstallEvent(null);
+    }
   }
 
   return (
@@ -147,20 +139,15 @@ export default function PWAInstallPrompt() {
                 </ol>
               </>
             ) : (
-              <>
-                <p className="mt-3 text-sm leading-6 text-gray-600">
-                  To install Dress Like Nawaabs,
-                  open your browser menu and choose
-                  "Install app" or "Add to Home screen".
-                </p>
-              </>
+              <p className="mt-3 text-sm leading-6 text-gray-600">
+                Open your browser menu and choose
+                "Install app" or "Add to Home screen".
+              </p>
             )}
 
             <button
               type="button"
-              onClick={() =>
-                setShowHelp(false)
-              }
+              onClick={() => setShowHelp(false)}
               className="mt-6 w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white"
             >
               Close
