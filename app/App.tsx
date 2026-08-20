@@ -5,7 +5,7 @@ import Analytics from "./components/common/Analytics";
 import StructuredData from "./components/common/StructuredData";
 import Favicon from "./components/common/Favicon";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
-
+import PWAInstallPrompt from "./components/common/PWAInstallPrompt";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ShopPage = lazy(() => import("./pages/ShopPage"));
@@ -39,6 +39,8 @@ export default function App() {
 
   return (
     <>
+      <PWAInstallPrompt />
+      
       {!isAdminRoute && <StructuredData />}
       <Analytics />
       <Favicon />
