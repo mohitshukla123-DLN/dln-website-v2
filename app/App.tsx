@@ -6,6 +6,7 @@ import StructuredData from "./components/common/StructuredData";
 import Favicon from "./components/common/Favicon";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import PWAInstallPrompt from "./components/common/PWAInstallPrompt";
+import InstallPage from "./pages/InstallPage";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ShopPage = lazy(() => import("./pages/ShopPage"));
@@ -47,6 +48,9 @@ export default function App() {
 
       <Suspense fallback={null}>
         <Routes>
+
+        <Route path="/install" element={<InstallPage />} />
+
           <Route
             path="/"
             element={
