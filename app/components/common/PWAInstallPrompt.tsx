@@ -31,32 +31,25 @@ export default function PWAInstallPrompt() {
 
   const [installed, setInstalled] = useState(false);
 
-  const [dismissed, setDismissed] =
-    useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   const [isMobileOrTablet, setIsMobileOrTablet] =
     useState(false);
 
-  const [showHelp, setShowHelp] =
-    useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
-    const userAgent =
-      navigator.userAgent.toLowerCase();
+    const userAgent = navigator.userAgent.toLowerCase();
 
-    const isAndroid =
-      /android/.test(userAgent);
+    const isAndroid = /android/.test(userAgent);
+    const isIOS = /iphone|ipad|ipod/.test(userAgent);
 
-    const isIOS =
-      /iphone|ipad|ipod/.test(userAgent);
-
-    const mobileOrTablet =
-      isAndroid || isIOS;
+    const mobileOrTablet = isAndroid || isIOS;
 
     setIsMobileOrTablet(mobileOrTablet);
 
     /*
-     * PWA installation prompt is only for
+     * Installation prompt is only for
      * phones and tablets.
      */
     if (!mobileOrTablet) {
@@ -68,15 +61,9 @@ export default function PWAInstallPrompt() {
      * never show the installation prompt.
      */
     const isStandalone =
-      window.matchMedia(
-        "(display-mode: standalone)"
-      ).matches ||
-      window.matchMedia(
-        "(display-mode: fullscreen)"
-      ).matches ||
-      window.matchMedia(
-        "(display-mode: minimal-ui)"
-      ).matches;
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.matchMedia("(display-mode: fullscreen)").matches ||
+      window.matchMedia("(display-mode: minimal-ui)").matches;
 
     if (isStandalone) {
       setInstalled(true);
@@ -84,36 +71,26 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * Local installation flag.
+     * Check browser installation state.
      *
-     * This is only a fallback. The appinstalled
-     * event below is the primary way to set it.
+     * This flag is set only after Chrome reports
+     * that the application was actually installed.
      */
-    if (
-      localStorage.getItem(
-        INSTALLED_KEY
-      ) === "true"
-    ) {
+    if (localStorage.getItem(INSTALLED_KEY) === "true") {
       setInstalled(true);
       return;
     }
 
     /*
-     * Detect an already-installed related PWA
-     * where the browser supports this API.
+     * Detect an installed related PWA where
+     * the browser supports this API.
      */
-    if (
-      navigator.getInstalledRelatedApps
-    ) {
+    if (navigator.getInstalledRelatedApps) {
       navigator
         .getInstalledRelatedApps()
         .then((apps) => {
           if (apps.length > 0) {
-            localStorage.setItem(
-              INSTALLED_KEY,
-              "true"
-            );
-
+            localStorage.setItem(INSTALLED_KEY, "true");
             setInstalled(true);
           }
         })
@@ -123,12 +100,10 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * Chrome fires this when its native
-     * installation prompt becomes available.
+     * Chrome fires this when the native installation
+     * prompt becomes available.
      */
-    const handleBeforeInstallPrompt = (
-      event: Event
-    ) => {
+    const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
 
       setInstallEvent(
@@ -137,14 +112,11 @@ export default function PWAInstallPrompt() {
     };
 
     /*
-     * Chrome fires this after the PWA
-     * has actually been installed.
+     * Chrome fires this after the PWA has actually
+     * been installed.
      */
     const handleAppInstalled = () => {
-      localStorage.setItem(
-        INSTALLED_KEY,
-        "true"
-      );
+      localStorage.setItem(INSTALLED_KEY, "true");
 
       setInstalled(true);
       setInstallEvent(null);
@@ -189,37 +161,27 @@ export default function PWAInstallPrompt() {
   }
 
   /*
-   * × only closes the popup for the current
-   * page/component lifecycle.
-   *
-   * Nothing is stored in localStorage.
-   * Therefore a fresh page load can show it again.
+   * Close only affects the current page/component
+   * lifecycle. Nothing is saved in localStorage.
    */
   if (dismissed) {
     return null;
   }
 
-  const userAgent =
-    navigator.userAgent.toLowerCase();
+  const userAgent = navigator.userAgent.toLowerCase();
 
-  const isAndroid =
-    /android/.test(userAgent);
-
-  const isIOS =
-    /iphone|ipad|ipod/.test(userAgent);
+  const isAndroid = /android/.test(userAgent);
+  const isIOS = /iphone|ipad|ipod/.test(userAgent);
 
   async function handleInstall() {
     /*
-     * Android Chrome native installation.
+     * Chrome native installation prompt.
      */
     if (installEvent) {
       try {
-        const result =
-          await installEvent.prompt();
+        const result = await installEvent.prompt();
 
-        if (
-          result.outcome === "accepted"
-        ) {
+        if (result.outcome === "accepted") {
           localStorage.setItem(
             INSTALLED_KEY,
             "true"
@@ -240,8 +202,8 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * Native prompt is not available.
-     * Open the dedicated installation guide.
+     * Native prompt is unavailable.
+     * Show the OS-specific installation guide.
      */
     setShowHelp(true);
   }
@@ -252,20 +214,22 @@ export default function PWAInstallPrompt() {
 
   return (
     <>
-      {/* Compact install banner */}
+      {/* =====================================================
+          COMPACT INSTALL BANNER
+          ===================================================== */}
       <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md">
         <div className="relative flex items-center gap-3 rounded-2xl bg-[#f5ebe7] px-4 py-3 shadow-xl ring-1 ring-[#7a1f2b]/20">
-          {/* Close */}
+          {/* Visible burgundy close button */}
           <button
             type="button"
             onClick={handleClose}
             aria-label="Close install prompt"
-            className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#7a1f2b] text-lg font-bold leading-none text-white shadow-md hover:bg-[#641923]"
+            className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-[#7a1f2b] text-xl font-bold leading-none text-white shadow-lg ring-2 ring-white transition hover:bg-[#641923]"
           >
             ×
           </button>
 
-          {/* Text */}
+          {/* Banner text */}
           <p className="min-w-0 flex-1 text-sm font-semibold leading-5 text-gray-900">
             Install Dress Like Nawaabs App
             <span className="font-normal text-gray-700">
@@ -274,7 +238,7 @@ export default function PWAInstallPrompt() {
             </span>
           </p>
 
-          {/* Install */}
+          {/* Install button */}
           <button
             type="button"
             onClick={handleInstall}
@@ -285,34 +249,37 @@ export default function PWAInstallPrompt() {
         </div>
       </div>
 
-      {/* Installation instructions */}
+      {/* =====================================================
+          INSTALLATION INSTRUCTIONS
+          ===================================================== */}
       {showHelp && (
         <div
-          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 p-4 sm:items-center"
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-4 sm:items-center"
           onClick={() => setShowHelp(false)}
         >
           <div
-            className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+            className="relative w-full max-w-md rounded-2xl bg-[#fffaf8] p-6 shadow-2xl ring-1 ring-[#7a1f2b]/20"
             onClick={(event) =>
               event.stopPropagation()
             }
           >
-            {/* Close */}
+            {/* Visible burgundy close button */}
             <button
               type="button"
-              onClick={() =>
-                setShowHelp(false)
-              }
-              aria-label="Close"
-              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a1f2b] text-2xl font-bold leading-none text-white"
+              onClick={() => setShowHelp(false)}
+              aria-label="Close installation instructions"
+              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#7a1f2b] text-2xl font-bold leading-none text-white shadow-lg transition hover:bg-[#641923]"
             >
               ×
             </button>
 
-            <h2 className="pr-10 text-xl font-semibold text-gray-900">
+            <h2 className="pr-12 text-xl font-semibold text-gray-900">
               Install Dress Like Nawaabs
             </h2>
 
+            {/* =================================================
+                ANDROID
+                ================================================= */}
             {isAndroid && (
               <>
                 <p className="mt-3 text-sm leading-6 text-gray-600">
@@ -320,13 +287,10 @@ export default function PWAInstallPrompt() {
                   phone or tablet:
                 </p>
 
-                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
+                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
                   <li>
                     Open this website in{" "}
-                    <strong>
-                      Google Chrome
-                    </strong>
-                    .
+                    <strong>Google Chrome</strong>.
                   </li>
 
                   <li>
@@ -347,9 +311,18 @@ export default function PWAInstallPrompt() {
                     Confirm the installation.
                   </li>
                 </ol>
+
+                <div className="mt-4 rounded-xl bg-[#f5ebe7] p-3 text-xs leading-5 text-gray-700">
+                  <strong>Tip:</strong> If you see
+                  "Install and Create Shortcut",
+                  that is the option you need.
+                </div>
               </>
             )}
 
+            {/* =================================================
+                iPHONE / iPAD
+                ================================================= */}
             {isIOS && (
               <>
                 <p className="mt-3 text-sm leading-6 text-gray-600">
@@ -357,7 +330,7 @@ export default function PWAInstallPrompt() {
                   iPhone or iPad:
                 </p>
 
-                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
+                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
                   <li>
                     Open this website in{" "}
                     <strong>Safari</strong>.
@@ -385,12 +358,11 @@ export default function PWAInstallPrompt() {
               </>
             )}
 
+            {/* Done */}
             <button
               type="button"
-              onClick={() =>
-                setShowHelp(false)
-              }
-              className="mt-5 w-full rounded-xl bg-[#7a1f2b] px-4 py-3 text-sm font-semibold text-white hover:bg-[#641923]"
+              onClick={() => setShowHelp(false)}
+              className="mt-5 w-full rounded-xl bg-[#7a1f2b] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#641923]"
             >
               Done
             </button>
