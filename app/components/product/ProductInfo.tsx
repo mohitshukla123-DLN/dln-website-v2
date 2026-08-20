@@ -25,12 +25,6 @@ export default function ProductInfo({
         {name}
       </h1>
 
-      {color && (
-        <p className="mt-2 text-sm font-medium text-[var(--muted)]">
-          Color: <span className="font-semibold text-[var(--foreground)]">{color}</span>
-        </p>
-      )}
-
       <div className="mt-4 flex items-center gap-3">
         <span className="text-xl text-yellow-500">
           ★★★★★
@@ -41,9 +35,18 @@ export default function ProductInfo({
         </span>
       </div>
 
-      <p className="mt-4 text-3xl font-bold text-[var(--burgundy)] sm:text-4xl">
+      <p className="mt-4 text-3xl font-bold text-black sm:text-4xl">
         ₹{price.toLocaleString("en-IN")}
       </p>
-      </>
+
+      {color && (
+        <p className="mt-3 text-sm text-[var(--muted)]">
+          <span className="font-semibold text-[var(--foreground)]">
+            Color:
+          </span>{" "}
+          {color}
+        </p>
+      )}
+    </>
   );
 }
