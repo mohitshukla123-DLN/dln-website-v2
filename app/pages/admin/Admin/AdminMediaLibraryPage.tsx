@@ -36,7 +36,6 @@ async function processImage(
   cropPercent: number
 ): Promise<Blob> {
   const image = new Image();
-
   const sourceUrl = URL.createObjectURL(file);
 
   try {
@@ -54,10 +53,9 @@ async function processImage(
     );
 
     const cropAmount =
-      Math.max(0, Math.min(80, cropPercent)) / 100;
+      Math.max(0, Math.min(60, cropPercent)) / 100;
 
-    const cropSize =
-      size * (1 - cropAmount);
+    const cropSize = size * (1 - cropAmount);
 
     const sx =
       (image.naturalWidth - cropSize) / 2;
@@ -65,11 +63,9 @@ async function processImage(
     const sy =
       (image.naturalHeight - cropSize) / 2;
 
-    const maxDimension = 1800;
-
     const outputSize = Math.min(
       cropSize,
-      maxDimension
+      1800
     );
 
     canvas.width = outputSize;
@@ -78,9 +74,7 @@ async function processImage(
     const context = canvas.getContext("2d");
 
     if (!context) {
-      throw new Error(
-        "Unable to process image."
-      );
+      throw new Error("Unable to process image.");
     }
 
     context.imageSmoothingEnabled = true;
@@ -108,9 +102,7 @@ async function processImage(
     );
 
     if (!blob) {
-      throw new Error(
-        "WebP conversion failed."
-      );
+      throw new Error("WebP conversion failed.");
     }
 
     return blob;
@@ -200,7 +192,10 @@ export default function AdminMediaLibraryPage() {
     setPendingImages((current) =>
       current.map((image) =>
         image.id === id
-          ? { ...image, crop }
+          ? {
+              ...image,
+              crop,
+            }
           : image
       )
     );
@@ -223,10 +218,11 @@ export default function AdminMediaLibraryPage() {
         const pending =
           pendingImages[index];
 
-        const processed = await processImage(
-          pending.file,
-          pending.crop
-        );
+        const processed =
+          await processImage(
+            pending.file,
+            pending.crop
+          );
 
         const baseName =
           slugify(pending.file.name) ||
@@ -244,8 +240,7 @@ export default function AdminMediaLibraryPage() {
               filename,
               processed,
               {
-                contentType:
-                  "image/webp",
+                contentType: "image/webp",
                 cacheControl:
                   "31536000",
                 upsert: false,
@@ -259,9 +254,7 @@ export default function AdminMediaLibraryPage() {
         const { data: urlData } =
           supabase.storage
             .from("media-library")
-            .getPublicUrl(
-              filename
-            );
+            .getPublicUrl(filename);
 
         const { error: dbError } =
           await supabase
@@ -271,9 +264,10 @@ export default function AdminMediaLibraryPage() {
               file_name: filename,
               public_url:
                 urlData.publicUrl,
-              is_featured:
-                images.length === 0 &&
-                index === 0,
+
+              // New uploads are NOT featured.
+              is_featured: false,
+
               sort_order:
                 startingOrder + index,
             });
@@ -382,8 +376,7 @@ export default function AdminMediaLibraryPage() {
   ) {
     if (sourceId === targetId) return;
 
-    const current =
-      [...images];
+    const current = [...images];
 
     const sourceIndex =
       current.findIndex(
@@ -404,12 +397,11 @@ export default function AdminMediaLibraryPage() {
       return;
     }
 
-    const [
-      moved,
-    ] = current.splice(
-      sourceIndex,
-      1
-    );
+    const [moved] =
+      current.splice(
+        sourceIndex,
+        1
+      );
 
     current.splice(
       targetIndex,
@@ -424,15 +416,22 @@ export default function AdminMediaLibraryPage() {
       index < current.length;
       index++
     ) {
-      await supabase
-        .from("media_library")
-        .update({
-          sort_order: index,
-        })
-        .eq(
-          "id",
-          current[index].id
-        );
+      const { error } =
+        await supabase
+          .from("media_library")
+          .update({
+            sort_order: index,
+          })
+          .eq(
+            "id",
+            current[index].id
+          );
+
+      if (error) {
+        alert(error.message);
+        await loadImages();
+        return;
+      }
     }
   }
 
@@ -442,12 +441,11 @@ export default function AdminMediaLibraryPage() {
     e.preventDefault();
     setDragActive(false);
 
-    const files =
+    addFiles(
       Array.from(
         e.dataTransfer.files
-      );
-
-    addFiles(files);
+      )
+    );
   }
 
   return (
@@ -458,8 +456,8 @@ export default function AdminMediaLibraryPage() {
         </h1>
 
         <p className="mt-2 text-[var(--muted)]">
-          Upload, prepare and organize
-          website images.
+          Upload, crop, compress and
+          organize website images.
         </p>
 
         {/* UPLOAD AREA */}
@@ -524,8 +522,10 @@ export default function AdminMediaLibraryPage() {
                 </h2>
 
                 <p className="mt-1 text-sm text-[var(--muted)]">
-                  Images will be converted
-                  to compressed WebP files.
+                  Crop changes are shown
+                  immediately. Images are
+                  converted to compressed
+                  WebP when published.
                 </p>
               </div>
 
@@ -543,56 +543,77 @@ export default function AdminMediaLibraryPage() {
 
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {pendingImages.map(
-                (image) => (
-                  <div
-                    key={image.id}
-                    className="overflow-hidden rounded-xl border"
-                  >
-                    <img
-                      src={image.preview}
-                      alt={image.file.name}
-                      className="aspect-square w-full object-cover"
-                    />
+                (image) => {
+                  const scale =
+                    1 +
+                    image.crop /
+                      100;
 
-                    <div className="p-4">
-                      <p className="truncate text-sm font-medium">
-                        {image.file.name}
-                      </p>
+                  return (
+                    <div
+                      key={image.id}
+                      className="overflow-hidden rounded-xl border"
+                    >
+                      <div className="aspect-square overflow-hidden bg-black/5">
+                        <img
+                          src={image.preview}
+                          alt={
+                            image.file.name
+                          }
+                          className="h-full w-full object-cover transition-transform duration-150"
+                          style={{
+                            transform: `scale(${scale})`,
+                          }}
+                        />
+                      </div>
 
-                      <label className="mt-4 block text-xs font-medium">
-                        Crop
-                      </label>
+                      <div className="p-4">
+                        <p className="truncate text-sm font-medium">
+                          {image.file.name}
+                        </p>
 
-                      <input
-                        type="range"
-                        min={0}
-                        max={60}
-                        value={image.crop}
-                        onChange={(e) =>
-                          updateCrop(
-                            image.id,
-                            Number(
-                              e.target.value
+                        <div className="mt-4 flex items-center justify-between">
+                          <label className="text-xs font-medium">
+                            Crop
+                          </label>
+
+                          <span className="text-xs text-[var(--muted)]">
+                            {image.crop}%
+                          </span>
+                        </div>
+
+                        <input
+                          type="range"
+                          min={0}
+                          max={60}
+                          value={image.crop}
+                          onChange={(e) =>
+                            updateCrop(
+                              image.id,
+                              Number(
+                                e.target
+                                  .value
+                              )
                             )
-                          )
-                        }
-                        className="mt-2 w-full"
-                      />
+                          }
+                          className="mt-2 w-full"
+                        />
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          removePending(
-                            image.id
-                          )
-                        }
-                        className="mt-4 w-full rounded-lg border px-3 py-2 text-sm"
-                      >
-                        Remove
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            removePending(
+                              image.id
+                            )
+                          }
+                          className="mt-4 w-full rounded-lg border px-3 py-2 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )
+                  );
+                }
               )}
             </div>
           </div>
@@ -606,7 +627,8 @@ export default function AdminMediaLibraryPage() {
 
           <p className="mt-1 text-sm text-[var(--muted)]">
             Drag images to reorder them.
-            Select one as the featured image.
+            Use "Set Featured" only when
+            you want an image to be featured.
           </p>
 
           <div className="mt-6 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
