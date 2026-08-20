@@ -32,7 +32,7 @@ async function generate() {
   ];
 
   for (const { filename, size } of sizes) {
-    const padding = Math.round(size * 0.12);
+    const padding = Math.round(size * 0.06);
     const logoSize = size - padding * 2;
 
     await sharp(source)
@@ -64,8 +64,8 @@ async function generate() {
    */
   const maskableSize = 512;
   const maskablePadding = Math.round(
-    maskableSize * 0.20
-  );
+  maskableSize * 0.10
+);
 
   const maskableLogoSize =
     maskableSize - maskablePadding * 2;
