@@ -250,6 +250,46 @@ export default function AdminHomepagePage() {
           Manage homepage content and appearance.
         </p>
 
+        <div className="mt-6 rounded-xl border bg-gray-50 p-5">
+          <h2 className="text-lg font-semibold">
+            Homepage CMS Guide
+          </h2>
+
+          <div className="mt-4 space-y-3 text-sm leading-6 text-[var(--muted)]">
+            <p>
+              <strong className="text-[var(--foreground)]">Enable:</strong>{" "}
+              Show or hide a homepage section without deleting its content.
+            </p>
+
+            <p>
+              <strong className="text-[var(--foreground)]">Count:</strong>{" "}
+              Controls how many products appear in New Arrivals, Featured
+              Collections, and Best Sellers.
+            </p>
+
+            <p>
+              <strong className="text-[var(--foreground)]">Title:</strong>{" "}
+              Controls the main heading displayed for that section.
+            </p>
+
+            <p>
+              <strong className="text-[var(--foreground)]">Subtitle:</strong>{" "}
+              Controls the supporting text displayed below the heading.
+            </p>
+
+            <p>
+              <strong className="text-[var(--foreground)]">Button URL:</strong>{" "}
+              Controls where the Hero button takes visitors. Example:{" "}
+              <code>/shop</code>
+            </p>
+
+            <p>
+              <strong className="text-[var(--foreground)]">Hero Image:</strong>{" "}
+              Upload or replace the main homepage Hero image.
+            </p>
+          </div>
+        </div>
+
         {/* HERO */}
         <div className="mt-10 rounded-2xl border bg-white p-8">
           <h2 className="text-2xl font-semibold">Hero Section</h2>
@@ -390,6 +430,10 @@ export default function AdminHomepagePage() {
               }
             />
 
+            <label className="block text-sm font-medium">
+              Products to Display
+            </label>
+
             <input
               type="number"
               min={1}
@@ -440,6 +484,10 @@ export default function AdminHomepagePage() {
                 setFeaturedCollectionsSubtitle(e.target.value)
               }
             />
+
+            <label className="block text-sm font-medium">
+              Products to Display
+            </label>
 
             <input
               type="number"
@@ -520,6 +568,10 @@ export default function AdminHomepagePage() {
                 setBestSellersSubtitle(e.target.value)
               }
             />
+
+            <label className="block text-sm font-medium">
+              Products to Display
+            </label>
 
             <input
               type="number"
