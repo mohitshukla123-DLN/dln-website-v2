@@ -1,66 +1,138 @@
 import { useEffect, useState } from "react";
 
 interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
+  prompt: () => Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
   userChoice: Promise<{
     outcome: "accepted" | "dismissed";
     platform: string;
   }>;
 }
 
+declare global {
+  interface Navigator {
+    getInstalledRelatedApps?: () => Promise<
+      Array<{
+        platform: string;
+        url?: string;
+        id?: string;
+      }>
+    >;
+  }
+}
+
+const INSTALLED_KEY = "dln-pwa-installed";
+
 export default function PWAInstallPrompt() {
-  const [installPrompt, setInstallPrompt] =
+  const [installEvent, setInstallEvent] =
     useState<BeforeInstallPromptEvent | null>(null);
 
-  const [installed, setInstalled] = useState(false);
-
   const [showHelp, setShowHelp] = useState(false);
-
-  const [isMobileOrTablet, setIsMobileOrTablet] =
-    useState(false);
-
-  const [isStandalone, setIsStandalone] =
-    useState(false);
+  const [installed, setInstalled] = useState(false);
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
 
   useEffect(() => {
-    const userAgent =
-      navigator.userAgent.toLowerCase();
+    const userAgent = navigator.userAgent.toLowerCase();
 
-    const mobileOrTablet =
-      /android|iphone|ipad|ipod/.test(userAgent);
+    const isAndroid = /android/.test(userAgent);
+    const isIOS = /iphone|ipad|ipod/.test(userAgent);
+
+    const mobileOrTablet = isAndroid || isIOS;
 
     setIsMobileOrTablet(mobileOrTablet);
 
-    const standalone =
-      window.matchMedia(
-        "(display-mode: standalone)"
-      ).matches;
-
-    setIsStandalone(standalone);
-
-    if (!mobileOrTablet || standalone) {
+    /*
+     * Desktop:
+     * Never show this installation prompt.
+     */
+    if (!mobileOrTablet) {
       return;
     }
 
+    /*
+     * If already running as an installed PWA,
+     * don't show the installation prompt.
+     */
+    const isStandalone =
+      window.matchMedia(
+        "(display-mode: standalone)"
+      ).matches ||
+      window.matchMedia(
+        "(display-mode: fullscreen)"
+      ).matches ||
+      window.matchMedia(
+        "(display-mode: minimal-ui)"
+      ).matches;
+
+    if (isStandalone) {
+      setInstalled(true);
+      return;
+    }
+
+    /*
+     * Local fallback.
+     *
+     * This prevents the popup from repeatedly appearing
+     * on the same browser/device after installation.
+     */
+    if (
+      localStorage.getItem(INSTALLED_KEY) === "true"
+    ) {
+      setInstalled(true);
+      return;
+    }
+
+    /*
+     * Check whether the browser can detect an
+     * already-installed related PWA.
+     *
+     * Supported mainly by Chromium-based browsers.
+     */
+    if (navigator.getInstalledRelatedApps) {
+      navigator
+        .getInstalledRelatedApps()
+        .then((apps) => {
+          if (apps.length > 0) {
+            setInstalled(true);
+
+            localStorage.setItem(
+              INSTALLED_KEY,
+              "true"
+            );
+          }
+        })
+        .catch(() => {
+          // Ignore unsupported/failed detection.
+        });
+    }
+
+    /*
+     * Capture Chrome/Android's native install event.
+     */
     const handleBeforeInstallPrompt = (
       event: Event
     ) => {
       event.preventDefault();
 
-      console.log(
-        "PWA: beforeinstallprompt captured"
-      );
-
-      setInstallPrompt(
+      setInstallEvent(
         event as BeforeInstallPromptEvent
       );
     };
 
+    /*
+     * When installation completes, Chrome fires
+     * appinstalled.
+     */
     const handleAppInstalled = () => {
-      console.log("PWA: app installed");
+      localStorage.setItem(
+        INSTALLED_KEY,
+        "true"
+      );
 
       setInstalled(true);
-      setInstallPrompt(null);
+      setInstallEvent(null);
       setShowHelp(false);
     };
 
@@ -74,19 +146,6 @@ export default function PWAInstallPrompt() {
       handleAppInstalled
     );
 
-    const mediaQuery = window.matchMedia(
-      "(display-mode: standalone)"
-    );
-
-    const handleDisplayModeChange = () => {
-      setIsStandalone(mediaQuery.matches);
-    };
-
-    mediaQuery.addEventListener(
-      "change",
-      handleDisplayModeChange
-    );
-
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
@@ -97,99 +156,70 @@ export default function PWAInstallPrompt() {
         "appinstalled",
         handleAppInstalled
       );
-
-      mediaQuery.removeEventListener(
-        "change",
-        handleDisplayModeChange
-      );
     };
   }, []);
 
-  const handleInstall = async () => {
-    if (installPrompt) {
-      try {
-        console.log(
-          "PWA: showing native install prompt"
-        );
-
-        await installPrompt.prompt();
-
-        const choice =
-          await installPrompt.userChoice;
-
-        console.log(
-          "PWA install result:",
-          choice.outcome
-        );
-
-        if (choice.outcome === "accepted") {
-          setInstalled(true);
-          setShowHelp(false);
-        }
-
-        setInstallPrompt(null);
-      } catch (error) {
-        console.error(
-          "PWA install failed:",
-          error
-        );
-
-        setShowHelp(true);
-      }
-
-      return;
-    }
-
-    /*
-     * Android Chrome may not expose
-     * beforeinstallprompt even though the
-     * browser provides its own installation
-     * option.
-     *
-     * iOS/iPadOS also uses the manual flow.
-     */
-    setShowHelp(true);
-  };
-
   /*
-   * Desktop/laptop:
-   * Never show the PWA installation prompt.
+   * Never render on desktop.
    */
   if (!isMobileOrTablet) {
     return null;
   }
 
   /*
-   * Installed PWA:
-   * Never show the installation prompt.
+   * Never render after installation.
    */
-  if (isStandalone || installed) {
+  if (installed) {
     return null;
+  }
+
+  async function handleInstall() {
+    /*
+     * Chrome/Android native installation.
+     */
+    if (installEvent) {
+      try {
+        const result =
+          await installEvent.prompt();
+
+        if (result.outcome === "accepted") {
+          localStorage.setItem(
+            INSTALLED_KEY,
+            "true"
+          );
+
+          setInstalled(true);
+        }
+
+        setInstallEvent(null);
+      } catch (error) {
+        console.error(
+          "PWA install failed:",
+          error
+        );
+      }
+
+      return;
+    }
+
+    /*
+     * No native prompt available.
+     *
+     * Send the user to the dedicated installation
+     * instructions page.
+     */
+    window.location.href = "/install";
   }
 
   return (
     <>
-      <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl bg-white p-4 shadow-2xl ring-1 ring-black/10">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h3 className="font-semibold text-gray-900">
-              Install Dress Like Nawaabs
-            </h3>
-
-            <p className="mt-1 text-sm text-gray-600">
-              Install the app for quick access.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleInstall}
-            className="shrink-0 rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white"
-          >
-            Install App
-          </button>
-        </div>
-      </div>
+      <button
+        type="button"
+        onClick={handleInstall}
+        className="fixed bottom-4 right-4 z-50 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-gray-800"
+      >
+        Install App
+      </button>
 
       {showHelp && (
         <div
@@ -202,7 +232,7 @@ export default function PWAInstallPrompt() {
               event.stopPropagation()
             }
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between gap-4">
               <h2 className="text-xl font-semibold">
                 Install Dress Like Nawaabs
               </h2>
@@ -210,94 +240,34 @@ export default function PWAInstallPrompt() {
               <button
                 type="button"
                 onClick={() => setShowHelp(false)}
-                className="text-2xl text-gray-500"
+                className="text-2xl leading-none text-gray-400 hover:text-gray-700"
                 aria-label="Close"
               >
                 ×
               </button>
             </div>
 
-            {/android/i.test(
-              navigator.userAgent
-            ) && (
-              <>
-                <p className="mt-3 text-sm leading-6 text-gray-600">
-                  Install on Android:
-                </p>
+            <p className="mt-3 text-sm leading-6 text-gray-600">
+              Install Dress Like Nawaabs on your phone
+              or tablet for quick access.
+            </p>
 
-                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
-                  <li>
-                    Tap Chrome's{" "}
-                    <strong>⋮</strong> menu.
-                  </li>
-
-                  <li>
-                    Tap{" "}
-                    <strong>
-                      Install &amp; Create Shortcut
-                    </strong>
-                    .
-                  </li>
-
-                  <li>
-                    Tap{" "}
-                    <strong>Install</strong>.
-                  </li>
-                </ol>
-
-                <p className="mt-4 text-xs leading-5 text-gray-500">
-                  If Chrome says the app is already
-                  installed, open{" "}
-                  <strong>
-                    Dress Like Nawaabs
-                  </strong>{" "}
-                  from your Android app drawer.
-                </p>
-              </>
-            )}
-
-            {/iphone|ipad|ipod/i.test(
-              navigator.userAgent
-            ) && (
-              <>
-                <p className="mt-3 text-sm leading-6 text-gray-600">
-                  Install on iPhone or iPad:
-                </p>
-
-                <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
-                  <li>
-                    Open this website in{" "}
-                    <strong>Safari</strong>.
-                  </li>
-
-                  <li>
-                    Tap the{" "}
-                    <strong>Share</strong>{" "}
-                    button.
-                  </li>
-
-                  <li>
-                    Tap{" "}
-                    <strong>
-                      Add to Home Screen
-                    </strong>
-                    .
-                  </li>
-
-                  <li>
-                    Tap{" "}
-                    <strong>Add</strong>.
-                  </li>
-                </ol>
-              </>
-            )}
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = "/install";
+              }}
+              className="mt-5 w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white"
+            >
+              Open Installation Guide
+            </button>
 
             <button
               type="button"
               onClick={() => setShowHelp(false)}
-              className="mt-6 w-full rounded-xl bg-gray-100 py-3 text-sm font-semibold text-gray-900"
+              className="mt-3 w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium text-gray-700"
             >
-              Close
+              Not now
             </button>
           </div>
         </div>
