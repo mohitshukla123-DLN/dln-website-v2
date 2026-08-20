@@ -106,8 +106,11 @@ export default function ProductPage() {
         return;
       }
 
+      console.log("PRODUCT PRICE:", data.price, typeof data.price);
+      
       const normalizedProduct: Product = {
           ...data,
+          price: Number(data.price) || 0,
           images: Array.isArray(data.images)
             ? data.images
             : data.image

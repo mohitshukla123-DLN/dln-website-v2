@@ -1,7 +1,7 @@
 interface Props {
   category: string;
   name: string;
-  color: string | null;
+  color: string;
   rating: number;
   reviews: number;
   price: number;
@@ -41,9 +41,9 @@ export default function ProductInfo({
         </span>
       </div>
 
-     <p className="mt-4 text-3xl font-bold text-[var(--burgundy)] sm:text-4xl">
+      <p className="mt-4 text-3xl font-bold text-[var(--burgundy)] sm:text-4xl">
         ₹{price.toLocaleString("en-IN")}
       </p>
-    </>
+      </>
   );
 }
