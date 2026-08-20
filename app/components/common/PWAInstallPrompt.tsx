@@ -24,7 +24,6 @@ declare global {
 }
 
 const INSTALLED_KEY = "dln-pwa-installed";
-const DISMISSED_KEY = "dln-pwa-install-dismissed";
 
 export default function PWAInstallPrompt() {
   const [installEvent, setInstallEvent] =
@@ -46,15 +45,14 @@ export default function PWAInstallPrompt() {
     setIsMobileOrTablet(mobileOrTablet);
 
     /*
-     * Desktop:
-     * Never show the PWA installation prompt.
+     * Only show the PWA prompt on phones/tablets.
      */
     if (!mobileOrTablet) {
       return;
     }
 
     /*
-     * If already running as an installed PWA,
+     * If the website is already running as an installed PWA,
      * don't show the installation prompt.
      */
     const isStandalone =
@@ -74,8 +72,10 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * If the user has already installed the app
-     * on this browser/device, don't show the prompt.
+     * Local fallback.
+     *
+     * If this browser has already completed an installation,
+     * don't show the prompt again.
      */
     if (
       localStorage.getItem(INSTALLED_KEY) === "true"
@@ -85,19 +85,7 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * If the user previously pressed Cancel,
-     * don't show the prompt again.
-     */
-    if (
-      localStorage.getItem(DISMISSED_KEY) === "true"
-    ) {
-      setDismissed(true);
-      return;
-    }
-
-    /*
-     * Check whether the browser can detect an
-     * already-installed related PWA.
+     * Try to detect an already-installed related PWA.
      */
     if (navigator.getInstalledRelatedApps) {
       navigator
@@ -118,7 +106,8 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * Capture Chrome/Android's native installation event.
+     * Chrome/Android provides this event when
+     * the website is eligible for native installation.
      */
     const handleBeforeInstallPrompt = (
       event: Event
@@ -131,15 +120,13 @@ export default function PWAInstallPrompt() {
     };
 
     /*
-     * Fired when the PWA has been installed.
+     * Fired after the PWA is successfully installed.
      */
     const handleAppInstalled = () => {
       localStorage.setItem(
         INSTALLED_KEY,
         "true"
       );
-
-      localStorage.removeItem(DISMISSED_KEY);
 
       setInstalled(true);
       setInstallEvent(null);
@@ -183,7 +170,11 @@ export default function PWAInstallPrompt() {
   }
 
   /*
-   * Don't show after the user pressed Cancel.
+   * User closed the popup.
+   *
+   * This is intentionally NOT stored in localStorage.
+   * Therefore it can appear again on a future visit/reload
+   * if the app has not been installed.
    */
   if (dismissed) {
     return null;
@@ -191,7 +182,7 @@ export default function PWAInstallPrompt() {
 
   async function handleInstall() {
     /*
-     * Chrome/Android native installation.
+     * Use Chrome's native installation prompt when available.
      */
     if (installEvent) {
       try {
@@ -203,8 +194,6 @@ export default function PWAInstallPrompt() {
             INSTALLED_KEY,
             "true"
           );
-
-          localStorage.removeItem(DISMISSED_KEY);
 
           setInstalled(true);
         }
@@ -221,53 +210,45 @@ export default function PWAInstallPrompt() {
     }
 
     /*
-     * If Chrome hasn't provided the native
-     * installation prompt, open the dedicated
-     * installation guide.
+     * If Chrome has not supplied the native prompt,
+     * send the user to the dedicated installation guide.
      */
     window.location.href = "/install";
   }
 
-  function handleCancel() {
-    localStorage.setItem(
-      DISMISSED_KEY,
-      "true"
-    );
-
+  function handleClose() {
     setDismissed(true);
   }
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl bg-white p-4 shadow-2xl ring-1 ring-black/10">
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900">
-            Install Dress Like Nawaabs
-          </h3>
+    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-black/10">
+      {/* Close button */}
+      <button
+        type="button"
+        onClick={handleClose}
+        aria-label="Close install prompt"
+        className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-2xl font-bold leading-none text-gray-700 shadow-sm hover:bg-gray-300 hover:text-black"
+      >
+        ×
+      </button>
 
-          <p className="mt-1 text-sm text-gray-600">
-            Install the app for quick access.
-          </p>
-        </div>
+      <div className="pr-10">
+        <h3 className="font-semibold text-gray-900">
+          Install Dress Like Nawaabs
+        </h3>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={handleCancel}
-            className="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            onClick={handleInstall}
-            className="rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800"
-          >
-            Install App
-          </button>
-        </div>
+        <p className="mt-1 text-sm leading-5 text-gray-600">
+          Install the app for quick access.
+        </p>
       </div>
+
+      <button
+        type="button"
+        onClick={handleInstall}
+        className="mt-4 w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-gray-800"
+      >
+        Install App
+      </button>
     </div>
   );
 }
