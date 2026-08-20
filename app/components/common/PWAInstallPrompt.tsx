@@ -9,149 +9,188 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function PWAInstallPrompt() {
-  const [installEvent, setInstallEvent] =
+  const [installPrompt, setInstallPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
 
-  const [visible, setVisible] = useState(false);
+  const [installed, setInstalled] = useState(false);
+
+  const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
-    const ua = navigator.userAgent.toLowerCase();
+    const isAndroid =
+      /android/i.test(navigator.userAgent);
 
-    const isAndroid = /android/.test(ua);
-
-    const isIOS =
-      /iphone|ipad|ipod/.test(ua) ||
-      (/macintosh/.test(ua) &&
-        "ontouchend" in document);
-
-    if (!isAndroid && !isIOS) {
+    if (!isAndroid) {
       return;
     }
 
-    const standalone =
-      window.matchMedia(
-        "(display-mode: standalone)"
-      ).matches ||
-      window.matchMedia(
-        "(display-mode: fullscreen)"
-      ).matches ||
-      (window.navigator as Navigator & {
-        standalone?: boolean;
-      }).standalone === true;
-
-    if (standalone) {
-      return;
-    }
-
-    const handlePrompt = (event: Event) => {
+    const handleBeforeInstallPrompt = (
+      event: Event
+    ) => {
       event.preventDefault();
 
-      setInstallEvent(
-        event as BeforeInstallPromptEvent
+      const installEvent =
+        event as BeforeInstallPromptEvent;
+
+      console.log(
+        "PWA: beforeinstallprompt captured"
       );
 
-      setVisible(true);
+      setInstallPrompt(installEvent);
     };
 
-    const handleInstalled = () => {
-      setVisible(false);
-      setInstallEvent(null);
+    const handleAppInstalled = () => {
+      console.log("PWA: app installed");
+
+      setInstalled(true);
+      setInstallPrompt(null);
+      setShowHelp(false);
     };
 
     window.addEventListener(
       "beforeinstallprompt",
-      handlePrompt
+      handleBeforeInstallPrompt
     );
 
     window.addEventListener(
       "appinstalled",
-      handleInstalled
+      handleAppInstalled
     );
 
-    // Show our mobile installation entry point
-    // even when the browser does not provide the
-    // native installation event.
-    const timer = window.setTimeout(() => {
-      setVisible(true);
-    }, 1500);
-
     return () => {
-      window.clearTimeout(timer);
-
       window.removeEventListener(
         "beforeinstallprompt",
-        handlePrompt
+        handleBeforeInstallPrompt
       );
 
       window.removeEventListener(
         "appinstalled",
-        handleInstalled
+        handleAppInstalled
       );
     };
   }, []);
 
-  if (!visible) {
+  const handleInstall = async () => {
+    if (!installPrompt) {
+      console.log(
+        "PWA: native install prompt unavailable"
+      );
+
+      setShowHelp(true);
+      return;
+    }
+
+    try {
+      console.log(
+        "PWA: showing native install prompt"
+      );
+
+      await installPrompt.prompt();
+
+      const choice =
+        await installPrompt.userChoice;
+
+      console.log(
+        "PWA install result:",
+        choice.outcome
+      );
+
+      if (choice.outcome === "accepted") {
+        setInstalled(true);
+      }
+
+      setInstallPrompt(null);
+    } catch (error) {
+      console.error(
+        "PWA install prompt failed:",
+        error
+      );
+    }
+  };
+
+  if (installed) {
     return null;
   }
 
-  async function handleInstall() {
-    if (installEvent) {
-      try {
-        await installEvent.prompt();
-
-        const result =
-          await installEvent.userChoice;
-
-        if (result.outcome === "accepted") {
-          setVisible(false);
-        }
-
-        setInstallEvent(null);
-        return;
-      } catch (error) {
-        console.error(
-          "PWA installation failed:",
-          error
-        );
-      }
-    }
-
-    window.location.href = "/install";
-  }
-
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
-      <div className="rounded-2xl bg-black p-4 text-white shadow-2xl">
-        <div className="flex items-start gap-3">
-          <div className="flex-1">
-            <p className="text-sm font-semibold">
+    <>
+      <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl bg-white p-4 shadow-2xl ring-1 ring-black/10">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h3 className="font-semibold text-gray-900">
               Install Dress Like Nawaabs
-            </p>
+            </h3>
 
-            <p className="mt-1 text-xs leading-5 text-gray-300">
-              Install the app on your phone or
-              tablet for quick access.
+            <p className="mt-1 text-sm text-gray-600">
+              Install the app for quick access.
             </p>
           </div>
 
           <button
             type="button"
-            onClick={() => setVisible(false)}
-            className="text-xl leading-none text-gray-400"
-            aria-label="Close"
+            onClick={handleInstall}
+            className="shrink-0 rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white"
           >
-            ×
+            Install App
           </button>
         </div>
-
-        <button
-          type="button"
-          onClick={handleInstall}
-          className="mt-3 w-full rounded-xl bg-white px-4 py-3 text-sm font-semibold text-black"
-        >
-          Install App
-        </button>
       </div>
-    </div>
+
+      {showHelp && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">
+                Install Dress Like Nawaabs
+              </h2>
+
+              <button
+                type="button"
+                onClick={() => setShowHelp(false)}
+                className="text-2xl text-gray-500"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <p className="mt-3 text-sm leading-6 text-gray-600">
+              Chrome has not provided the automatic
+              installation prompt yet.
+            </p>
+
+            <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-700">
+              <li>
+                Tap Chrome's <strong>⋮</strong> menu.
+              </li>
+
+              <li>
+                Tap{" "}
+                <strong>
+                  Install app
+                </strong>{" "}
+                or{" "}
+                <strong>
+                  Add to Home screen
+                </strong>
+                .
+              </li>
+
+              <li>
+                Follow Chrome's installation prompt.
+              </li>
+            </ol>
+
+            <button
+              type="button"
+              onClick={() => setShowHelp(false)}
+              className="mt-6 w-full rounded-xl bg-gray-100 py-3 text-sm font-semibold"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
