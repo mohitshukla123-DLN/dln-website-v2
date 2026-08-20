@@ -5,55 +5,106 @@ export default function PWAInstallPrompt() {
   const [showHelp, setShowHelp] = useState(false);
 
   useEffect(() => {
-    const checkInstalled = () => {
+    const checkInstalled = async () => {
       const standalone =
         window.matchMedia("(display-mode: standalone)").matches ||
-        (window.navigator as Navigator & { standalone?: boolean })
-          .standalone === true;
+        window.matchMedia("(display-mode: fullscreen)").matches ||
+        window.matchMedia("(display-mode: minimal-ui)").matches ||
+        (window.navigator as Navigator & {
+          standalone?: boolean;
+        }).standalone === true;
 
-      setInstalled(standalone);
+      let relatedAppInstalled = false;
+
+      try {
+        if ("getInstalledRelatedApps" in navigator) {
+          const apps =
+            await navigator.getInstalledRelatedApps();
+
+          relatedAppInstalled = apps.length > 0;
+        }
+      } catch {
+        // Ignore unsupported browsers
+      }
+
+      setInstalled(
+        standalone || relatedAppInstalled
+      );
     };
 
     checkInstalled();
 
-    window.addEventListener("appinstalled", checkInstalled);
+    const media = window.matchMedia(
+      "(display-mode: standalone)"
+    );
 
-    const media = window.matchMedia("(display-mode: standalone)");
-    media.addEventListener("change", checkInstalled);
+    const handleChange = () => {
+      checkInstalled();
+    };
+
+    media.addEventListener("change", handleChange);
+
+    window.addEventListener(
+      "appinstalled",
+      checkInstalled
+    );
+
+    window.addEventListener(
+      "pageshow",
+      checkInstalled
+    );
+
+    document.addEventListener(
+      "visibilitychange",
+      checkInstalled
+    );
 
     return () => {
-      window.removeEventListener("appinstalled", checkInstalled);
-      media.removeEventListener("change", checkInstalled);
+      media.removeEventListener(
+        "change",
+        handleChange
+      );
+
+      window.removeEventListener(
+        "appinstalled",
+        checkInstalled
+      );
+
+      window.removeEventListener(
+        "pageshow",
+        checkInstalled
+      );
+
+      document.removeEventListener(
+        "visibilitychange",
+        checkInstalled
+      );
     };
   }, []);
 
-  if (installed) return null;
+  if (installed) {
+    return null;
+  }
 
   const ua = navigator.userAgent.toLowerCase();
 
-  const isIOS = /iphone|ipad|ipod/.test(ua);
-  const isAndroid = /android/.test(ua);
-  const isMac = /macintosh|mac os x/.test(ua);
+  const isIOS =
+    /iphone|ipad|ipod/.test(ua);
 
-  const isChrome =
-    /chrome|crios/.test(ua) &&
-    !/edg|opr|opera/.test(ua);
+  const isAndroid =
+    /android/.test(ua);
 
-  const isSafari =
-    /safari/.test(ua) &&
-    !/chrome|crios|android/.test(ua);
+  const isMac =
+    /macintosh|mac os x/.test(ua);
 
-  const isDesktop = !isIOS && !isAndroid;
-
-  const handleInstall = () => {
-    setShowHelp(true);
-  };
+  const isDesktop =
+    !isIOS && !isAndroid;
 
   return (
     <>
       <button
         type="button"
-        onClick={handleInstall}
+        onClick={() => setShowHelp(true)}
         className="fixed bottom-5 right-5 z-50 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:scale-105"
       >
         Install App
@@ -82,129 +133,23 @@ export default function PWAInstallPrompt() {
               </button>
             </div>
 
-            {/* ANDROID */}
             {isAndroid && (
               <>
                 <p className="mt-3 text-sm text-gray-600">
-                  Install on your Android phone:
+                  Install on Android:
                 </p>
 
                 <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
                   <li>
-                    Open Dress Like Nawaabs in{" "}
-                    <strong>Google Chrome</strong>.
+                    Open this website in Chrome.
                   </li>
                   <li>
                     Tap the <strong>⋮</strong> menu.
                   </li>
                   <li>
                     Select{" "}
-                    <strong>
-                      Install app
-                    </strong>{" "}
-                    or{" "}
-                    <strong>
-                      Add to Home screen
-                    </strong>
-                    .
-                  </li>
-                  <li>Confirm the installation.</li>
-                </ol>
-
-                {!isChrome && (
-                  <p className="mt-4 rounded-lg bg-yellow-50 p-3 text-xs text-yellow-800">
-                    For the best installation experience,
-                    open this website in Google Chrome.
-                  </p>
-                )}
-              </>
-            )}
-
-            {/* IPHONE / IPAD */}
-            {isIOS && (
-              <>
-                <p className="mt-3 text-sm text-gray-600">
-                  Install on your iPhone or iPad:
-                </p>
-
-                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
-                  <li>
-                    Open this website in{" "}
-                    <strong>Safari</strong>.
-                  </li>
-                  <li>
-                    Tap the <strong>Share</strong> button.
-                  </li>
-                  <li>
-                    Select{" "}
-                    <strong>
-                      Add to Home Screen
-                    </strong>
-                    .
-                  </li>
-                  <li>
-                    Tap <strong>Add</strong>.
-                  </li>
-                </ol>
-
-                {!isSafari && (
-                  <p className="mt-4 rounded-lg bg-yellow-50 p-3 text-xs text-yellow-800">
-                    iPhone/iPad installation requires Safari.
-                  </p>
-                )}
-              </>
-            )}
-
-            {/* MAC */}
-              {isMac && isDesktop && (
-                <>
-                  <p className="mt-3 text-sm text-gray-600">
-                    Install on your Mac:
-                  </p>
-
-                  <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
-                    <li>
-                      Open this website in{" "}
-                      <strong>Google Chrome</strong>.
-                    </li>
-                    <li>
-                      Click the <strong>⋮</strong> menu in the
-                      top-right corner.
-                    </li>
-                    <li>
-                      Look for{" "}
-                      <strong>Install Dress Like Nawaabs</strong>.
-                    </li>
-                    <li>
-                      Click it and confirm{" "}
-                      <strong>Install</strong>.
-                    </li>
-                  </ol>
-
-                  <p className="mt-4 rounded-lg bg-gray-50 p-3 text-xs leading-5 text-gray-500">
-                    If "Install Dress Like Nawaabs" is not shown,
-                    Chrome has not made the site available for
-                    installation on this browser yet.
-                  </p>
-                </>
-              )}
-
-            {/* OTHER DESKTOP */}
-            {!isAndroid && !isIOS && !isMac && (
-              <>
-                <p className="mt-3 text-sm text-gray-600">
-                  Install Dress Like Nawaabs from your
-                  browser.
-                </p>
-
-                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
-                  <li>
-                    Open the browser menu.
-                  </li>
-                  <li>
-                    Look for{" "}
-                    <strong>Install Dress Like Nawaabs</strong>{" "}
-                    or <strong>Install app</strong>.
+                    <strong>Install app</strong> or{" "}
+                    <strong>Add to Home screen</strong>.
                   </li>
                   <li>
                     Confirm the installation.
@@ -212,6 +157,66 @@ export default function PWAInstallPrompt() {
                 </ol>
               </>
             )}
+
+            {isIOS && (
+              <>
+                <p className="mt-3 text-sm text-gray-600">
+                  Install on iPhone or iPad:
+                </p>
+
+                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open this website in Safari.
+                  </li>
+                  <li>
+                    Tap the <strong>Share</strong> button.
+                  </li>
+                  <li>
+                    Select{" "}
+                    <strong>Add to Home Screen</strong>.
+                  </li>
+                  <li>
+                    Tap <strong>Add</strong>.
+                  </li>
+                </ol>
+              </>
+            )}
+
+            {isMac && isDesktop && (
+              <>
+                <p className="mt-3 text-sm text-gray-600">
+                  Install on your Mac:
+                </p>
+
+                <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-gray-700">
+                  <li>
+                    Open this website in Google Chrome.
+                  </li>
+                  <li>
+                    Click the <strong>Install</strong>{" "}
+                    icon in the address bar.
+                  </li>
+                  <li>
+                    Click <strong>Install</strong>.
+                  </li>
+                </ol>
+
+                <p className="mt-4 rounded-lg bg-gray-50 p-3 text-xs leading-5 text-gray-500">
+                  If Chrome does not show the install
+                  icon, open the Chrome menu and look for
+                  "Install Dress Like Nawaabs".
+                </p>
+              </>
+            )}
+
+            {!isAndroid &&
+              !isIOS &&
+              !isMac && (
+                <p className="mt-3 text-sm leading-6 text-gray-600">
+                  Open the browser menu and choose the
+                  option to install Dress Like Nawaabs.
+                </p>
+              )}
 
             <button
               type="button"
