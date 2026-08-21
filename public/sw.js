@@ -8,6 +8,7 @@ const SUPABASE_ORIGIN =
 
 const APP_SHELL = [
   "/",
+  "/index.html",
   "/manifest.webmanifest",
   "/favicon.ico",
   "/favicon.png",
@@ -36,18 +37,15 @@ self.addEventListener("install", (event) => {
       for (const url of APP_SHELL) {
         try {
           const response = await fetch(url, {
-            cache: "no-cache",
+            cache: "no-store",
           });
 
           if (response.ok) {
             await cache.put(url, response);
+            console.log("PWA shell cached:", url);
           }
         } catch (error) {
-          console.warn(
-            "PWA shell cache failed:",
-            url,
-            error
-          );
+          console.warn("PWA shell cache failed:", url, error);
         }
       }
     })()
