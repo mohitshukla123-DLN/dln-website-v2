@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v13";
+const CACHE_NAME = "dln-v14";
 const API_CACHE_NAME = "dln-api-v1";
 const FONT_CACHE_NAME = "dln-fonts-v1";
 const IMAGE_CACHE_NAME = "dln-images-v1";
@@ -259,40 +259,33 @@ async function handleNavigation(request) {
 async function handleImage(request) {
   const cache = await caches.open(IMAGE_CACHE_NAME);
 
-  try {
-    const response = await fetch(request, {
-      cache: "no-store",
-    });
+  // 1. Try cache first
+  const cached = await cache.match(request);
 
+  if (cached) {
+    return cached;
+  }
+
+  // 2. Fetch from network
+  try {
+    const response = await fetch(request);
+
+    // 3. Save successful images
     if (response.ok) {
       await cache.put(request, response.clone());
 
-      console.log(
-        "Supabase image cached:",
-        request.url
-      );
+      console.log("Image cached:", request.url);
     }
 
     return response;
   } catch (error) {
-    const cached = await cache.match(request);
-
-    if (cached) {
-      console.warn(
-        "Offline image from cache:",
-        request.url
-      );
-
-      return cached;
-    }
-
     console.warn(
       "Offline image unavailable:",
       request.url
     );
 
     return new Response("", {
-      status: 404,
+      status: 503,
       statusText: "Offline image unavailable",
     });
   }
