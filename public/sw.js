@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v6";
+const CACHE_NAME = "dln-v7";
 
 const APP_SHELL = [
   "/",
@@ -98,4 +98,4 @@ self.addEventListener("fetch", (event) => {
       })
       .catch(() => caches.match(event.request))
   );
-});
+});clear
