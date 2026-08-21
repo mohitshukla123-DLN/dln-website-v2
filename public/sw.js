@@ -1,7 +1,7 @@
-const CACHE_NAME = "dln-v15";
-const API_CACHE_NAME = "dln-api-v1";
+const CACHE_NAME = "dln-v16";
+const API_CACHE_NAME = "dln-api-v2";
 const FONT_CACHE_NAME = "dln-fonts-v1";
-const IMAGE_CACHE_NAME = "dln-images-v1";
+const IMAGE_CACHE_NAME = "dln-images-v2";
 
 importScripts("/sw-assets.js");
 
@@ -38,7 +38,9 @@ self.addEventListener("install", (event) => {
     (async () => {
       const cache = await caches.open(CACHE_NAME);
 
-      // Cache the PWA shell
+      /*
+       * Cache PWA shell.
+       */
       for (const url of APP_SHELL) {
         try {
           const response = await fetch(url, {
@@ -46,7 +48,7 @@ self.addEventListener("install", (event) => {
           });
 
           if (response.ok) {
-            await cache.put(url, response);
+            await cache.put(url, response.clone());
             console.log("PWA shell cached:", url);
           }
         } catch (error) {
@@ -58,7 +60,9 @@ self.addEventListener("install", (event) => {
         }
       }
 
-      // Cache all Vite-generated JS/CSS/assets
+      /*
+       * Cache Vite-generated JS/CSS/assets.
+       */
       for (const url of SW_ASSETS) {
         try {
           const response = await fetch(url, {
@@ -66,11 +70,8 @@ self.addEventListener("install", (event) => {
           });
 
           if (response.ok) {
-            await cache.put(url, response);
-            console.log(
-              "PWA asset cached:",
-              url
-            );
+            await cache.put(url, response.clone());
+            console.log("PWA asset cached:", url);
           }
         } catch (error) {
           console.warn(
@@ -95,23 +96,30 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
+      const keep = new Set([
+        CACHE_NAME,
+        API_CACHE_NAME,
+        FONT_CACHE_NAME,
+        IMAGE_CACHE_NAME,
+      ]);
+
       const keys = await caches.keys();
 
       await Promise.all(
         keys
-          .filter(
-            (key) =>
-              ![
-                CACHE_NAME,
-                API_CACHE_NAME,
-                FONT_CACHE_NAME,
-                IMAGE_CACHE_NAME,
-              ].includes(key)
-          )
-          .map((key) => caches.delete(key))
+          .filter((key) => !keep.has(key))
+          .map((key) => {
+            console.log("Deleting old cache:", key);
+            return caches.delete(key);
+          })
       );
 
       await self.clients.claim();
+
+      console.log(
+        "Service Worker activated:",
+        CACHE_NAME
+      );
     })()
   );
 });
@@ -133,13 +141,13 @@ function isSupabaseImage(request) {
     return false;
   }
 
+  const url = new URL(request.url);
+
   return (
-    request.url.includes(
+    url.pathname.includes(
       "/storage/v1/object/public/"
     ) ||
-    IMAGE_EXTENSIONS.test(
-      new URL(request.url).pathname
-    )
+    IMAGE_EXTENSIONS.test(url.pathname)
   );
 }
 
@@ -178,11 +186,13 @@ function isNavigation(request) {
  * ---------------------------------------------------------
  * NAVIGATION
  *
- * Online:
- *   network first
+ * Network first.
  *
  * Offline:
- *   cached SPA shell
+ *   1. Exact cached route
+ *   2. Cached index.html
+ *   3. Cached /
+ *   4. Offline fallback
  * ---------------------------------------------------------
  */
 
@@ -191,19 +201,46 @@ async function handleNavigation(request) {
     const response = await fetch(request);
 
     if (response.ok) {
-      const cache = await caches.open(
-        CACHE_NAME
-      );
+      const cache = await caches.open(CACHE_NAME);
 
-      await cache.put(
-        request,
-        response.clone()
-      );
+      /*
+       * Cache the requested HTML route.
+       */
+      try {
+        await cache.put(
+          request,
+          response.clone()
+        );
+      } catch (error) {
+        console.warn(
+          "Navigation cache failed:",
+          request.url,
+          error
+        );
+      }
 
-      await cache.put(
-        "/",
-        response.clone()
-      );
+      /*
+       * Keep the actual application shell as "/".
+       *
+       * IMPORTANT:
+       * Do not overwrite "/" with arbitrary route HTML.
+       */
+      if (
+        request.url ===
+        new URL("/", self.location.origin).href
+      ) {
+        try {
+          await cache.put(
+            "/",
+            response.clone()
+          );
+        } catch (error) {
+          console.warn(
+            "Root cache failed:",
+            error
+          );
+        }
+      }
     }
 
     return response;
@@ -213,20 +250,38 @@ async function handleNavigation(request) {
       request.url
     );
 
-    const exact = await caches.match(
-      request
-    );
+    /*
+     * 1. Exact route.
+     */
+    const exact = await caches.match(request);
 
     if (exact) {
       return exact;
     }
 
+    /*
+     * 2. index.html.
+     */
+    const index = await caches.match(
+      "/index.html"
+    );
+
+    if (index) {
+      return index;
+    }
+
+    /*
+     * 3. Root.
+     */
     const root = await caches.match("/");
 
     if (root) {
       return root;
     }
 
+    /*
+     * 4. Last-resort HTML.
+     */
     return new Response(
       `<!doctype html>
 <html>
@@ -257,16 +312,11 @@ async function handleNavigation(request) {
  *
  * Cache first.
  *
- * IMPORTANT:
- * Supabase cross-origin images are commonly
- * returned as opaque responses:
+ * Supabase public Storage responses may be "opaque"
+ * because they are cross-origin.
  *
- *   response.type === "opaque"
- *   response.ok === false
- *   response.status === 0
- *
- * Opaque responses are still valid for <img>
- * and MUST be allowed into Cache Storage.
+ * Opaque responses ARE intentionally cached here.
+ * This is required for reliable offline public images.
  * ---------------------------------------------------------
  */
 
@@ -275,7 +325,9 @@ async function handleImage(request) {
     IMAGE_CACHE_NAME
   );
 
-  // 1. Cache first
+  /*
+   * 1. Cache first.
+   */
   const cached = await cache.match(request);
 
   if (cached) {
@@ -287,21 +339,25 @@ async function handleImage(request) {
     return cached;
   }
 
-  // 2. Network
+  /*
+   * 2. Network.
+   */
   try {
     const response = await fetch(request);
 
     /*
-     * Cache both:
+     * Cache:
      *
-     * 1. Normal successful responses
-     * 2. Opaque Supabase responses
+     * - normal successful responses
+     * - opaque Supabase public Storage responses
+     *
+     * Do NOT require response.type === "basic".
      */
-    const cacheable =
+    const shouldCache =
       response.ok ||
       response.type === "opaque";
 
-    if (cacheable) {
+    if (shouldCache) {
       try {
         await cache.put(
           request,
@@ -317,10 +373,6 @@ async function handleImage(request) {
           response.status
         );
       } catch (cacheError) {
-        /*
-         * Never break an online image just
-         * because Cache Storage failed.
-         */
         console.warn(
           "Image cache write failed:",
           request.url,
@@ -342,28 +394,27 @@ async function handleImage(request) {
   } catch (error) {
     console.warn(
       "Image network failed:",
-      request.url,
-      error
+      request.url
     );
 
     /*
-     * Try cache again in case another request
-     * populated it while this request was running.
+     * Usually the cache-first check above already
+     * handles this, but keep a final fallback.
      */
-    const fallback = await cache.match(
-      request
-    );
+    const fallback = await cache.match(request);
 
     if (fallback) {
-      console.log(
-        "Offline image served from cache:",
-        request.url
-      );
-
       return fallback;
     }
 
-    throw error;
+    /*
+     * Return a clean offline response instead of
+     * throwing an unhandled fetch error.
+     */
+    return new Response("", {
+      status: 503,
+      statusText: "Offline image unavailable",
+    });
   }
 }
 
@@ -397,7 +448,7 @@ async function handleFont(request) {
         );
       } catch (error) {
         console.warn(
-          "Font cache failed:",
+          "Font cache write failed:",
           request.url,
           error
         );
@@ -421,10 +472,15 @@ async function handleFont(request) {
 
 /*
  * ---------------------------------------------------------
- * API
+ * SUPABASE API
  *
- * Network first.
- * Cached API response when offline.
+ * GET:
+ *   Network first
+ *   Cached response when offline
+ *
+ * Non-GET:
+ *   Never intercepted/cached here because the fetch
+ *   handler ignores non-GET requests.
  * ---------------------------------------------------------
  */
 
@@ -452,7 +508,7 @@ async function handleApi(request) {
         );
       } catch (cacheError) {
         console.warn(
-          "Supabase API cache failed:",
+          "Supabase API cache write failed:",
           request.url,
           cacheError
         );
@@ -461,9 +517,7 @@ async function handleApi(request) {
 
     return response;
   } catch (error) {
-    const cached = await cache.match(
-      request
-    );
+    const cached = await cache.match(request);
 
     if (cached) {
       console.warn(
@@ -499,7 +553,12 @@ async function handleApi(request) {
  * ---------------------------------------------------------
  * VIDEO
  *
- * Do NOT aggressively cache videos.
+ * Never cache videos.
+ *
+ * This avoids:
+ * - huge Cache Storage usage
+ * - Range request problems
+ * - partially cached videos
  * ---------------------------------------------------------
  */
 
@@ -517,16 +576,14 @@ async function handleVideo(request) {
 
 /*
  * ---------------------------------------------------------
- * OTHER SAME-ORIGIN ASSETS
+ * SAME-ORIGIN ASSETS
  *
  * Cache first.
  * ---------------------------------------------------------
  */
 
 async function handleAsset(request) {
-  const cached = await caches.match(
-    request
-  );
+  const cached = await caches.match(request);
 
   if (cached) {
     return cached;
@@ -578,6 +635,9 @@ async function handleAsset(request) {
 self.addEventListener("fetch", (event) => {
   const request = event.request;
 
+  /*
+   * Only GET requests.
+   */
   if (request.method !== "GET") {
     return;
   }
@@ -585,7 +645,11 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
 
   /*
-   * Ignore cross-origin requests except Supabase.
+   * Ignore unrelated cross-origin requests.
+   *
+   * Only:
+   * - same-origin
+   * - Supabase
    */
   if (
     url.origin !== self.location.origin &&
@@ -595,7 +659,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * Navigation
+   * Navigation.
    */
   if (isNavigation(request)) {
     event.respondWith(
@@ -606,7 +670,10 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * Supabase images
+   * Supabase public Storage images.
+   *
+   * This MUST come before generic same-origin
+   * asset handling.
    */
   if (isSupabaseImage(request)) {
     event.respondWith(
@@ -617,7 +684,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * Fonts
+   * Fonts.
    */
   if (isFont(request)) {
     event.respondWith(
@@ -628,7 +695,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * Supabase API
+   * Supabase REST API.
    */
   if (isApiRequest(request)) {
     event.respondWith(
@@ -639,7 +706,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * Videos
+   * Videos.
    */
   if (isVideo(request)) {
     event.respondWith(
@@ -650,11 +717,9 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * Same-origin assets
+   * Same-origin assets.
    */
-  if (
-    url.origin === self.location.origin
-  ) {
+  if (url.origin === self.location.origin) {
     event.respondWith(
       handleAsset(request)
     );
