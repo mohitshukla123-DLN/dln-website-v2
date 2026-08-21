@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v14";
+const CACHE_NAME = "dln-v15";
 const API_CACHE_NAME = "dln-api-v1";
 const FONT_CACHE_NAME = "dln-fonts-v1";
 const IMAGE_CACHE_NAME = "dln-images-v1";
@@ -259,22 +259,58 @@ async function handleNavigation(request) {
 async function handleImage(request) {
   const cache = await caches.open(IMAGE_CACHE_NAME);
 
-  // 1. Try cache first
+  // 1. Cache first
   const cached = await cache.match(request);
 
   if (cached) {
+    console.log("Image served from cache:", request.url);
     return cached;
   }
 
-  // 2. Fetch from network
+  // 2. Network
   try {
     const response = await fetch(request);
 
-    // 3. Save successful images
-    if (response.ok) {
-      await cache.put(request, response.clone());
+    /*
+     * Supabase images requested by <img> can produce
+     * an opaque response because of cross-origin/no-cors.
+     *
+     * Opaque responses have:
+     *
+     *   response.ok === false
+     *   response.type === "opaque"
+     *
+     * They are still valid responses and can be stored
+     * in Cache Storage.
+     */
+    const cacheable =
+      response.ok ||
+      response.type === "opaque";
 
-      console.log("Image cached:", request.url);
+    if (cacheable) {
+      try {
+        await cache.put(
+          request,
+          response.clone()
+        );
+
+        console.log(
+          "Image cached:",
+          request.url,
+          "type:",
+          response.type
+        );
+      } catch (cacheError) {
+        /*
+         * Do not break the user's online image just
+         * because Cache Storage failed.
+         */
+        console.warn(
+          "Image cache write failed:",
+          request.url,
+          cacheError
+        );
+      }
     }
 
     return response;
