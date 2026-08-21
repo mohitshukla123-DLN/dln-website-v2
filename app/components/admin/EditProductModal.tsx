@@ -7,6 +7,7 @@ import {
 import type { AdminProduct } from "../../types/adminProduct";
 import { categories } from "../../data/categories";
 import { subcategories } from "../../data/subcategories";
+import ProductImageCropper from "./ProductImageCropper";
 
 interface Props {
   open: boolean;
@@ -60,6 +61,7 @@ export default function EditProductModal({
   const [productImages, setProductImages] = useState<string[]>([]);
   const [productVideos, setProductVideos] = useState<string[]>([]);
   const [newVideoFiles, setNewVideoFiles] = useState<File[]>([]);
+  const [cropFile, setCropFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (!product) return;
@@ -147,46 +149,26 @@ async function uploadNewProductImages(
 
   if (productImages.length + files.length > 8) {
     alert("You can have a maximum of 8 product images.");
+    e.target.value = "";
     return;
   }
 
-  setLoading(true);
+  const file = files[0];
 
-  try {
-    const uploaded: string[] = [];
-
-    for (const file of files) {
-      if (!file.type.startsWith("image/")) {
-        throw new Error(`Invalid image: ${file.name}`);
-      }
-
-      if (file.size > 10 * 1024 * 1024) {
-        throw new Error(`Image must be under 10MB: ${file.name}`);
-      }
-
-      const result = await uploadProductImage({
-        file,
-        category,
-        productName: name,
-        color: "default",
-        view: `edit-${productImages.length + uploaded.length + 1}`,
-        sku: product.sku ?? `product-${product.id}`,
-      });
-
-      uploaded.push(result.url);
-    }
-
-    setProductImages((current) => [...current, ...uploaded]);
-  } catch (error) {
-    alert(
-      error instanceof Error
-        ? error.message
-        : "Image upload failed."
-    );
-  } finally {
-    setLoading(false);
+  if (!file.type.startsWith("image/")) {
+    alert(`Invalid image: ${file.name}`);
     e.target.value = "";
+    return;
   }
+
+  if (file.size > 10 * 1024 * 1024) {
+    alert(`Image must be under 10MB: ${file.name}`);
+    e.target.value = "";
+    return;
+  }
+
+  setCropFile(file);
+  e.target.value = "";
 }
 
 function handleNewVideos(
@@ -215,6 +197,38 @@ function handleNewVideos(
         current.filter((_, i) => i !== index)
       );
     }
+
+
+async function handleCroppedProductImage(file: File) {
+  if (!product) return;
+
+  setCropFile(null);
+  setLoading(true);
+
+  try {
+    const result = await uploadProductImage({
+      file,
+      category,
+      productName: name,
+      color: "default",
+      view: `edit-${productImages.length + 1}`,
+      sku: product.sku ?? `product-${product.id}`,
+    });
+
+    setProductImages((current) => [
+      ...current,
+      result.url,
+    ]);
+  } catch (error) {
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Image upload failed."
+    );
+  } finally {
+    setLoading(false);
+  }
+}
 
 async function saveChanges() {
       if (!product) return;
@@ -530,7 +544,7 @@ async function saveChanges() {
                 multiple
                 onChange={handleNewVideos}
                 disabled={loading}
-                className="w-full rounded-lg border p-3 text-sm"
+                className="w-full cursor-pointer rounded-lg border-2 border-[var(--burgundy)] bg-[var(--burgundy)]/5 p-3 text-sm font-medium text-[var(--burgundy)] transition hover:bg-[var(--burgundy)]/10"
               />
 
               <p className="mt-2 text-xs text-gray-500">
@@ -660,6 +674,14 @@ async function saveChanges() {
               : "Save Changes"}
           </button>
         </div>
+
+                {cropFile && (
+          <ProductImageCropper
+            file={cropFile}
+            onDone={handleCroppedProductImage}
+            onCancel={() => setCropFile(null)}
+          />
+        )}
       </div>
     </div>
   );
