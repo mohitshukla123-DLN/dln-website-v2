@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v16";
+const CACHE_NAME = "dln-v17";
 const API_CACHE_NAME = "dln-api-v2";
 const FONT_CACHE_NAME = "dln-fonts-v2";
 const IMAGE_CACHE_NAME = "dln-images-v2";
@@ -41,6 +41,7 @@ self.addEventListener("install", (event) => {
       /*
        * Cache PWA shell.
        */
+
       for (const url of APP_SHELL) {
         try {
           const response = await fetch(url, {
@@ -49,7 +50,11 @@ self.addEventListener("install", (event) => {
 
           if (response.ok) {
             await cache.put(url, response.clone());
-            console.log("PWA shell cached:", url);
+
+            console.log(
+              "PWA shell cached:",
+              url
+            );
           }
         } catch (error) {
           console.warn(
@@ -63,6 +68,7 @@ self.addEventListener("install", (event) => {
       /*
        * Cache Vite-generated JS/CSS/assets.
        */
+
       for (const url of SW_ASSETS) {
         try {
           const response = await fetch(url, {
@@ -70,8 +76,15 @@ self.addEventListener("install", (event) => {
           });
 
           if (response.ok) {
-            await cache.put(url, response.clone());
-            console.log("PWA asset cached:", url);
+            await cache.put(
+              url,
+              response.clone()
+            );
+
+            console.log(
+              "PWA asset cached:",
+              url
+            );
           }
         } catch (error) {
           console.warn(
@@ -109,7 +122,11 @@ self.addEventListener("activate", (event) => {
         keys
           .filter((key) => !keep.has(key))
           .map((key) => {
-            console.log("Deleting old cache:", key);
+            console.log(
+              "Deleting old cache:",
+              key
+            );
+
             return caches.delete(key);
           })
       );
@@ -201,11 +218,14 @@ async function handleNavigation(request) {
     const response = await fetch(request);
 
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
+      const cache = await caches.open(
+        CACHE_NAME
+      );
 
       /*
        * Cache the requested HTML route.
        */
+
       try {
         await cache.put(
           request,
@@ -221,13 +241,14 @@ async function handleNavigation(request) {
 
       /*
        * Keep the actual application shell as "/".
-       *
-       * IMPORTANT:
-       * Do not overwrite "/" with arbitrary route HTML.
        */
+
       if (
         request.url ===
-        new URL("/", self.location.origin).href
+        new URL(
+          "/",
+          self.location.origin
+        ).href
       ) {
         try {
           await cache.put(
@@ -253,7 +274,10 @@ async function handleNavigation(request) {
     /*
      * 1. Exact route.
      */
-    const exact = await caches.match(request);
+
+    const exact = await caches.match(
+      request
+    );
 
     if (exact) {
       return exact;
@@ -262,6 +286,7 @@ async function handleNavigation(request) {
     /*
      * 2. index.html.
      */
+
     const index = await caches.match(
       "/index.html"
     );
@@ -273,6 +298,7 @@ async function handleNavigation(request) {
     /*
      * 3. Root.
      */
+
     const root = await caches.match("/");
 
     if (root) {
@@ -282,6 +308,7 @@ async function handleNavigation(request) {
     /*
      * 4. Last-resort HTML.
      */
+
     return new Response(
       `<!doctype html>
 <html>
@@ -312,11 +339,27 @@ async function handleNavigation(request) {
  *
  * Cache first.
  *
- * Supabase public Storage responses may be "opaque"
- * because they are cross-origin.
+ * IMPORTANT:
  *
- * Opaque responses ARE intentionally cached here.
- * This is required for reliable offline public images.
+ * Supabase image URLs frequently contain query parameters
+ * such as:
+ *
+ *   ?v=1787334608342
+ *   ?test=123
+ *
+ * The actual image is the same file.
+ *
+ * Therefore cache lookup uses:
+ *
+ *   ignoreSearch: true
+ *
+ * This allows:
+ *
+ *   image.jpg
+ *   image.jpg?v=123
+ *   image.jpg?test=123
+ *
+ * to all use the same cached image.
  * ---------------------------------------------------------
  */
 
@@ -326,9 +369,31 @@ async function handleImage(request) {
   );
 
   /*
-   * 1. Cache first.
+   * -------------------------------------------------------
+   * 1. CACHE FIRST
+   *
+   * IMPORTANT FIX:
+   *
+   * ignoreSearch: true
+   *
+   * This is what allows a cached:
+   *
+   * image.jpg
+   *
+   * to satisfy:
+   *
+   * image.jpg?test=123
+   *
+   * while offline.
+   * -------------------------------------------------------
    */
-  const cached = await cache.match(request);
+
+  const cached = await cache.match(
+    request,
+    {
+      ignoreSearch: true,
+    }
+  );
 
   if (cached) {
     console.log(
@@ -340,8 +405,11 @@ async function handleImage(request) {
   }
 
   /*
-   * 2. Network.
+   * -------------------------------------------------------
+   * 2. NETWORK
+   * -------------------------------------------------------
    */
+
   try {
     const response = await fetch(request);
 
@@ -350,22 +418,50 @@ async function handleImage(request) {
      *
      * - normal successful responses
      * - opaque Supabase public Storage responses
-     *
-     * Do NOT require response.type === "basic".
      */
+
     const shouldCache =
       response.ok ||
       response.type === "opaque";
 
     if (shouldCache) {
       try {
+        /*
+         * Store the image using a URL without query
+         * parameters.
+         *
+         * This creates one canonical cache entry for:
+         *
+         * image.jpg
+         * image.jpg?v=123
+         * image.jpg?test=123
+         */
+
+        const cacheUrl = new URL(
+          request.url
+        );
+
+        cacheUrl.search = "";
+
+        cacheUrl.hash = "";
+
+        const cacheKey =
+          new Request(
+            cacheUrl.toString(),
+            {
+              method: "GET",
+            }
+          );
+
         await cache.put(
-          request,
+          cacheKey,
           response.clone()
         );
 
         console.log(
           "Image cached:",
+          cacheUrl.toString(),
+          "original:",
           request.url,
           "type:",
           response.type,
@@ -398,22 +494,40 @@ async function handleImage(request) {
     );
 
     /*
-     * Usually the cache-first check above already
-     * handles this, but keep a final fallback.
+     * -------------------------------------------------------
+     * 3. FINAL CACHE FALLBACK
+     *
+     * IMPORTANT:
+     * Also use ignoreSearch here.
+     * -------------------------------------------------------
      */
-    const fallback = await cache.match(request);
+
+    const fallback = await cache.match(
+      request,
+      {
+        ignoreSearch: true,
+      }
+    );
 
     if (fallback) {
+      console.log(
+        "Image fallback served from cache:",
+        request.url
+      );
+
       return fallback;
     }
 
     /*
-     * Return a clean offline response instead of
-     * throwing an unhandled fetch error.
+     * -------------------------------------------------------
+     * 4. CLEAN OFFLINE RESPONSE
+     * -------------------------------------------------------
      */
+
     return new Response("", {
       status: 503,
-      statusText: "Offline image unavailable",
+      statusText:
+        "Offline image unavailable",
     });
   }
 }
@@ -431,7 +545,9 @@ async function handleFont(request) {
     FONT_CACHE_NAME
   );
 
-  const cached = await cache.match(request);
+  const cached = await cache.match(
+    request
+  );
 
   if (cached) {
     return cached;
@@ -517,7 +633,9 @@ async function handleApi(request) {
 
     return response;
   } catch (error) {
-    const cached = await cache.match(request);
+    const cached = await cache.match(
+      request
+    );
 
     if (cached) {
       console.warn(
@@ -554,11 +672,6 @@ async function handleApi(request) {
  * VIDEO
  *
  * Never cache videos.
- *
- * This avoids:
- * - huge Cache Storage usage
- * - Range request problems
- * - partially cached videos
  * ---------------------------------------------------------
  */
 
@@ -583,7 +696,9 @@ async function handleVideo(request) {
  */
 
 async function handleAsset(request) {
-  const cached = await caches.match(request);
+  const cached = await caches.match(
+    request
+  );
 
   if (cached) {
     return cached;
@@ -638,11 +753,14 @@ self.addEventListener("fetch", (event) => {
   /*
    * Only GET requests.
    */
+
   if (request.method !== "GET") {
     return;
   }
 
-  const url = new URL(request.url);
+  const url = new URL(
+    request.url
+  );
 
   /*
    * Ignore unrelated cross-origin requests.
@@ -651,8 +769,10 @@ self.addEventListener("fetch", (event) => {
    * - same-origin
    * - Supabase
    */
+
   if (
-    url.origin !== self.location.origin &&
+    url.origin !==
+      self.location.origin &&
     url.origin !== SUPABASE_ORIGIN
   ) {
     return;
@@ -661,6 +781,7 @@ self.addEventListener("fetch", (event) => {
   /*
    * Navigation.
    */
+
   if (isNavigation(request)) {
     event.respondWith(
       handleNavigation(request)
@@ -675,6 +796,7 @@ self.addEventListener("fetch", (event) => {
    * This MUST come before generic same-origin
    * asset handling.
    */
+
   if (isSupabaseImage(request)) {
     event.respondWith(
       handleImage(request)
@@ -686,6 +808,7 @@ self.addEventListener("fetch", (event) => {
   /*
    * Fonts.
    */
+
   if (isFont(request)) {
     event.respondWith(
       handleFont(request)
@@ -697,6 +820,7 @@ self.addEventListener("fetch", (event) => {
   /*
    * Supabase REST API.
    */
+
   if (isApiRequest(request)) {
     event.respondWith(
       handleApi(request)
@@ -708,6 +832,7 @@ self.addEventListener("fetch", (event) => {
   /*
    * Videos.
    */
+
   if (isVideo(request)) {
     event.respondWith(
       handleVideo(request)
@@ -719,7 +844,11 @@ self.addEventListener("fetch", (event) => {
   /*
    * Same-origin assets.
    */
-  if (url.origin === self.location.origin) {
+
+  if (
+    url.origin ===
+    self.location.origin
+  ) {
     event.respondWith(
       handleAsset(request)
     );
