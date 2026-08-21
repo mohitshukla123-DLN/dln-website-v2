@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v17";
+const CACHE_NAME = "dln-v18";
 const API_CACHE_NAME = "dln-api-v2";
 const FONT_CACHE_NAME = "dln-fonts-v2";
 const IMAGE_CACHE_NAME = "dln-images-v2";
@@ -27,6 +27,9 @@ const IMAGE_EXTENSIONS =
 const VIDEO_EXTENSIONS =
   /\.(mp4|webm|mov|m4v|ogg)$/i;
 
+const FONT_EXTENSIONS =
+  /\.(woff2?|ttf|otf|eot)$/i;
+
 /*
  * ---------------------------------------------------------
  * INSTALL
@@ -46,6 +49,7 @@ self.addEventListener("install", (event) => {
         try {
           const response = await fetch(url, {
             cache: "no-store",
+            redirect: "follow",
           });
 
           if (response.ok) {
@@ -73,6 +77,7 @@ self.addEventListener("install", (event) => {
         try {
           const response = await fetch(url, {
             cache: "no-store",
+            redirect: "follow",
           });
 
           if (response.ok) {
@@ -182,9 +187,7 @@ function isFont(request) {
 
   return (
     request.destination === "font" ||
-    /\.(woff2?|ttf|otf|eot)$/i.test(
-      url.pathname
-    )
+    FONT_EXTENSIONS.test(url.pathname)
   );
 }
 
@@ -207,126 +210,90 @@ function isNavigation(request) {
  *
  * Offline:
  *   1. Exact cached route
- *   2. Cached index.html
- *   3. Cached /
- *   4. Offline fallback
+ *   2. Cached pathname
+ *   3. Cached index.html
+ *   4. Cached /
+ *   5. Offline fallback
  * ---------------------------------------------------------
  */
 
-    async function handleNavigation(request) {
+async function handleNavigation(request) {
+  /*
+   * Try network first.
+   *
+   * IMPORTANT:
+   * redirect: "follow" prevents the redirected-response
+   * error seen during offline navigation.
+   */
+
+  try {
+    const response = await fetch(request, {
+      redirect: "follow",
+    });
+
+    if (response.ok) {
+      const cache = await caches.open(
+        CACHE_NAME
+      );
+
+      /*
+       * Cache the exact navigation request.
+       */
+
       try {
-        const response = await fetch(request, {
-          redirect: "follow",
-        });
-
-        if (response.ok) {
-          const cache = await caches.open(CACHE_NAME);
-
-          try {
-            await cache.put(request, response.clone());
-          } catch (error) {
-            console.warn(
-              "Navigation cache failed:",
-              request.url,
-              error
-            );
-          }
-
-          if (
-            request.url ===
-            new URL("/", self.location.origin).href
-          ) {
-            try {
-              await cache.put("/", response.clone());
-            } catch (error) {
-              console.warn(
-                "Root cache failed:",
-                error
-              );
-            }
-          }
-        }
-
-        return response;
-      } catch (error) {
-        console.warn(
-          "Offline navigation:",
-          request.url
+        await cache.put(
+          request,
+          response.clone()
         );
 
-        // 1. Exact requested URL
-        const exact = await caches.match(request);
+        console.log(
+          "Navigation cached:",
+          request.url
+        );
+      } catch (error) {
+        console.warn(
+          "Navigation cache failed:",
+          request.url,
+          error
+        );
+      }
 
-        if (exact) {
-          return exact;
-        }
+      /*
+       * Also cache the pathname.
+       *
+       * Example:
+       *
+       * /products/jacket
+       *
+       * This gives us a clean cache key without
+       * query parameters.
+       */
 
-        // 2. Try pathname without query parameters
-        try {
-          const url = new URL(request.url);
-          const pathnameRequest = new Request(
+      try {
+        const url = new URL(request.url);
+
+        const pathnameRequest =
+          new Request(
             url.pathname,
             {
               method: "GET",
             }
           );
 
-          const pathnameCache =
-            await caches.match(pathnameRequest);
-
-          if (pathnameCache) {
-            return pathnameCache;
-          }
-        } catch (error) {
-          console.warn(
-            "Pathname cache lookup failed:",
-            error
-          );
-        }
-
-        // 3. index.html
-        const index = await caches.match(
-          "/index.html"
+        await cache.put(
+          pathnameRequest,
+          response.clone()
         );
-
-        if (index) {
-          return index;
-        }
-
-        // 4. Root
-        const root = await caches.match("/");
-
-        if (root) {
-          return root;
-        }
-
-        // 5. Last-resort offline page
-        return new Response(
-          `<!doctype html>
-    <html>
-    <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Dress Like Nawaabs</title>
-    </head>
-    <body>
-    <h1>Dress Like Nawaabs</h1>
-    <p>You are currently offline.</p>
-    </body>
-    </html>`,
-          {
-            status: 200,
-            headers: {
-              "Content-Type":
-                "text/html; charset=utf-8",
-            },
-          }
+      } catch (error) {
+        console.warn(
+          "Pathname navigation cache failed:",
+          request.url,
+          error
         );
       }
-    }
 
       /*
-       * Keep the actual application shell as "/".
+       * Keep "/" as the application shell.
        */
 
       if (
@@ -357,42 +324,107 @@ function isNavigation(request) {
       request.url
     );
 
+    const cache = await caches.open(
+      CACHE_NAME
+    );
+
     /*
-     * 1. Exact route.
+     * -------------------------------------------------------
+     * 1. EXACT REQUEST
+     * -------------------------------------------------------
      */
 
-    const exact = await caches.match(
+    const exact = await cache.match(
       request
     );
 
     if (exact) {
+      console.log(
+        "Navigation served from exact cache:",
+        request.url
+      );
+
       return exact;
     }
 
     /*
-     * 2. index.html.
+     * -------------------------------------------------------
+     * 2. PATHNAME
+     * -------------------------------------------------------
      */
 
-    const index = await caches.match(
+    try {
+      const url = new URL(request.url);
+
+      const pathnameRequest =
+        new Request(
+          url.pathname,
+          {
+            method: "GET",
+          }
+        );
+
+      const pathnameCache =
+        await cache.match(
+          pathnameRequest
+        );
+
+      if (pathnameCache) {
+        console.log(
+          "Navigation served from pathname cache:",
+          url.pathname
+        );
+
+        return pathnameCache;
+      }
+    } catch (error) {
+      console.warn(
+        "Pathname cache lookup failed:",
+        request.url,
+        error
+      );
+    }
+
+    /*
+     * -------------------------------------------------------
+     * 3. INDEX.HTML
+     * -------------------------------------------------------
+     */
+
+    const index = await cache.match(
       "/index.html"
     );
 
     if (index) {
+      console.log(
+        "Navigation served from index.html:"
+      );
+
       return index;
     }
 
     /*
-     * 3. Root.
+     * -------------------------------------------------------
+     * 4. ROOT
+     * -------------------------------------------------------
      */
 
-    const root = await caches.match("/");
+    const root = await cache.match(
+      "/"
+    );
 
     if (root) {
+      console.log(
+        "Navigation served from root:"
+      );
+
       return root;
     }
 
     /*
-     * 4. Last-resort HTML.
+     * -------------------------------------------------------
+     * 5. LAST-RESORT OFFLINE PAGE
+     * -------------------------------------------------------
      */
 
     return new Response(
@@ -425,27 +457,15 @@ function isNavigation(request) {
  *
  * Cache first.
  *
- * IMPORTANT:
+ * Query parameters are ignored for cache lookup.
  *
- * Supabase image URLs frequently contain query parameters
- * such as:
+ * Example:
  *
- *   ?v=1787334608342
- *   ?test=123
+ * image.jpg
+ * image.jpg?v=123
+ * image.jpg?test=123
  *
- * The actual image is the same file.
- *
- * Therefore cache lookup uses:
- *
- *   ignoreSearch: true
- *
- * This allows:
- *
- *   image.jpg
- *   image.jpg?v=123
- *   image.jpg?test=123
- *
- * to all use the same cached image.
+ * all use the same cached image.
  * ---------------------------------------------------------
  */
 
@@ -455,23 +475,7 @@ async function handleImage(request) {
   );
 
   /*
-   * -------------------------------------------------------
-   * 1. CACHE FIRST
-   *
-   * IMPORTANT FIX:
-   *
-   * ignoreSearch: true
-   *
-   * This is what allows a cached:
-   *
-   * image.jpg
-   *
-   * to satisfy:
-   *
-   * image.jpg?test=123
-   *
-   * while offline.
-   * -------------------------------------------------------
+   * 1. Cache first.
    */
 
   const cached = await cache.match(
@@ -491,20 +495,13 @@ async function handleImage(request) {
   }
 
   /*
-   * -------------------------------------------------------
-   * 2. NETWORK
-   * -------------------------------------------------------
+   * 2. Network.
    */
 
   try {
-    const response = await fetch(request);
-
-    /*
-     * Cache:
-     *
-     * - normal successful responses
-     * - opaque Supabase public Storage responses
-     */
+    const response = await fetch(
+      request
+    );
 
     const shouldCache =
       response.ok ||
@@ -513,14 +510,8 @@ async function handleImage(request) {
     if (shouldCache) {
       try {
         /*
-         * Store the image using a URL without query
-         * parameters.
-         *
-         * This creates one canonical cache entry for:
-         *
-         * image.jpg
-         * image.jpg?v=123
-         * image.jpg?test=123
+         * Store under canonical URL without
+         * query parameters.
          */
 
         const cacheUrl = new URL(
@@ -528,7 +519,6 @@ async function handleImage(request) {
         );
 
         cacheUrl.search = "";
-
         cacheUrl.hash = "";
 
         const cacheKey =
@@ -546,13 +536,7 @@ async function handleImage(request) {
 
         console.log(
           "Image cached:",
-          cacheUrl.toString(),
-          "original:",
-          request.url,
-          "type:",
-          response.type,
-          "status:",
-          response.status
+          cacheUrl.toString()
         );
       } catch (cacheError) {
         console.warn(
@@ -561,15 +545,6 @@ async function handleImage(request) {
           cacheError
         );
       }
-    } else {
-      console.warn(
-        "Image NOT cached:",
-        request.url,
-        "type:",
-        response.type,
-        "status:",
-        response.status
-      );
     }
 
     return response;
@@ -580,12 +555,7 @@ async function handleImage(request) {
     );
 
     /*
-     * -------------------------------------------------------
-     * 3. FINAL CACHE FALLBACK
-     *
-     * IMPORTANT:
-     * Also use ignoreSearch here.
-     * -------------------------------------------------------
+     * 3. Final cache fallback.
      */
 
     const fallback = await cache.match(
@@ -605,24 +575,23 @@ async function handleImage(request) {
     }
 
     /*
-     * -------------------------------------------------------
-     * 4. CLEAN OFFLINE RESPONSE
-     * -------------------------------------------------------
+     * 4. Offline response.
      */
 
-    return new Response("", {
-      status: 503,
-      statusText:
-        "Offline image unavailable",
-    });
+    return new Response(
+      "",
+      {
+        status: 503,
+        statusText:
+          "Offline image unavailable",
+      }
+    );
   }
 }
 
 /*
  * ---------------------------------------------------------
  * FONTS
- *
- * Cache first.
  * ---------------------------------------------------------
  */
 
@@ -640,7 +609,9 @@ async function handleFont(request) {
   }
 
   try {
-    const response = await fetch(request);
+    const response = await fetch(
+      request
+    );
 
     if (response.ok) {
       try {
@@ -664,25 +635,20 @@ async function handleFont(request) {
       request.url
     );
 
-    return new Response("", {
-      status: 503,
-      statusText:
-        "Offline font unavailable",
-    });
+    return new Response(
+      "",
+      {
+        status: 503,
+        statusText:
+          "Offline font unavailable",
+      }
+    );
   }
 }
 
 /*
  * ---------------------------------------------------------
  * SUPABASE API
- *
- * GET:
- *   Network first
- *   Cached response when offline
- *
- * Non-GET:
- *   Never intercepted/cached here because the fetch
- *   handler ignores non-GET requests.
  * ---------------------------------------------------------
  */
 
@@ -692,7 +658,9 @@ async function handleApi(request) {
   );
 
   try {
-    const response = await fetch(request);
+    const response = await fetch(
+      request
+    );
 
     if (
       response.ok &&
@@ -765,19 +733,20 @@ async function handleVideo(request) {
   try {
     return await fetch(request);
   } catch (error) {
-    return new Response("", {
-      status: 503,
-      statusText:
-        "Offline video unavailable",
-    });
+    return new Response(
+      "",
+      {
+        status: 503,
+        statusText:
+          "Offline video unavailable",
+      }
+    );
   }
 }
 
 /*
  * ---------------------------------------------------------
  * SAME-ORIGIN ASSETS
- *
- * Cache first.
  * ---------------------------------------------------------
  */
 
@@ -791,7 +760,9 @@ async function handleAsset(request) {
   }
 
   try {
-    const response = await fetch(request);
+    const response = await fetch(
+      request
+    );
 
     if (response.ok) {
       const cache = await caches.open(
@@ -819,11 +790,14 @@ async function handleAsset(request) {
       request.url
     );
 
-    return new Response("", {
-      status: 503,
-      statusText:
-        "Offline asset unavailable",
-    });
+    return new Response(
+      "",
+      {
+        status: 503,
+        statusText:
+          "Offline asset unavailable",
+      }
+    );
   }
 }
 
@@ -833,110 +807,107 @@ async function handleAsset(request) {
  * ---------------------------------------------------------
  */
 
-self.addEventListener("fetch", (event) => {
-  const request = event.request;
+self.addEventListener(
+  "fetch",
+  (event) => {
+    const request = event.request;
 
-  /*
-   * Only GET requests.
-   */
+    /*
+     * Only GET requests.
+     */
 
-  if (request.method !== "GET") {
-    return;
-  }
+    if (request.method !== "GET") {
+      return;
+    }
 
-  const url = new URL(
-    request.url
-  );
-
-  /*
-   * Ignore unrelated cross-origin requests.
-   *
-   * Only:
-   * - same-origin
-   * - Supabase
-   */
-
-  if (
-    url.origin !==
-      self.location.origin &&
-    url.origin !== SUPABASE_ORIGIN
-  ) {
-    return;
-  }
-
-  /*
-   * Navigation.
-   */
-
-  if (isNavigation(request)) {
-    event.respondWith(
-      handleNavigation(request)
+    const url = new URL(
+      request.url
     );
 
-    return;
+    /*
+     * Ignore unrelated cross-origin
+     * requests.
+     */
+
+    if (
+      url.origin !==
+        self.location.origin &&
+      url.origin !== SUPABASE_ORIGIN
+    ) {
+      return;
+    }
+
+    /*
+     * Navigation.
+     */
+
+    if (isNavigation(request)) {
+      event.respondWith(
+        handleNavigation(request)
+      );
+
+      return;
+    }
+
+    /*
+     * Supabase public Storage images.
+     */
+
+    if (isSupabaseImage(request)) {
+      event.respondWith(
+        handleImage(request)
+      );
+
+      return;
+    }
+
+    /*
+     * Fonts.
+     */
+
+    if (isFont(request)) {
+      event.respondWith(
+        handleFont(request)
+      );
+
+      return;
+    }
+
+    /*
+     * Supabase REST API.
+     */
+
+    if (isApiRequest(request)) {
+      event.respondWith(
+        handleApi(request)
+      );
+
+      return;
+    }
+
+    /*
+     * Videos.
+     */
+
+    if (isVideo(request)) {
+      event.respondWith(
+        handleVideo(request)
+      );
+
+      return;
+    }
+
+    /*
+     * Same-origin assets.
+     */
+
+    if (
+      url.origin ===
+      self.location.origin
+    ) {
+      event.respondWith(
+        handleAsset(request)
+      );
+    }
   }
-
-  /*
-   * Supabase public Storage images.
-   *
-   * This MUST come before generic same-origin
-   * asset handling.
-   */
-
-  if (isSupabaseImage(request)) {
-    event.respondWith(
-      handleImage(request)
-    );
-
-    return;
-  }
-
-  /*
-   * Fonts.
-   */
-
-  if (isFont(request)) {
-    event.respondWith(
-      handleFont(request)
-    );
-
-    return;
-  }
-
-  /*
-   * Supabase REST API.
-   */
-
-  if (isApiRequest(request)) {
-    event.respondWith(
-      handleApi(request)
-    );
-
-    return;
-  }
-
-  /*
-   * Videos.
-   */
-
-  if (isVideo(request)) {
-    event.respondWith(
-      handleVideo(request)
-    );
-
-    return;
-  }
-
-  /*
-   * Same-origin assets.
-   */
-
-  if (
-    url.origin ===
-    self.location.origin
-  ) {
-    event.respondWith(
-      handleAsset(request)
-    );
-  }
-});
+);
