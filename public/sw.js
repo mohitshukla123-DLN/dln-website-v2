@@ -1,6 +1,10 @@
 const CACHE_NAME = "dln-v12";
 const API_CACHE_NAME = "dln-api-v1";
 const FONT_CACHE_NAME = "dln-fonts-v1";
+const IMAGE_CACHE_NAME = "dln-images-v1";
+
+const SUPABASE_ORIGIN =
+  "https://wcbuhcjjcofvuxokduyh.supabase.co";
 
 const APP_SHELL = [
   "/",
@@ -12,14 +16,11 @@ const APP_SHELL = [
   "/pwa-512-maskable.png",
 ];
 
-const FONT_HOSTS = [
-  "fonts.googleapis.com",
-  "fonts.gstatic.com",
-];
-
-const API_HOSTS = [
-  "wcbuhcjjcofvuxokduyh.supabase.co",
-];
+/*
+ * ---------------------------------------------------------
+ * INSTALL
+ * ---------------------------------------------------------
+ */
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -28,13 +29,13 @@ self.addEventListener("install", (event) => {
 
       for (const url of APP_SHELL) {
         try {
-          const response = await fetch(url);
-
-          if (response.ok) {
-            await cache.put(url, response);
-          }
+          await cache.add(url);
         } catch (error) {
-          console.warn("PWA shell cache failed:", url, error);
+          console.warn(
+            "PWA shell cache failed:",
+            url,
+            error
+          );
         }
       }
     })()
@@ -42,6 +43,12 @@ self.addEventListener("install", (event) => {
 
   self.skipWaiting();
 });
+
+/*
+ * ---------------------------------------------------------
+ * ACTIVATE
+ * ---------------------------------------------------------
+ */
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
@@ -54,7 +61,8 @@ self.addEventListener("activate", (event) => {
             (key) =>
               key !== CACHE_NAME &&
               key !== API_CACHE_NAME &&
-              key !== FONT_CACHE_NAME
+              key !== FONT_CACHE_NAME &&
+              key !== IMAGE_CACHE_NAME
           )
           .map((key) => caches.delete(key))
       );
@@ -64,6 +72,53 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+/*
+ * ---------------------------------------------------------
+ * HELPERS
+ * ---------------------------------------------------------
+ */
+
+function isSupabaseRequest(url) {
+  return url.origin === SUPABASE_ORIGIN;
+}
+
+function isSupabaseStorageImage(url) {
+  if (!isSupabaseRequest(url)) {
+    return false;
+  }
+
+  return (
+    url.pathname.startsWith(
+      "/storage/v1/object/public/"
+    ) &&
+    /\.(jpg|jpeg|png|webp|gif|svg|avif)$/i.test(
+      url.pathname
+    )
+  );
+}
+
+function isSupabaseApiRequest(url) {
+  return (
+    isSupabaseRequest(url) &&
+    url.pathname.startsWith("/rest/v1/")
+  );
+}
+
+function isFontRequest(request) {
+  const url = new URL(request.url);
+
+  return (
+    url.origin === self.location.origin &&
+    /\.(woff2?|ttf|otf)$/i.test(url.pathname)
+  );
+}
+
+/*
+ * ---------------------------------------------------------
+ * FETCH
+ * ---------------------------------------------------------
+ */
+
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") {
     return;
@@ -72,9 +127,9 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
   /*
-   * ---------------------------------------------------------
-   * 1. NAVIGATION
-   * ---------------------------------------------------------
+   * -------------------------------------------------------
+   * NAVIGATION
+   * -------------------------------------------------------
    */
 
   if (event.request.mode === "navigate") {
@@ -86,12 +141,18 @@ self.addEventListener("fetch", (event) => {
           if (response.ok) {
             const cache = await caches.open(CACHE_NAME);
 
-            await cache.put("/", response.clone());
+            await cache.put(
+              "/",
+              response.clone()
+            );
           }
 
           return response;
         } catch (error) {
-          console.warn("Offline navigation:", error);
+          console.warn(
+            "Offline navigation:",
+            error
+          );
 
           const cached = await caches.match("/");
 
@@ -115,7 +176,8 @@ self.addEventListener("fetch", (event) => {
             {
               status: 200,
               headers: {
-                "Content-Type": "text/html; charset=utf-8",
+                "Content-Type":
+                  "text/html; charset=utf-8",
               },
             }
           );
@@ -127,98 +189,65 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * ---------------------------------------------------------
-   * 2. SUPABASE API
-   * ---------------------------------------------------------
+   * -------------------------------------------------------
+   * SUPABASE STORAGE IMAGES
    *
-   * Network first:
-   *   - Online  -> get fresh Supabase data
-   *   - Success -> update API cache
-   *   - Offline -> return cached API response
+   * CACHE FIRST
+   * -------------------------------------------------------
    */
 
-  if (API_HOSTS.includes(url.hostname)) {
+  if (isSupabaseStorageImage(url)) {
     event.respondWith(
       (async () => {
-        const cache = await caches.open(API_CACHE_NAME);
+        const cache = await caches.open(
+          IMAGE_CACHE_NAME
+        );
 
-        try {
-          const response = await fetch(event.request);
+        const cached = await cache.match(
+          event.request
+        );
 
-          if (response.ok) {
-            await cache.put(
-              event.request,
-              response.clone()
-            );
-          }
-
-          return response;
-        } catch (error) {
-          console.warn(
-            "Supabase offline, using API cache:",
+        if (cached) {
+          console.log(
+            "Supabase image from cache:",
             event.request.url
           );
 
-          const cached = await cache.match(event.request);
-
-          if (cached) {
-            return cached;
-          }
-
-          return new Response(
-            JSON.stringify({
-              error: "offline",
-              message: "No cached data available.",
-            }),
-            {
-              status: 503,
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          return cached;
         }
-      })()
-    );
-
-    return;
-  }
-
-  /*
-   * ---------------------------------------------------------
-   * 3. GOOGLE FONTS
-   * ---------------------------------------------------------
-   *
-   * Network first with font-specific cache.
-   */
-
-  if (FONT_HOSTS.includes(url.hostname)) {
-    event.respondWith(
-      (async () => {
-        const cache = await caches.open(FONT_CACHE_NAME);
 
         try {
-          const response = await fetch(event.request);
+          const response = await fetch(
+            event.request
+          );
 
-          if (response.ok) {
-            await cache.put(
-              event.request,
-              response.clone()
-            );
+          if (response.ok || response.type === "opaque") {
+            try {
+              await cache.put(
+                event.request,
+                response.clone()
+              );
+
+              console.log(
+                "Supabase image cached:",
+                event.request.url
+              );
+            } catch (cacheError) {
+              console.warn(
+                "Supabase image cache failed:",
+                event.request.url,
+                cacheError
+              );
+            }
           }
 
           return response;
         } catch (error) {
           console.warn(
-            "Font offline, using font cache:",
-            event.request.url
+            "Supabase image unavailable offline:",
+            event.request.url,
+            error
           );
-
-          const cached = await cache.match(event.request);
-
-          if (cached) {
-            return cached;
-          }
 
           return new Response("", {
             status: 503,
@@ -232,28 +261,168 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * ---------------------------------------------------------
-   * 4. SAME-ORIGIN STATIC ASSETS
-   * ---------------------------------------------------------
+   * -------------------------------------------------------
+   * SUPABASE REST API
    *
-   * Cache first.
+   * NETWORK FIRST
+   * FALL BACK TO API CACHE
+   * -------------------------------------------------------
    */
 
-  if (url.origin === self.location.origin) {
+  if (isSupabaseApiRequest(url)) {
     event.respondWith(
       (async () => {
-        const cached = await caches.match(event.request);
+        const cache = await caches.open(
+          API_CACHE_NAME
+        );
+
+        try {
+          const response = await fetch(
+            event.request
+          );
+
+          if (response.ok) {
+            try {
+              await cache.put(
+                event.request,
+                response.clone()
+              );
+
+              console.log(
+                "Supabase API cached:",
+                event.request.url
+              );
+            } catch (cacheError) {
+              console.warn(
+                "Supabase API cache failed:",
+                event.request.url,
+                cacheError
+              );
+            }
+          }
+
+          return response;
+        } catch (error) {
+          const cached = await cache.match(
+            event.request
+          );
+
+          if (cached) {
+            console.log(
+              "Supabase offline, using API cache:",
+              event.request.url
+            );
+
+            return cached;
+          }
+
+          console.warn(
+            "Supabase API unavailable offline:",
+            event.request.url
+          );
+
+          return new Response(
+            JSON.stringify([]),
+            {
+              status: 503,
+              statusText: "Offline",
+              headers: {
+                "Content-Type":
+                  "application/json",
+              },
+            }
+          );
+        }
+      })()
+    );
+
+    return;
+  }
+
+  /*
+   * -------------------------------------------------------
+   * FONTS
+   * -------------------------------------------------------
+   */
+
+  if (isFontRequest(event.request)) {
+    event.respondWith(
+      (async () => {
+        const cache = await caches.open(
+          FONT_CACHE_NAME
+        );
+
+        const cached = await cache.match(
+          event.request
+        );
 
         if (cached) {
           return cached;
         }
 
         try {
-          const response = await fetch(event.request);
+          const response = await fetch(
+            event.request
+          );
 
           if (response.ok) {
-            const cache = await caches.open(CACHE_NAME);
+            await cache.put(
+              event.request,
+              response.clone()
+            );
+          }
 
+          return response;
+        } catch (error) {
+          console.warn(
+            "Font unavailable offline:",
+            event.request.url
+          );
+
+          return new Response("", {
+            status: 503,
+            statusText: "Offline",
+          });
+        }
+      })()
+    );
+
+    return;
+  }
+
+  /*
+   * -------------------------------------------------------
+   * SAME-ORIGIN ASSETS
+   *
+   * CACHE FIRST
+   * -------------------------------------------------------
+   */
+
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  event.respondWith(
+    (async () => {
+      const cached = await caches.match(
+        event.request
+      );
+
+      if (cached) {
+        return cached;
+      }
+
+      try {
+        const response = await fetch(
+          event.request
+        );
+
+        if (response.ok) {
+          const cache = await caches.open(
+            CACHE_NAME
+          );
+
+          try {
             await cache.put(
               event.request,
               response.clone()
@@ -263,23 +432,27 @@ self.addEventListener("fetch", (event) => {
               "PWA cached:",
               event.request.url
             );
+          } catch (cacheError) {
+            console.warn(
+              "PWA cache put failed:",
+              event.request.url,
+              cacheError
+            );
           }
-
-          return response;
-        } catch (error) {
-          console.warn(
-            "PWA offline asset unavailable:",
-            event.request.url
-          );
-
-          return new Response("", {
-            status: 503,
-            statusText: "Offline",
-          });
         }
-      })()
-    );
 
-    return;
-  }
+        return response;
+      } catch (error) {
+        console.warn(
+          "PWA offline asset unavailable:",
+          event.request.url
+        );
+
+        return new Response("", {
+          status: 503,
+          statusText: "Offline",
+        });
+      }
+    })()
+  );
 });
