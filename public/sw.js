@@ -257,43 +257,40 @@ async function handleNavigation(request) {
  */
 
 async function handleImage(request) {
-  const cache = await caches.open(
-    IMAGE_CACHE_NAME
-  );
-
-  const cached = await cache.match(request);
-
-  if (cached) {
-    return cached;
-  }
+  const cache = await caches.open(IMAGE_CACHE_NAME);
 
   try {
-    const response = await fetch(request);
+    const response = await fetch(request, {
+      cache: "no-store",
+    });
 
-    if (
-      response.ok &&
-      response.type !== "opaque"
-    ) {
-      await cache.put(
-        request,
-        response.clone()
+    if (response.ok) {
+      await cache.put(request, response.clone());
+
+      console.log(
+        "Supabase image cached:",
+        request.url
       );
     }
 
     return response;
   } catch (error) {
+    const cached = await cache.match(request);
+
+    if (cached) {
+      console.warn(
+        "Offline image from cache:",
+        request.url
+      );
+
+      return cached;
+    }
+
     console.warn(
       "Offline image unavailable:",
       request.url
     );
 
-    /*
-     * IMPORTANT:
-     * Do NOT return a 503 for a missing image.
-     *
-     * Returning an empty response avoids turning
-     * every image request into a visible network error.
-     */
     return new Response("", {
       status: 404,
       statusText: "Offline image unavailable",
