@@ -1,6 +1,6 @@
 const CACHE_NAME = "dln-v16";
 const API_CACHE_NAME = "dln-api-v2";
-const FONT_CACHE_NAME = "dln-fonts-v1";
+const FONT_CACHE_NAME = "dln-fonts-v2";
 const IMAGE_CACHE_NAME = "dln-images-v2";
 
 importScripts("/sw-assets.js");
