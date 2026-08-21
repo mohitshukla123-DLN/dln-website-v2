@@ -87,6 +87,119 @@ const ALLOWED_VIDEO_TYPES = [
 
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100MB
 
+async function optimizeVideo(file: File): Promise<File> {
+  // Don't re-encode if the browser cannot use MediaRecorder.
+  if (!("MediaRecorder" in window)) {
+    return file;
+  }
+
+  // Already reasonably small — keep original.
+  if (file.size <= 15 * 1024 * 1024) {
+    return file;
+  }
+
+  const video = document.createElement("video");
+  video.muted = true;
+  video.playsInline = true;
+  video.preload = "metadata";
+
+  const objectUrl = URL.createObjectURL(file);
+
+  try {
+    video.src = objectUrl;
+
+    await new Promise<void>((resolve, reject) => {
+      video.onloadedmetadata = () => resolve();
+      video.onerror = () =>
+        reject(new Error("Could not read video."));
+    });
+
+    const stream =
+      (video as HTMLVideoElement & {
+        captureStream?: () => MediaStream;
+      }).captureStream?.();
+
+    if (!stream) {
+      return file;
+    }
+
+    const mimeTypes = [
+      "video/webm;codecs=vp9",
+      "video/webm;codecs=vp8",
+      "video/webm",
+    ];
+
+    const mimeType = mimeTypes.find((type) =>
+      MediaRecorder.isTypeSupported(type)
+    );
+
+    if (!mimeType) {
+      return file;
+    }
+
+    const recorder = new MediaRecorder(stream, {
+      mimeType,
+      videoBitsPerSecond: 2_500_000,
+    });
+
+    const chunks: Blob[] = [];
+
+    const optimized = new Promise<Blob>(
+      (resolve, reject) => {
+        recorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            chunks.push(event.data);
+          }
+        };
+
+        recorder.onerror = () => {
+          reject(
+            new Error("Video optimization failed.")
+          );
+        };
+
+        recorder.onstop = () => {
+          resolve(
+            new Blob(chunks, {
+              type: mimeType,
+            })
+          );
+        };
+      }
+    );
+
+    video.currentTime = 0;
+
+    await video.play();
+
+    recorder.start();
+
+    await new Promise<void>((resolve) => {
+      video.onended = () => resolve();
+    });
+
+    recorder.stop();
+
+    const blob = await optimized;
+
+    // Only use optimized version if it is actually smaller.
+    if (blob.size >= file.size) {
+      return file;
+    }
+
+    return new File(
+      [blob],
+      `${file.name.replace(/\.[^/.]+$/, "")}.webm`,
+      {
+        type: "video/webm",
+        lastModified: Date.now(),
+      }
+    );
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
 export async function uploadProductVideo({
   file,
   category,
@@ -105,8 +218,7 @@ export async function uploadProductVideo({
     );
   }
 
-  const extension =
-    file.name.split(".").pop()?.toLowerCase() || "mp4";
+  const optimizedFile = await optimizeVideo(file);
 
   const baseName =
     `${slugify(category)}-${slugify(productName)}-${slugify(sku)}`;
@@ -114,15 +226,16 @@ export async function uploadProductVideo({
   const fileName =
     `${baseName}-video-${Date.now()}-${Math.random()
       .toString(36)
-      .slice(2, 8)}.${extension}`;
+      .slice(2, 8)}.webm`;
 
-  const filePath = `products/videos/${fileName}`;
+  const filePath =
+    `products/videos/${fileName}`;
 
   const { error } = await supabase.storage
     .from("products")
-    .upload(filePath, file, {
+    .upload(filePath, optimizedFile, {
       upsert: false,
-      contentType: file.type,
+      contentType: optimizedFile.type,
       cacheControl: "31536000",
     });
 
