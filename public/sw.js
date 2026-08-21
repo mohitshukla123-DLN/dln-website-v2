@@ -3,6 +3,10 @@ const API_CACHE_NAME = "dln-api-v1";
 const FONT_CACHE_NAME = "dln-fonts-v1";
 const IMAGE_CACHE_NAME = "dln-images-v1";
 
+importScripts("/sw-assets.js");
+
+const SW_ASSETS = self.__SW_ASSETS__ || [];
+
 const SUPABASE_ORIGIN =
   "https://wcbuhcjjcofvuxokduyh.supabase.co";
 

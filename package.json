@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
+    "scripts": {
     "dev": "vite",
-    "build": "npm run generate:sitemap && tsc -b && vite build",
+    "build": "npm run generate:sitemap && tsc -b && vite build && npm run generate:sw-assets && cp public/sw-assets.js dist/sw-assets.js && cp public/sw.js dist/sw.js",
     "generate:sitemap": "node scripts/generate-sitemap.js",
+    "generate:sw-assets": "node scripts/generate-sw-assets.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
