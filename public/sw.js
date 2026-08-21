@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v18";
+const CACHE_NAME = "dln-v19";
 const API_CACHE_NAME = "dln-api-v2";
 const FONT_CACHE_NAME = "dln-fonts-v2";
 const IMAGE_CACHE_NAME = "dln-images-v2";
@@ -42,7 +42,7 @@ self.addEventListener("install", (event) => {
       const cache = await caches.open(CACHE_NAME);
 
       /*
-       * Cache PWA shell.
+       * Cache application shell.
        */
 
       for (const url of APP_SHELL) {
@@ -198,8 +198,38 @@ function isApiRequest(request) {
   );
 }
 
+/*
+ * IMPORTANT:
+ *
+ * A normal browser page load should have:
+ *
+ *   request.mode === "navigate"
+ *
+ * But some requests can reach the Service Worker as
+ * document/HTML requests without mode === "navigate".
+ *
+ * We therefore check:
+ *
+ *   1. navigate mode
+ *   2. document destination
+ *   3. Accept: text/html
+ *
+ * This prevents /products/jacket and /category/jacket
+ * from incorrectly going to handleAsset().
+ */
+
 function isNavigation(request) {
-  return request.mode === "navigate";
+  if (request.mode === "navigate") {
+    return true;
+  }
+
+  if (request.destination === "document") {
+    return true;
+  }
+
+  const accept = request.headers.get("accept") || "";
+
+  return accept.includes("text/html");
 }
 
 /*
@@ -209,6 +239,7 @@ function isNavigation(request) {
  * Network first.
  *
  * Offline:
+ *
  *   1. Exact cached route
  *   2. Cached pathname
  *   3. Cached index.html
@@ -219,11 +250,7 @@ function isNavigation(request) {
 
 async function handleNavigation(request) {
   /*
-   * Try network first.
-   *
-   * IMPORTANT:
-   * redirect: "follow" prevents the redirected-response
-   * error seen during offline navigation.
+   * NETWORK FIRST
    */
 
   try {
@@ -237,7 +264,7 @@ async function handleNavigation(request) {
       );
 
       /*
-       * Cache the exact navigation request.
+       * Cache exact request.
        */
 
       try {
@@ -259,18 +286,13 @@ async function handleNavigation(request) {
       }
 
       /*
-       * Also cache the pathname.
-       *
-       * Example:
-       *
-       * /products/jacket
-       *
-       * This gives us a clean cache key without
-       * query parameters.
+       * Cache pathname without query string.
        */
 
       try {
-        const url = new URL(request.url);
+        const url = new URL(
+          request.url
+        );
 
         const pathnameRequest =
           new Request(
@@ -284,6 +306,11 @@ async function handleNavigation(request) {
           pathnameRequest,
           response.clone()
         );
+
+        console.log(
+          "Navigation pathname cached:",
+          url.pathname
+        );
       } catch (error) {
         console.warn(
           "Pathname navigation cache failed:",
@@ -293,7 +320,7 @@ async function handleNavigation(request) {
       }
 
       /*
-       * Keep "/" as the application shell.
+       * Keep "/" as application shell.
        */
 
       if (
@@ -354,7 +381,9 @@ async function handleNavigation(request) {
      */
 
     try {
-      const url = new URL(request.url);
+      const url = new URL(
+        request.url
+      );
 
       const pathnameRequest =
         new Request(
@@ -397,7 +426,7 @@ async function handleNavigation(request) {
 
     if (index) {
       console.log(
-        "Navigation served from index.html:"
+        "Navigation served from index.html"
       );
 
       return index;
@@ -415,7 +444,7 @@ async function handleNavigation(request) {
 
     if (root) {
       console.log(
-        "Navigation served from root:"
+        "Navigation served from root"
       );
 
       return root;
@@ -423,7 +452,7 @@ async function handleNavigation(request) {
 
     /*
      * -------------------------------------------------------
-     * 5. LAST-RESORT OFFLINE PAGE
+     * 5. OFFLINE FALLBACK
      * -------------------------------------------------------
      */
 
@@ -457,15 +486,7 @@ async function handleNavigation(request) {
  *
  * Cache first.
  *
- * Query parameters are ignored for cache lookup.
- *
- * Example:
- *
- * image.jpg
- * image.jpg?v=123
- * image.jpg?test=123
- *
- * all use the same cached image.
+ * Query parameters are ignored.
  * ---------------------------------------------------------
  */
 
@@ -475,7 +496,7 @@ async function handleImage(request) {
   );
 
   /*
-   * 1. Cache first.
+   * CACHE FIRST
    */
 
   const cached = await cache.match(
@@ -495,7 +516,7 @@ async function handleImage(request) {
   }
 
   /*
-   * 2. Network.
+   * NETWORK
    */
 
   try {
@@ -509,14 +530,8 @@ async function handleImage(request) {
 
     if (shouldCache) {
       try {
-        /*
-         * Store under canonical URL without
-         * query parameters.
-         */
-
-        const cacheUrl = new URL(
-          request.url
-        );
+        const cacheUrl =
+          new URL(request.url);
 
         cacheUrl.search = "";
         cacheUrl.hash = "";
@@ -555,15 +570,16 @@ async function handleImage(request) {
     );
 
     /*
-     * 3. Final cache fallback.
+     * FINAL CACHE FALLBACK
      */
 
-    const fallback = await cache.match(
-      request,
-      {
-        ignoreSearch: true,
-      }
-    );
+    const fallback =
+      await cache.match(
+        request,
+        {
+          ignoreSearch: true,
+        }
+      );
 
     if (fallback) {
       console.log(
@@ -573,10 +589,6 @@ async function handleImage(request) {
 
       return fallback;
     }
-
-    /*
-     * 4. Offline response.
-     */
 
     return new Response(
       "",
@@ -813,7 +825,7 @@ self.addEventListener(
     const request = event.request;
 
     /*
-     * Only GET requests.
+     * Only GET.
      */
 
     if (request.method !== "GET") {
@@ -825,8 +837,7 @@ self.addEventListener(
     );
 
     /*
-     * Ignore unrelated cross-origin
-     * requests.
+     * Only same-origin and Supabase.
      */
 
     if (
@@ -838,10 +849,25 @@ self.addEventListener(
     }
 
     /*
-     * Navigation.
+     * -------------------------------------------------------
+     * NAVIGATION / HTML
+     *
+     * IMPORTANT:
+     *
+     * This MUST happen before handleAsset().
+     * -------------------------------------------------------
      */
 
     if (isNavigation(request)) {
+      console.log(
+        "SW navigation request:",
+        request.url,
+        "mode:",
+        request.mode,
+        "destination:",
+        request.destination
+      );
+
       event.respondWith(
         handleNavigation(request)
       );
@@ -850,7 +876,9 @@ self.addEventListener(
     }
 
     /*
-     * Supabase public Storage images.
+     * -------------------------------------------------------
+     * SUPABASE IMAGES
+     * -------------------------------------------------------
      */
 
     if (isSupabaseImage(request)) {
@@ -862,7 +890,9 @@ self.addEventListener(
     }
 
     /*
-     * Fonts.
+     * -------------------------------------------------------
+     * FONTS
+     * -------------------------------------------------------
      */
 
     if (isFont(request)) {
@@ -874,7 +904,9 @@ self.addEventListener(
     }
 
     /*
-     * Supabase REST API.
+     * -------------------------------------------------------
+     * SUPABASE REST API
+     * -------------------------------------------------------
      */
 
     if (isApiRequest(request)) {
@@ -886,7 +918,9 @@ self.addEventListener(
     }
 
     /*
-     * Videos.
+     * -------------------------------------------------------
+     * VIDEOS
+     * -------------------------------------------------------
      */
 
     if (isVideo(request)) {
@@ -898,7 +932,9 @@ self.addEventListener(
     }
 
     /*
-     * Same-origin assets.
+     * -------------------------------------------------------
+     * SAME-ORIGIN ASSETS
+     * -------------------------------------------------------
      */
 
     if (
