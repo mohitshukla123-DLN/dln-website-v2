@@ -354,17 +354,17 @@ async function handleFont(request) {
  */
 
 async function handleApi(request) {
-  const cache = await caches.open(
-    API_CACHE_NAME
-  );
+  const cache = await caches.open(API_CACHE_NAME);
 
   try {
     const response = await fetch(request);
 
-    if (response.ok) {
-      await cache.put(
-        request,
-        response.clone()
+    if (response.ok && request.method === "GET") {
+      await cache.put(request, response.clone());
+
+      console.log(
+        "Supabase API cached:",
+        request.url
       );
     }
 
@@ -381,6 +381,11 @@ async function handleApi(request) {
       return cached;
     }
 
+    console.warn(
+      "Supabase API unavailable:",
+      request.url
+    );
+
     return new Response(
       JSON.stringify({
         offline: true,
@@ -389,8 +394,7 @@ async function handleApi(request) {
       {
         status: 503,
         headers: {
-          "Content-Type":
-            "application/json",
+          "Content-Type": "application/json",
         },
       }
     );
