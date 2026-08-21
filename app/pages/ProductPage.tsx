@@ -117,6 +117,9 @@ export default function ProductPage() {
             : data.image
               ? [data.image]
               : [],
+          videos: Array.isArray(data.videos)
+            ? data.videos
+            : [],
           sizes: data.sizes ?? {},
           specifications: {
               fabric: data.fabric ?? "",

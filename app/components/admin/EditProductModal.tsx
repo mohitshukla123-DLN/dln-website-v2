@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
-import { uploadProductImage } from "../../lib/storage";
+import {
+  uploadProductImage,
+  uploadProductVideo,
+} from "../../lib/storage";
 import type { AdminProduct } from "../../types/adminProduct";
 import { categories } from "../../data/categories";
 import { subcategories } from "../../data/subcategories";
@@ -55,6 +58,8 @@ export default function EditProductModal({
 
   const [newArrival, setNewArrival] = useState(false);
   const [productImages, setProductImages] = useState<string[]>([]);
+  const [productVideos, setProductVideos] = useState<string[]>([]);
+  const [newVideoFiles, setNewVideoFiles] = useState<File[]>([]);
 
   useEffect(() => {
     if (!product) return;
@@ -100,6 +105,14 @@ export default function EditProductModal({
               ? [product.image]
               : []
         );
+
+      setProductVideos(
+        Array.isArray(product.videos)
+          ? product.videos
+          : []
+      );
+
+      setNewVideoFiles([]);
   }, [product]);
 
   const categoryKey = category
@@ -176,10 +189,67 @@ async function uploadNewProductImages(
   }
 }
 
+function handleNewVideos(
+      e: React.ChangeEvent<HTMLInputElement>
+    ) {
+      if (!e.target.files) return;
+
+      const files = Array.from(e.target.files ?? []);
+
+        setNewVideoFiles((current) => [
+          ...current,
+          ...files,
+        ]);
+
+      e.target.value = "";
+    }
+
+    function removeExistingVideo(index: number) {
+      setProductVideos((current) =>
+        current.filter((_, i) => i !== index)
+      );
+    }
+
+    function removeNewVideo(index: number) {
+      setNewVideoFiles((current) =>
+        current.filter((_, i) => i !== index)
+      );
+    }
+
 async function saveChanges() {
       if (!product) return;
 
       setLoading(true);
+
+      const uploadedVideos: string[] = [];
+
+        try {
+          for (const file of newVideoFiles) {
+            const result = await uploadProductVideo({
+              file,
+              category,
+              productName: name,
+              sku: product.sku ?? `product-${product.id}`,
+            });
+
+            uploadedVideos.push(result.url);
+          }
+        } catch (error) {
+          setLoading(false);
+
+          alert(
+            error instanceof Error
+              ? error.message
+              : "Video upload failed."
+          );
+
+          return;
+        }
+
+        const finalVideos = [
+          ...productVideos,
+          ...uploadedVideos,
+        ];
 
       const { error } = await supabase
         .from("products")
@@ -200,6 +270,7 @@ async function saveChanges() {
           // Product images
           image: productImages[0] ?? null,
           images: productImages,
+          videos: finalVideos,
 
           description,
 
@@ -447,6 +518,76 @@ async function saveChanges() {
               </div>
             )}
           </div>
+
+          <div className="mb-6">
+              <h3 className="mb-3 text-sm font-semibold">
+                Product Videos
+              </h3>
+
+              <input
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime"
+                multiple
+                onChange={handleNewVideos}
+                disabled={loading}
+                className="w-full rounded-lg border p-3 text-sm"
+              />
+
+              <p className="mt-2 text-xs text-gray-500">
+                MP4, WebM or MOV • Maximum 100 MB per video
+              </p>
+
+              {productVideos.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {productVideos.map((url, index) => (
+                    <div
+                      key={`${url}-${index}`}
+                      className="flex items-center justify-between rounded-lg border p-3"
+                    >
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="truncate text-sm text-[var(--burgundy)] underline"
+                      >
+                        Existing Video {index + 1}
+                      </a>
+
+                      <button
+                        type="button"
+                        onClick={() => removeExistingVideo(index)}
+                        className="ml-3 rounded-lg bg-red-600 px-3 py-1 text-xs text-white"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {newVideoFiles.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  {newVideoFiles.map((file, index) => (
+                    <div
+                      key={`${file.name}-${index}`}
+                      className="flex items-center justify-between rounded-lg border p-3"
+                    >
+                      <span className="truncate text-sm">
+                        {file.name}
+                      </span>
+
+                      <button
+                        type="button"
+                        onClick={() => removeNewVideo(index)}
+                        className="ml-3 rounded-lg bg-red-600 px-3 py-1 text-xs text-white"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
         <select
           className="mb-4 w-full rounded-lg border p-3"

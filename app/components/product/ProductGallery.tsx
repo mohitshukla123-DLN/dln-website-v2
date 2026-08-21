@@ -2,9 +2,10 @@ import { useState } from "react";
 
 interface Props {
   product: {
-    name: string;
-    images: string[];
-  };
+  name: string;
+  images: string[];
+  videos?: string[];
+};
   activeImage: string;
   setActiveImage: (image: string) => void;
   onImageClick: () => void;
@@ -25,7 +26,7 @@ export default function ProductGallery({
   });
 
   const images = product.images ?? [];
-
+  const videos = product.videos ?? [];
   const currentIndex = Math.max(
     0,
     images.indexOf(activeImage)
@@ -162,37 +163,59 @@ export default function ProductGallery({
       </div>
 
       {/* Thumbnail navigation */}
-      {images.length > 1 && (
-        <div className="mt-6 flex gap-4 overflow-x-auto pb-2">
-          {images.map((image, index) => (
-            <button
-              key={`${image}-${index}`}
-              type="button"
-              onClick={() => {
-                setImageLoaded(false);
-                setActiveImage(image);
-                resetZoom();
-              }}
-              className={`shrink-0 overflow-hidden rounded-xl border-2 transition ${
-                activeImage === image
-                  ? "border-[var(--burgundy)]"
-                  : "border-transparent hover:border-[var(--burgundy)]"
-              }`}
-              aria-label={`View image ${index + 1}`}
-            >
-              <img
-                src={image}
-                alt={`${product.name} ${index + 1}`}
-                loading="lazy"
-                decoding="async"
-                className="h-24 w-24 object-cover"
-                width={96}
-                height={96}
-              />
-            </button>
-          ))}
-        </div>
-      )}
+          {images.length > 1 && (
+            <div className="mt-6 flex gap-4 overflow-x-auto pb-2">
+              {images.map((image, index) => (
+                <button
+                  key={`${image}-${index}`}
+                  type="button"
+                  onClick={() => {
+                    setImageLoaded(false);
+                    setActiveImage(image);
+                    resetZoom();
+                  }}
+                  className={`shrink-0 overflow-hidden rounded-xl border-2 transition ${
+                    activeImage === image
+                      ? "border-[var(--burgundy)]"
+                      : "border-transparent hover:border-[var(--burgundy)]"
+                  }`}
+                  aria-label={`View image ${index + 1}`}
+                >
+                  <img
+                    src={image}
+                    alt={`${product.name} ${index + 1}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="h-24 w-24 object-cover"
+                    width={96}
+                    height={96}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+
+                  {videos.length > 0 && (
+            <div className="mt-8">
+              <h3 className="mb-4 text-lg font-semibold">
+                Product Videos
+              </h3>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                {videos.map((video, index) => (
+                  <video
+                    key={`${video}-${index}`}
+                    src={video}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="w-full rounded-xl bg-black"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
     </div>
   );
 }

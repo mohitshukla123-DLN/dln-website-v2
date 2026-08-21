@@ -52,6 +52,7 @@ export default function AdminProductsPage() {
             sizes,
             image,
             images,
+            videos,
             created_at,
             updated_at
           `)

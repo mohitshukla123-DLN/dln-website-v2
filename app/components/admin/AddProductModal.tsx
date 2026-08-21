@@ -4,7 +4,10 @@ import {
   useState,
 } from "react";
 import { supabase } from "../../lib/supabase";
-import { uploadProductImage } from "../../lib/storage";
+import {
+  uploadProductImage,
+  uploadProductVideo,
+} from "../../lib/storage";
 import ProductImageCropper from "./ProductImageCropper";
 import { categories } from "../../data/categories";
 import { subcategories } from "../../data/subcategories";
@@ -88,6 +91,7 @@ export default function AddProductModal({
   const [newArrival, setNewArrival] = useState(false);
 
   const [images, setImages] = useState<ProductImage[]>([]);
+  const [videos, setVideos] = useState<File[]>([]);
 
   const [cropFile, setCropFile] =
     useState<File | null>(null);
@@ -259,6 +263,27 @@ export default function AddProductModal({
       return updated;
     });
   }
+
+  function handleVideos(
+      e: ChangeEvent<HTMLInputElement>
+    ) {
+      if (!e.target.files) return;
+
+      const selected = Array.from(e.target.files);
+
+      setVideos((current) => [
+        ...current,
+        ...selected,
+      ]);
+
+      e.target.value = "";
+    }
+
+    function removeVideo(index: number) {
+      setVideos((current) =>
+        current.filter((_, i) => i !== index)
+      );
+    }
 
   async function saveProduct() {
     const {
@@ -433,6 +458,23 @@ export default function AddProductModal({
         );
       }
 
+      const uploadedVideos: string[] = [];
+
+      for (
+        let index = 0;
+        index < videos.length;
+        index++
+      ) {
+        const uploaded = await uploadProductVideo({
+          file: videos[index],
+          category,
+          productName: trimmedName,
+          sku: trimmedSKU,
+        });
+
+        uploadedVideos.push(uploaded.url);
+      }
+
       const { error } = await supabase
         .from("products")
         .insert({
@@ -474,6 +516,7 @@ export default function AddProductModal({
             uploadedImages[0] ?? null,
 
           images: uploadedImages,
+          videos: uploadedVideos,
         });
 
       if (error) {
@@ -779,6 +822,49 @@ export default function AddProductModal({
               )
             }
           />
+
+          <div className="mb-6">
+            <label className="mb-2 block font-medium">
+              Product Videos
+            </label>
+
+            <input
+              id="product-videos"
+              type="file"
+              accept="video/mp4,video/webm,video/quicktime"
+              multiple
+              onChange={handleVideos}
+              disabled={loading}
+              className="block w-full rounded-lg border p-3 text-sm"
+            />
+
+            <p className="mt-2 text-xs text-gray-500">
+              MP4, WebM or MOV • Maximum 100 MB per video
+            </p>
+
+            {videos.length > 0 && (
+              <div className="mt-4 space-y-2">
+                {videos.map((video, index) => (
+                  <div
+                    key={`${video.name}-${index}`}
+                    className="flex items-center justify-between rounded-lg border p-3"
+                  >
+                    <span className="truncate text-sm">
+                      {video.name}
+                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() => removeVideo(index)}
+                      className="ml-3 rounded-lg bg-red-600 px-3 py-1 text-xs text-white"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="mb-4 grid grid-cols-2 gap-4">
             <input

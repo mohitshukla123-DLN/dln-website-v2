@@ -21,6 +21,8 @@ export interface Product {
 
   images: string[];
 
+  videos: string[];
+
   featured: boolean;
 
   bestseller: boolean;

@@ -43,6 +43,7 @@ export interface AdminProduct {
 
   image: string | null;
   images: string[];
+  videos: string[];
 
   created_at?: string;
 
