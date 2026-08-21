@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v4";
+const CACHE_NAME = "dln-v5";
 
 const APP_SHELL = [
   "/",
