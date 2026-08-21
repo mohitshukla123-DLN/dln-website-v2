@@ -213,31 +213,117 @@ function isNavigation(request) {
  * ---------------------------------------------------------
  */
 
-async function handleNavigation(request) {
-  try {
-    const response = await fetch(request);
-
-    if (response.ok) {
-      const cache = await caches.open(
-        CACHE_NAME
-      );
-
-      /*
-       * Cache the requested HTML route.
-       */
-
+    async function handleNavigation(request) {
       try {
-        await cache.put(
-          request,
-          response.clone()
-        );
+        const response = await fetch(request, {
+          redirect: "follow",
+        });
+
+        if (response.ok) {
+          const cache = await caches.open(CACHE_NAME);
+
+          try {
+            await cache.put(request, response.clone());
+          } catch (error) {
+            console.warn(
+              "Navigation cache failed:",
+              request.url,
+              error
+            );
+          }
+
+          if (
+            request.url ===
+            new URL("/", self.location.origin).href
+          ) {
+            try {
+              await cache.put("/", response.clone());
+            } catch (error) {
+              console.warn(
+                "Root cache failed:",
+                error
+              );
+            }
+          }
+        }
+
+        return response;
       } catch (error) {
         console.warn(
-          "Navigation cache failed:",
-          request.url,
-          error
+          "Offline navigation:",
+          request.url
+        );
+
+        // 1. Exact requested URL
+        const exact = await caches.match(request);
+
+        if (exact) {
+          return exact;
+        }
+
+        // 2. Try pathname without query parameters
+        try {
+          const url = new URL(request.url);
+          const pathnameRequest = new Request(
+            url.pathname,
+            {
+              method: "GET",
+            }
+          );
+
+          const pathnameCache =
+            await caches.match(pathnameRequest);
+
+          if (pathnameCache) {
+            return pathnameCache;
+          }
+        } catch (error) {
+          console.warn(
+            "Pathname cache lookup failed:",
+            error
+          );
+        }
+
+        // 3. index.html
+        const index = await caches.match(
+          "/index.html"
+        );
+
+        if (index) {
+          return index;
+        }
+
+        // 4. Root
+        const root = await caches.match("/");
+
+        if (root) {
+          return root;
+        }
+
+        // 5. Last-resort offline page
+        return new Response(
+          `<!doctype html>
+    <html>
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Dress Like Nawaabs</title>
+    </head>
+    <body>
+    <h1>Dress Like Nawaabs</h1>
+    <p>You are currently offline.</p>
+    </body>
+    </html>`,
+          {
+            status: 200,
+            headers: {
+              "Content-Type":
+                "text/html; charset=utf-8",
+            },
+          }
         );
       }
+    }
 
       /*
        * Keep the actual application shell as "/".
