@@ -1,4 +1,3 @@
-cat > public/sw.js <<'EOF'
 const CACHE_NAME = "dln-v6";
 
 const APP_SHELL = [
@@ -17,7 +16,7 @@ self.addEventListener("install", (event) => {
         try {
           await cache.add(url);
         } catch (error) {
-          console.warn("Failed to cache:", url, error);
+          console.warn("PWA cache failed:", url, error);
         }
       }
     })
@@ -47,7 +46,7 @@ self.addEventListener("fetch", (event) => {
 
   if (url.origin !== self.location.origin) return;
 
-  // HTML navigation: network first, cached homepage when offline.
+  // HTML/navigation: ALWAYS try network first.
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request)
@@ -62,18 +61,31 @@ self.addEventListener("fetch", (event) => {
 
           return response;
         })
-        .catch(() => caches.match("/"))
+        .catch(async () => {
+          const cached = await caches.match("/");
+
+          if (cached) {
+            return cached;
+          }
+
+          return new Response(
+            "<!doctype html><html><body><h1>Dress Like Nawaabs</h1><p>You are offline.</p></body></html>",
+            {
+              headers: {
+                "Content-Type": "text/html",
+              },
+            }
+          );
+        })
     );
 
     return;
   }
 
-  // Static assets: cache first, then network.
+  // Assets: network first, cache fallback.
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(event.request).then((response) => {
+    fetch(event.request)
+      .then((response) => {
         if (response.ok) {
           const copy = response.clone();
 
@@ -83,8 +95,7 @@ self.addEventListener("fetch", (event) => {
         }
 
         return response;
-      });
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });
-EOF
