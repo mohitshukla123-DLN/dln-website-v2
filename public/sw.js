@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v19";
+const CACHE_NAME = "dln-v20";
 const API_CACHE_NAME = "dln-api-v2";
 const FONT_CACHE_NAME = "dln-fonts-v2";
 const IMAGE_CACHE_NAME = "dln-images-v2";
@@ -12,7 +12,6 @@ const SUPABASE_ORIGIN =
 
 const APP_SHELL = [
   "/",
-  "/index.html",
   "/manifest.webmanifest",
   "/favicon.ico",
   "/favicon.png",
@@ -420,35 +419,29 @@ async function handleNavigation(request) {
      * -------------------------------------------------------
      */
 
-    const index = await cache.match(
-      "/index.html"
-    );
+    // 3. ROOT — canonical Cloudflare Pages application shell
+const root = await cache.match("/");
 
-    if (index) {
-      console.log(
-        "Navigation served from index.html"
-      );
+if (root) {
+  console.log(
+    "Navigation served from root"
+  );
 
-      return index;
-    }
+  return root;
+}
 
-    /*
-     * -------------------------------------------------------
-     * 4. ROOT
-     * -------------------------------------------------------
-     */
+// 4. INDEX.HTML — secondary fallback
+const index = await cache.match(
+  "/index.html"
+);
 
-    const root = await cache.match(
-      "/"
-    );
+if (index) {
+  console.log(
+    "Navigation served from index.html"
+  );
 
-    if (root) {
-      console.log(
-        "Navigation served from root"
-      );
-
-      return root;
-    }
+  return index;
+}
 
     /*
      * -------------------------------------------------------
