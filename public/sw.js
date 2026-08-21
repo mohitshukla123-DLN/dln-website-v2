@@ -135,28 +135,28 @@ self.addEventListener("fetch", (event) => {
 
   // Assets and other same-origin GET requests.
   event.respondWith(
-    (async () => {
-      try {
-        const response = await fetch(event.request);
+  (async () => {
+    const cached = await caches.match(event.request);
 
-        if (response.ok) {
-          const cache = await caches.open(CACHE_NAME);
-          await cache.put(event.request, response.clone());
-        }
+    try {
+      const response = await fetch(event.request);
 
-        return response;
-      } catch {
-        const cached = await caches.match(event.request);
-
-        if (cached) {
-          return cached;
-        }
-
-        return new Response("", {
-          status: 503,
-          statusText: "Offline",
-        });
+      if (response.ok) {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put(event.request, response.clone());
       }
-    })()
-  );
+
+      return response;
+    } catch {
+      if (cached) {
+        return cached;
+      }
+
+      return new Response("", {
+        status: 503,
+        statusText: "Offline",
+      });
+    }
+  })()
+);
 });
