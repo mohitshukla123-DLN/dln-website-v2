@@ -1,4 +1,4 @@
-const CACHE_NAME = "dln-v10";
+const CACHE_NAME = "dln-v11";
 
 const APP_SHELL = [
   "/",
@@ -49,9 +49,7 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   /*
-   * HTML/navigation:
-   * Network first.
-   * Cached homepage when offline.
+   * Navigation
    */
   if (event.request.mode === "navigate") {
     event.respondWith(
@@ -102,11 +100,9 @@ self.addEventListener("fetch", (event) => {
   }
 
   /*
-   * JS/CSS/images/fonts/etc:
+   * JS / CSS / images / fonts / other same-origin assets
    *
-   * Cache first.
-   * If not cached, use network.
-   * Successful network responses are cached.
+   * CACHE FIRST.
    */
   event.respondWith(
     (async () => {
@@ -123,12 +119,20 @@ self.addEventListener("fetch", (event) => {
           const cache = await caches.open(CACHE_NAME);
 
           try {
-            await cache.put(event.request, response.clone());
-          } catch (error) {
+            await cache.put(
+              event.request,
+              response.clone()
+            );
+
+            console.log(
+              "PWA cached:",
+              event.request.url
+            );
+          } catch (cacheError) {
             console.warn(
               "PWA cache put failed:",
               event.request.url,
-              error
+              cacheError
             );
           }
         }
@@ -136,9 +140,8 @@ self.addEventListener("fetch", (event) => {
         return response;
       } catch (error) {
         console.warn(
-          "PWA fetch failed:",
-          event.request.url,
-          error
+          "PWA offline asset unavailable:",
+          event.request.url
         );
 
         return new Response("", {
