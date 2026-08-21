@@ -38,6 +38,7 @@ self.addEventListener("install", (event) => {
     (async () => {
       const cache = await caches.open(CACHE_NAME);
 
+      // Cache the PWA shell
       for (const url of APP_SHELL) {
         try {
           const response = await fetch(url, {
@@ -50,6 +51,22 @@ self.addEventListener("install", (event) => {
           }
         } catch (error) {
           console.warn("PWA shell cache failed:", url, error);
+        }
+      }
+
+      // Cache all Vite-generated JS/CSS/assets
+      for (const url of SW_ASSETS) {
+        try {
+          const response = await fetch(url, {
+            cache: "no-store",
+          });
+
+          if (response.ok) {
+            await cache.put(url, response);
+            console.log("PWA asset cached:", url);
+          }
+        } catch (error) {
+          console.warn("PWA asset cache failed:", url, error);
         }
       }
     })()
