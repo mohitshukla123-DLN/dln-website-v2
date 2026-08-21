@@ -50,7 +50,11 @@ self.addEventListener("install", (event) => {
             console.log("PWA shell cached:", url);
           }
         } catch (error) {
-          console.warn("PWA shell cache failed:", url, error);
+          console.warn(
+            "PWA shell cache failed:",
+            url,
+            error
+          );
         }
       }
 
@@ -63,10 +67,17 @@ self.addEventListener("install", (event) => {
 
           if (response.ok) {
             await cache.put(url, response);
-            console.log("PWA asset cached:", url);
+            console.log(
+              "PWA asset cached:",
+              url
+            );
           }
         } catch (error) {
-          console.warn("PWA asset cache failed:", url, error);
+          console.warn(
+            "PWA asset cache failed:",
+            url,
+            error
+          );
         }
       }
     })()
@@ -112,7 +123,9 @@ self.addEventListener("activate", (event) => {
  */
 
 function isSupabase(request) {
-  return request.url.startsWith(SUPABASE_ORIGIN);
+  return request.url.startsWith(
+    SUPABASE_ORIGIN
+  );
 }
 
 function isSupabaseImage(request) {
@@ -121,7 +134,9 @@ function isSupabaseImage(request) {
   }
 
   return (
-    request.url.includes("/storage/v1/object/public/") ||
+    request.url.includes(
+      "/storage/v1/object/public/"
+    ) ||
     IMAGE_EXTENSIONS.test(
       new URL(request.url).pathname
     )
@@ -142,7 +157,9 @@ function isFont(request) {
 
   return (
     request.destination === "font" ||
-    /\.(woff2?|ttf|otf|eot)$/i.test(url.pathname)
+    /\.(woff2?|ttf|otf|eot)$/i.test(
+      url.pathname
+    )
   );
 }
 
@@ -174,24 +191,19 @@ async function handleNavigation(request) {
     const response = await fetch(request);
 
     if (response.ok) {
-      const cache = await caches.open(CACHE_NAME);
+      const cache = await caches.open(
+        CACHE_NAME
+      );
 
-      /*
-       * Cache the actual requested route.
-       *
-       * This is important for:
-       * /shop
-       * /about
-       * /contact
-       * /products/...
-       * etc.
-       */
-      await cache.put(request, response.clone());
+      await cache.put(
+        request,
+        response.clone()
+      );
 
-      /*
-       * Also keep "/" as the main offline fallback.
-       */
-      await cache.put("/", response.clone());
+      await cache.put(
+        "/",
+        response.clone()
+      );
     }
 
     return response;
@@ -201,27 +213,20 @@ async function handleNavigation(request) {
       request.url
     );
 
-    /*
-     * First try the exact route.
-     */
-    const exact = await caches.match(request);
+    const exact = await caches.match(
+      request
+    );
 
     if (exact) {
       return exact;
     }
 
-    /*
-     * Then try the SPA root.
-     */
     const root = await caches.match("/");
 
     if (root) {
       return root;
     }
 
-    /*
-     * Last-resort HTML.
-     */
     return new Response(
       `<!doctype html>
 <html>
@@ -252,18 +257,33 @@ async function handleNavigation(request) {
  *
  * Cache first.
  *
- * This is the important fix for Supabase images.
+ * IMPORTANT:
+ * Supabase cross-origin images are commonly
+ * returned as opaque responses:
+ *
+ *   response.type === "opaque"
+ *   response.ok === false
+ *   response.status === 0
+ *
+ * Opaque responses are still valid for <img>
+ * and MUST be allowed into Cache Storage.
  * ---------------------------------------------------------
  */
 
 async function handleImage(request) {
-  const cache = await caches.open(IMAGE_CACHE_NAME);
+  const cache = await caches.open(
+    IMAGE_CACHE_NAME
+  );
 
   // 1. Cache first
   const cached = await cache.match(request);
 
   if (cached) {
-    console.log("Image served from cache:", request.url);
+    console.log(
+      "Image served from cache:",
+      request.url
+    );
+
     return cached;
   }
 
@@ -272,16 +292,10 @@ async function handleImage(request) {
     const response = await fetch(request);
 
     /*
-     * Supabase images requested by <img> can produce
-     * an opaque response because of cross-origin/no-cors.
+     * Cache both:
      *
-     * Opaque responses have:
-     *
-     *   response.ok === false
-     *   response.type === "opaque"
-     *
-     * They are still valid responses and can be stored
-     * in Cache Storage.
+     * 1. Normal successful responses
+     * 2. Opaque Supabase responses
      */
     const cacheable =
       response.ok ||
@@ -298,11 +312,13 @@ async function handleImage(request) {
           "Image cached:",
           request.url,
           "type:",
-          response.type
+          response.type,
+          "status:",
+          response.status
         );
       } catch (cacheError) {
         /*
-         * Do not break the user's online image just
+         * Never break an online image just
          * because Cache Storage failed.
          */
         console.warn(
@@ -311,19 +327,43 @@ async function handleImage(request) {
           cacheError
         );
       }
+    } else {
+      console.warn(
+        "Image NOT cached:",
+        request.url,
+        "type:",
+        response.type,
+        "status:",
+        response.status
+      );
     }
 
     return response;
   } catch (error) {
     console.warn(
-      "Offline image unavailable:",
-      request.url
+      "Image network failed:",
+      request.url,
+      error
     );
 
-    return new Response("", {
-      status: 503,
-      statusText: "Offline image unavailable",
-    });
+    /*
+     * Try cache again in case another request
+     * populated it while this request was running.
+     */
+    const fallback = await cache.match(
+      request
+    );
+
+    if (fallback) {
+      console.log(
+        "Offline image served from cache:",
+        request.url
+      );
+
+      return fallback;
+    }
+
+    throw error;
   }
 }
 
@@ -350,10 +390,18 @@ async function handleFont(request) {
     const response = await fetch(request);
 
     if (response.ok) {
-      await cache.put(
-        request,
-        response.clone()
-      );
+      try {
+        await cache.put(
+          request,
+          response.clone()
+        );
+      } catch (error) {
+        console.warn(
+          "Font cache failed:",
+          request.url,
+          error
+        );
+      }
     }
 
     return response;
@@ -365,7 +413,8 @@ async function handleFont(request) {
 
     return new Response("", {
       status: 503,
-      statusText: "Offline font unavailable",
+      statusText:
+        "Offline font unavailable",
     });
   }
 }
@@ -380,23 +429,41 @@ async function handleFont(request) {
  */
 
 async function handleApi(request) {
-  const cache = await caches.open(API_CACHE_NAME);
+  const cache = await caches.open(
+    API_CACHE_NAME
+  );
 
   try {
     const response = await fetch(request);
 
-    if (response.ok && request.method === "GET") {
-      await cache.put(request, response.clone());
+    if (
+      response.ok &&
+      request.method === "GET"
+    ) {
+      try {
+        await cache.put(
+          request,
+          response.clone()
+        );
 
-      console.log(
-        "Supabase API cached:",
-        request.url
-      );
+        console.log(
+          "Supabase API cached:",
+          request.url
+        );
+      } catch (cacheError) {
+        console.warn(
+          "Supabase API cache failed:",
+          request.url,
+          cacheError
+        );
+      }
     }
 
     return response;
   } catch (error) {
-    const cached = await cache.match(request);
+    const cached = await cache.match(
+      request
+    );
 
     if (cached) {
       console.warn(
@@ -420,7 +487,8 @@ async function handleApi(request) {
       {
         status: 503,
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type":
+            "application/json",
         },
       }
     );
@@ -431,11 +499,7 @@ async function handleApi(request) {
  * ---------------------------------------------------------
  * VIDEO
  *
- * DO NOT aggressively cache videos.
- *
- * Let the browser/network handle them normally.
- * This prevents huge Cache Storage usage and
- * Range-request problems.
+ * Do NOT aggressively cache videos.
  * ---------------------------------------------------------
  */
 
@@ -445,7 +509,8 @@ async function handleVideo(request) {
   } catch (error) {
     return new Response("", {
       status: 503,
-      statusText: "Offline video unavailable",
+      statusText:
+        "Offline video unavailable",
     });
   }
 }
@@ -459,7 +524,9 @@ async function handleVideo(request) {
  */
 
 async function handleAsset(request) {
-  const cached = await caches.match(request);
+  const cached = await caches.match(
+    request
+  );
 
   if (cached) {
     return cached;
@@ -496,7 +563,8 @@ async function handleAsset(request) {
 
     return new Response("", {
       status: 503,
-      statusText: "Offline asset unavailable",
+      statusText:
+        "Offline asset unavailable",
     });
   }
 }
@@ -584,7 +652,9 @@ self.addEventListener("fetch", (event) => {
   /*
    * Same-origin assets
    */
-  if (url.origin === self.location.origin) {
+  if (
+    url.origin === self.location.origin
+  ) {
     event.respondWith(
       handleAsset(request)
     );
