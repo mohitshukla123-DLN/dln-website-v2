@@ -1,8 +1,9 @@
-const CACHE_NAME = "dln-v11";
+const CACHE_NAME = "dln-v12";
 
 const APP_SHELL = [
   "/",
   "/manifest.webmanifest",
+  "/favicon.ico",
   "/favicon.png",
   "/pwa-192.png",
   "/pwa-512.png",
