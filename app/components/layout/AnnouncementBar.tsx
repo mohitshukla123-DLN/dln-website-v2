@@ -6,33 +6,60 @@ export default function AnnouncementBar() {
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-
     async function loadAnnouncement() {
       const { data, error } = await supabase
         .from("site_settings")
         .select("announcement_text, announcement_enabled")
-        .eq("id", 1)
         .single();
 
-      if (!mounted) return;
+      if (error) {
+        console.error("Failed to load announcement:", error);
+        return;
+      }
 
       setMessage(data?.announcement_text?.trim() || "");
       setEnabled(data?.announcement_enabled ?? false);
     }
 
     loadAnnouncement();
-
-    return () => {
-      mounted = false;
-    };
   }, []);
 
-  if (!enabled || !message) return null;
+  if (!enabled || !message) {
+    return null;
+  }
 
   return (
-    <div className="bg-[var(--burgundy)] px-4 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.16em] text-white sm:py-3 sm:text-sm">
-      {message}
+    <div className="overflow-hidden bg-[var(--burgundy)] text-white">
+      <div className="relative flex h-8 items-center overflow-hidden">
+        <div className="flex min-w-max animate-[announcement-scroll_18s_linear_infinite] whitespace-nowrap">
+          <span className="px-8 text-xs font-medium sm:text-sm">
+            {message}
+          </span>
+
+          <span className="px-8 text-xs font-medium sm:text-sm">
+            {message}
+          </span>
+
+          <span className="px-8 text-xs font-medium sm:text-sm">
+            {message}
+          </span>
+
+          <span className="px-8 text-xs font-medium sm:text-sm">
+            {message}
+          </span>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes announcement-scroll {
+          from {
+            transform: translateX(-25%);
+          }
+          to {
+            transform: translateX(0%);
+          }
+        }
+      `}</style>
     </div>
   );
 }
