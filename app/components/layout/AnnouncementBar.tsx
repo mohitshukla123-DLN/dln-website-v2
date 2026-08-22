@@ -29,34 +29,22 @@ export default function AnnouncementBar() {
   }
 
   return (
-    <div className="overflow-hidden bg-[var(--burgundy)] text-white">
-      <div className="relative flex h-8 items-center overflow-hidden">
-        <div className="flex min-w-max animate-[announcement-scroll_18s_linear_infinite] whitespace-nowrap">
-          <span className="px-8 text-xs font-medium sm:text-sm">
-            {message}
-          </span>
-
-          <span className="px-8 text-xs font-medium sm:text-sm">
-            {message}
-          </span>
-
-          <span className="px-8 text-xs font-medium sm:text-sm">
-            {message}
-          </span>
-
-          <span className="px-8 text-xs font-medium sm:text-sm">
-            {message}
-          </span>
-        </div>
+    <div className="bg-[var(--burgundy)] text-white">
+      <div className="flex items-center justify-center px-4 py-2">
+        <p className="text-center font-bold animate-[announcement-blink_1.8s_ease-in-out_infinite]">
+          {message}
+        </p>
       </div>
 
       <style>{`
-        @keyframes announcement-scroll {
-          from {
-            transform: translateX(-25%);
+        @keyframes announcement-blink {
+          0%,
+          100% {
+            opacity: 1;
           }
-          to {
-            transform: translateX(0%);
+
+          50% {
+            opacity: 0.35;
           }
         }
       `}</style>
