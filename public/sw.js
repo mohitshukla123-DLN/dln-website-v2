@@ -658,14 +658,10 @@ async function handleFont(request) {
  */
 
 async function handleApi(request) {
-  const cache = await caches.open(
-    API_CACHE_NAME
-  );
+  const cache = await caches.open(API_CACHE_NAME);
 
   try {
-    const response = await fetch(
-      request
-    );
+    const response = await fetch(request);
 
     if (
       response.ok &&
@@ -692,9 +688,7 @@ async function handleApi(request) {
 
     return response;
   } catch (error) {
-    const cached = await cache.match(
-      request
-    );
+    const cached = await cache.match(request);
 
     if (cached) {
       console.warn(
@@ -703,6 +697,72 @@ async function handleApi(request) {
       );
 
       return cached;
+    }
+
+    /*
+     * Product slug requests may not have their exact
+     * URL cached. Fall back to the cached full catalogue.
+     */
+    const url = new URL(request.url);
+
+    if (
+      url.pathname === "/rest/v1/products" &&
+      url.searchParams.has("slug")
+    ) {
+      const catalogueUrl =
+        `${SUPABASE_ORIGIN}/rest/v1/products?select=*&order=created_at.desc`;
+
+      const catalogueRequest =
+        new Request(catalogueUrl, {
+          method: "GET",
+          headers: request.headers,
+        });
+
+      const catalogueCache =
+        await cache.match(catalogueRequest);
+
+      if (catalogueCache) {
+        const products =
+          await catalogueCache.json();
+
+        const slugFilter =
+          url.searchParams.get("slug");
+
+        const match =
+          slugFilter?.match(/^eq\.(.+)$/);
+
+        const slug =
+          match
+            ? decodeURIComponent(match[1])
+            : null;
+
+        const product =
+          Array.isArray(products) && slug
+            ? products.find(
+                (item) =>
+                  item.slug === slug
+              )
+            : null;
+
+        console.warn(
+          "Supabase offline, resolving product from catalogue cache:",
+          slug,
+          Boolean(product)
+        );
+
+        return new Response(
+          JSON.stringify(
+            product ? [product] : []
+          ),
+          {
+            status: 200,
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+          }
+        );
+      }
     }
 
     console.warn(
