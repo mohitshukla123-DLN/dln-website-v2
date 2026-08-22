@@ -4,16 +4,30 @@ import { supabase } from "../../lib/supabase";
 export default function Favicon() {
   useEffect(() => {
     async function loadFavicon() {
-      const { data } = await supabase
-        .from("site_settings")
-        .select("favicon_url")
-        .eq("id", 1)
-        .single();
+      // Offline fallback
+      if (!navigator.onLine) {
+        setFavicon("/favicon.png");
+        return;
+      }
 
-      const favicon = data?.favicon_url?.trim();
+      try {
+        const { data, error } = await supabase
+          .from("site_settings")
+          .select("favicon_url")
+          .eq("id", 1)
+          .single();
 
-      if (!favicon) return;
+        if (error) throw error;
 
+        const favicon = data?.favicon_url?.trim();
+
+        setFavicon(favicon || "/favicon.png");
+      } catch {
+        setFavicon("/favicon.png");
+      }
+    }
+
+    function setFavicon(url: string) {
       let link = document.querySelector<HTMLLinkElement>(
         'link[rel="icon"]'
       );
@@ -24,7 +38,7 @@ export default function Favicon() {
         document.head.appendChild(link);
       }
 
-      link.href = `${favicon}?v=${Date.now()}`;
+      link.href = url;
     }
 
     loadFavicon();
