@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   DragEvent,
+  useEffect,
   useState,
 } from "react";
 import { supabase } from "../../lib/supabase";
@@ -9,8 +10,6 @@ import {
   uploadProductVideo,
 } from "../../lib/storage";
 import ProductImageCropper from "./ProductImageCropper";
-import { categories } from "../../data/categories";
-import { subcategories } from "../../data/subcategories";
 
 interface Props {
   open: boolean;
@@ -22,6 +21,23 @@ interface ProductImage {
   file: File;
   preview: string;
   view: string;
+}
+
+interface CategoryOption {
+  id: number;
+  name: string;
+  slug: string;
+  enabled: boolean;
+  sort_order: number;
+}
+
+interface SubcategoryOption {
+  id: number;
+  category_id: number;
+  name: string;
+  slug: string;
+  enabled: boolean;
+  sort_order: number;
 }
 
 function slugify(text: string) {
@@ -93,17 +109,73 @@ export default function AddProductModal({
   const [images, setImages] = useState<ProductImage[]>([]);
   const [videos, setVideos] = useState<File[]>([]);
 
+  const [categoryOptions, setCategoryOptions] =
+  useState<CategoryOption[]>([]);
+
+  const [subcategoryOptions, setSubcategoryOptions] =
+  useState<SubcategoryOption[]>([]);
+
   const [cropFile, setCropFile] =
     useState<File | null>(null);
 
   const [dragIndex, setDragIndex] =
     useState<number | null>(null);
 
+  useEffect(() => {
+  if (!open) return;
+
+  async function loadCategoryOptions() {
+      const [{ data: categoryData, error: categoryError }, {
+        data: subcategoryData,
+        error: subcategoryError,
+      }] = await Promise.all([
+        supabase
+          .from("categories")
+          .select("id,name,slug,enabled,sort_order")
+          .eq("enabled", true)
+          .order("sort_order", { ascending: true })
+          .order("name", { ascending: true }),
+
+        supabase
+          .from("subcategories")
+          .select(
+            "id,category_id,name,slug,enabled,sort_order"
+          )
+          .eq("enabled", true)
+          .order("sort_order", { ascending: true })
+          .order("name", { ascending: true }),
+      ]);
+
+      if (categoryError) {
+        alert(categoryError.message);
+        return;
+      }
+
+      if (subcategoryError) {
+        alert(subcategoryError.message);
+        return;
+      }
+
+      setCategoryOptions(categoryData ?? []);
+      setSubcategoryOptions(subcategoryData ?? []);
+    }
+
+    loadCategoryOptions();
+  }, [open]);
+
   if (!open) return null;
 
-  const categoryKey = category
-    .toLowerCase()
-    .replace(/\s+/g, "-");
+  const selectedCategory = categoryOptions.find(
+    (item) => item.name === category
+  );
+
+  const availableSubcategories =
+    selectedCategory
+      ? subcategoryOptions.filter(
+          (item) =>
+            item.category_id === selectedCategory.id
+        )
+      : [];
 
   function createImageItem(file: File): ProductImage {
     return {
@@ -356,14 +428,12 @@ export default function AddProductModal({
     }
 
     if (
-      subcategories[
-        categoryKey as keyof typeof subcategories
-      ]?.length > 0 &&
-      !subcategory
-    ) {
-      alert("Please select a subcategory.");
-      return;
-    }
+        availableSubcategories.length > 0 &&
+        !subcategory
+      ) {
+        alert("Please select a subcategory.");
+        return;
+      }
 
     if (
       !price ||
@@ -583,19 +653,15 @@ export default function AddProductModal({
             className="mb-4 w-full rounded-lg border p-3"
             value={category}
             onChange={(e) => {
-              setCategory(
-                e.target.value
-              );
+              setCategory(e.target.value);
               setSubcategory("");
             }}
           >
-            <option value="">
-              Select Category
-            </option>
+            <option value="">Select Category</option>
 
-            {categories.map((item) => (
+            {categoryOptions.map((item) => (
               <option
-                key={item.slug}
+                key={item.id}
                 value={item.name}
               >
                 {item.name}
@@ -607,33 +673,26 @@ export default function AddProductModal({
             className="mb-4 w-full rounded-lg border p-3 disabled:bg-gray-100"
             value={subcategory}
             onChange={(e) =>
-              setSubcategory(
-                e.target.value
-              )
+              setSubcategory(e.target.value)
             }
             disabled={!category}
           >
             <option value="">
               {!category
                 ? "Select Category First"
-                : subcategories[
-                    categoryKey as keyof typeof subcategories
-                  ]?.length
+                : availableSubcategories.length > 0
                   ? "Select Subcategory"
                   : "No Subcategories Available"}
             </option>
 
-            {category &&
-              subcategories[
-                categoryKey as keyof typeof subcategories
-              ]?.map((item) => (
-                <option
-                  key={item}
-                  value={item}
-                >
-                  {item}
-                </option>
-              ))}
+            {availableSubcategories.map((item) => (
+              <option
+                key={item.id}
+                value={item.name}
+              >
+                {item.name}
+              </option>
+            ))}
           </select>
 
           <div className="mb-4 grid grid-cols-2 gap-4">

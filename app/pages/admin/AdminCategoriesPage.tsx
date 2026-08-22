@@ -14,10 +14,40 @@ interface Category {
   sort_order: number;
 }
 
+interface Subcategory {
+  id: number;
+  category_id: number;
+  name: string;
+  slug: string;
+  enabled: boolean;
+  sort_order: number;
+}
+
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] =
+    useState<Subcategory[]>([]);
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const [expanded, setExpanded] = useState<
+    number | null
+  >(null);
+
+  const [newSubcategory, setNewSubcategory] =
+    useState("");
+
+  const [savingSubcategory, setSavingSubcategory] =
+    useState(false);
 
   async function loadCategories() {
     setLoading(true);
@@ -35,12 +65,39 @@ export default function AdminCategoriesPage() {
     }
 
     setCategories(data ?? []);
+
+    const { data: subcategoryData, error: subcategoryError } =
+      await supabase
+        .from("subcategories")
+        .select("*")
+        .order("sort_order", { ascending: true })
+        .order("name", { ascending: true });
+
+    if (subcategoryError) {
+      alert(subcategoryError.message);
+      setLoading(false);
+      return;
+    }
+
+    setSubcategories(subcategoryData ?? []);
     setLoading(false);
   }
 
   useEffect(() => {
     loadCategories();
   }, []);
+
+  function getSubcategories(categoryId: number) {
+    return subcategories
+      .filter(
+        (item) => item.category_id === categoryId
+      )
+      .sort(
+        (a, b) =>
+          a.sort_order - b.sort_order ||
+          a.name.localeCompare(b.name)
+      );
+  }
 
   async function toggleEnabled(
     category: Category
@@ -64,7 +121,7 @@ export default function AdminCategoriesPage() {
     category: Category
   ) {
     const confirmed = window.confirm(
-      `Delete "${category.name}"? This cannot be undone.`
+      `Delete "${category.name}"? This will also delete its subcategories. This cannot be undone.`
     );
 
     if (!confirmed) return;
@@ -127,6 +184,150 @@ export default function AdminCategoriesPage() {
     loadCategories();
   }
 
+  async function addSubcategory(
+    categoryId: number
+  ) {
+    const trimmedName =
+      newSubcategory.trim();
+
+    if (!trimmedName) {
+      alert("Please enter a subcategory name.");
+      return;
+    }
+
+    setSavingSubcategory(true);
+
+    const slug = slugify(trimmedName);
+
+    const { data: existing } = await supabase
+      .from("subcategories")
+      .select("id")
+      .eq("category_id", categoryId)
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (existing) {
+      setSavingSubcategory(false);
+      alert(
+        "This subcategory already exists under this category."
+      );
+      return;
+    }
+
+    const existingSubcategories =
+      getSubcategories(categoryId);
+
+    const nextSortOrder =
+      existingSubcategories.length > 0
+        ? Math.max(
+            ...existingSubcategories.map(
+              (item) => item.sort_order
+            )
+          ) + 1
+        : 0;
+
+    const { error } = await supabase
+      .from("subcategories")
+      .insert({
+        category_id: categoryId,
+        name: trimmedName,
+        slug,
+        enabled: true,
+        sort_order: nextSortOrder,
+      });
+
+    setSavingSubcategory(false);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    setNewSubcategory("");
+    await loadCategories();
+  }
+
+  async function toggleSubcategory(
+    subcategory: Subcategory
+  ) {
+    const { error } = await supabase
+      .from("subcategories")
+      .update({
+        enabled: !subcategory.enabled,
+      })
+      .eq("id", subcategory.id);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    loadCategories();
+  }
+
+  async function deleteSubcategory(
+    subcategory: Subcategory
+  ) {
+    const confirmed = window.confirm(
+      `Delete "${subcategory.name}"? This cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from("subcategories")
+      .delete()
+      .eq("id", subcategory.id);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    loadCategories();
+  }
+
+  async function moveSubcategory(
+    categoryId: number,
+    index: number,
+    direction: "up" | "down"
+  ) {
+    const items = getSubcategories(categoryId);
+
+    const targetIndex =
+      direction === "up"
+        ? index - 1
+        : index + 1;
+
+    if (
+      targetIndex < 0 ||
+      targetIndex >= items.length
+    ) {
+      return;
+    }
+
+    const first = items[index];
+    const second = items[targetIndex];
+
+    await Promise.all([
+      supabase
+        .from("subcategories")
+        .update({
+          sort_order: targetIndex,
+        })
+        .eq("id", first.id),
+
+      supabase
+        .from("subcategories")
+        .update({
+          sort_order: index,
+        })
+        .eq("id", second.id),
+    ]);
+
+    loadCategories();
+  }
+
   return (
     <Container>
       <section className="py-16">
@@ -137,7 +338,7 @@ export default function AdminCategoriesPage() {
             </h1>
 
             <p className="mt-2 text-[var(--muted)]">
-              Manage product categories,
+              Manage categories, subcategories,
               visibility and display order.
             </p>
           </div>
@@ -160,124 +361,258 @@ export default function AdminCategoriesPage() {
               No categories found.
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="p-4 text-left">
-                      Order
-                    </th>
+            <div>
+              {categories.map(
+                (category, index) => {
+                  const items =
+                    getSubcategories(category.id);
 
-                    <th className="p-4 text-left">
-                      Name
-                    </th>
+                  const isExpanded =
+                    expanded === category.id;
 
-                    <th className="p-4 text-left">
-                      Slug
-                    </th>
+                  return (
+                    <div
+                      key={category.id}
+                      className="border-b last:border-b-0"
+                    >
+                      <div className="flex items-center gap-4 p-4">
+                        <div className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            disabled={index === 0}
+                            onClick={() =>
+                              moveCategory(
+                                index,
+                                "up"
+                              )
+                            }
+                            className="rounded border px-2 py-1 text-xs disabled:opacity-30"
+                          >
+                            ↑
+                          </button>
 
-                    <th className="p-4 text-left">
-                      Status
-                    </th>
+                          <button
+                            type="button"
+                            disabled={
+                              index ===
+                              categories.length - 1
+                            }
+                            onClick={() =>
+                              moveCategory(
+                                index,
+                                "down"
+                              )
+                            }
+                            className="rounded border px-2 py-1 text-xs disabled:opacity-30"
+                          >
+                            ↓
+                          </button>
+                        </div>
 
-                    <th className="p-4 text-right">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {categories.map(
-                    (category, index) => (
-                      <tr
-                        key={category.id}
-                        className="border-t"
-                      >
-                        <td className="p-4">
-                          <div className="flex items-center gap-1">
-                            <button
-                              type="button"
-                              disabled={index === 0}
-                              onClick={() =>
-                                moveCategory(
-                                  index,
-                                  "up"
-                                )
-                              }
-                              className="rounded border px-2 py-1 text-xs disabled:opacity-30"
-                            >
-                              ↑
-                            </button>
-
-                            <button
-                              type="button"
-                              disabled={
-                                index ===
-                                categories.length - 1
-                              }
-                              onClick={() =>
-                                moveCategory(
-                                  index,
-                                  "down"
-                                )
-                              }
-                              className="rounded border px-2 py-1 text-xs disabled:opacity-30"
-                            >
-                              ↓
-                            </button>
-
-                            <span className="ml-2 text-sm text-[var(--muted)]">
-                              {category.sort_order}
-                            </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+  console.log("EXPAND CLICK", category.id, category.name);
+  setExpanded(isExpanded ? null : category.id);
+}}
+                          className="flex-1 text-left"
+                        >
+                          <div className="font-semibold">
+                            {category.name}
                           </div>
-                        </td>
 
-                        <td className="p-4 font-medium">
-                          {category.name}
-                        </td>
+                          <div className="text-sm text-[var(--muted)]">
+                            {category.slug} ·{" "}
+                            {items.length}{" "}
+                            subcategor
+                            {items.length === 1
+                              ? "y"
+                              : "ies"}
+                          </div>
+                        </button>
 
-                        <td className="p-4 text-sm text-[var(--muted)]">
-                          {category.slug}
-                        </td>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            toggleEnabled(category)
+                          }
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                            category.enabled
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-500"
+                          }`}
+                        >
+                          {category.enabled
+                            ? "Enabled"
+                            : "Disabled"}
+                        </button>
 
-                        <td className="p-4">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              toggleEnabled(
-                                category
-                              )
-                            }
-                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                              category.enabled
-                                ? "bg-green-100 text-green-700"
-                                : "bg-gray-100 text-gray-500"
-                            }`}
-                          >
-                            {category.enabled
-                              ? "Enabled"
-                              : "Disabled"}
-                          </button>
-                        </td>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            deleteCategory(category)
+                          }
+                          className="rounded-lg border px-3 py-2 text-xs text-red-600"
+                        >
+                          Delete
+                        </button>
 
-                        <td className="p-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              deleteCategory(
-                                category
-                              )
-                            }
-                            className="rounded-lg border px-3 py-2 text-xs text-red-600"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
+                        <span className="text-xl">
+                          {isExpanded ? "⌃" : "⌄"}
+                        </span>
+                      </div>
+
+                      {isExpanded && (
+                        <div className="bg-gray-50 px-6 pb-6 pt-2">
+                          <div className="mb-4 flex gap-2">
+                            <input
+                              value={newSubcategory}
+                              onChange={(e) =>
+                                setNewSubcategory(
+                                  e.target.value
+                                )
+                              }
+                              onKeyDown={(e) => {
+                                if (
+                                  e.key === "Enter"
+                                ) {
+                                  addSubcategory(
+                                    category.id
+                                  );
+                                }
+                              }}
+                              placeholder={`Add subcategory to ${category.name}`}
+                              className="flex-1 rounded-lg border bg-white p-3"
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                addSubcategory(
+                                  category.id
+                                )
+                              }
+                              disabled={
+                                savingSubcategory
+                              }
+                              className="rounded-lg bg-[var(--burgundy)] px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                            >
+                              {savingSubcategory
+                                ? "Saving..."
+                                : "+ Add"}
+                            </button>
+                          </div>
+
+                          {items.length === 0 ? (
+                            <div className="rounded-lg border bg-white p-4 text-sm text-[var(--muted)]">
+                              No subcategories yet.
+                            </div>
+                          ) : (
+                            <div className="overflow-hidden rounded-lg border bg-white">
+                              {items.map(
+                                (
+                                  subcategory,
+                                  subIndex
+                                ) => (
+                                  <div
+                                    key={
+                                      subcategory.id
+                                    }
+                                    className="flex items-center gap-3 border-b p-3 last:border-b-0"
+                                  >
+                                    <div className="flex gap-1">
+                                      <button
+                                        type="button"
+                                        disabled={
+                                          subIndex ===
+                                          0
+                                        }
+                                        onClick={() =>
+                                          moveSubcategory(
+                                            category.id,
+                                            subIndex,
+                                            "up"
+                                          )
+                                        }
+                                        className="rounded border px-2 py-1 text-xs disabled:opacity-30"
+                                      >
+                                        ↑
+                                      </button>
+
+                                      <button
+                                        type="button"
+                                        disabled={
+                                          subIndex ===
+                                          items.length -
+                                            1
+                                        }
+                                        onClick={() =>
+                                          moveSubcategory(
+                                            category.id,
+                                            subIndex,
+                                            "down"
+                                          )
+                                        }
+                                        className="rounded border px-2 py-1 text-xs disabled:opacity-30"
+                                      >
+                                        ↓
+                                      </button>
+                                    </div>
+
+                                    <div className="flex-1">
+                                      <div className="font-medium">
+                                        {
+                                          subcategory.name
+                                        }
+                                      </div>
+
+                                      <div className="text-xs text-[var(--muted)]">
+                                        {
+                                          subcategory.slug
+                                        }
+                                      </div>
+                                    </div>
+
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        toggleSubcategory(
+                                          subcategory
+                                        )
+                                      }
+                                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                                        subcategory.enabled
+                                          ? "bg-green-100 text-green-700"
+                                          : "bg-gray-100 text-gray-500"
+                                      }`}
+                                    >
+                                      {subcategory.enabled
+                                        ? "Enabled"
+                                        : "Disabled"}
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        deleteSubcategory(
+                                          subcategory
+                                        )
+                                      }
+                                      className="rounded-lg border px-3 py-2 text-xs text-red-600"
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+              )}
             </div>
           )}
         </div>
@@ -290,41 +625,35 @@ export default function AdminCategoriesPage() {
           <div className="mt-4 space-y-3 text-sm text-[var(--muted)]">
             <p>
               <strong className="text-black">
-                Slug:
+                Category:
               </strong>{" "}
-              The URL-friendly identifier used for
-              category links. Example:
-              <span className="ml-1 font-medium text-black">
-                sarees
-              </span>
-              .
+              Controls the main product category.
             </p>
 
             <p>
               <strong className="text-black">
-                Sort:
+                Subcategory:
               </strong>{" "}
-              Controls the order in which categories
-              appear. Use ↑ and ↓ to move a category.
+              Expand a category to add, remove,
+              enable, disable or reorder its
+              subcategories.
             </p>
 
             <p>
               <strong className="text-black">
                 Enabled:
               </strong>{" "}
-              Controls whether the category is active
-              on the website. Disabled categories can
-              remain in the database without being
-              publicly displayed.
+              Disabled categories and subcategories
+              remain in the database but can be
+              excluded from the storefront.
             </p>
 
             <p>
               <strong className="text-black">
                 Delete:
               </strong>{" "}
-              Permanently removes the category.
-              Use this only when the category is no
-              longer required.
+              Deleting a category also deletes its
+              subcategories.
             </p>
           </div>
         </div>

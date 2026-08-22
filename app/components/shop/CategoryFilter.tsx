@@ -1,4 +1,5 @@
-import { categories } from "../../data/categories";
+import { useEffect, useState } from "react";
+import { getCategories, type Category } from "../../lib/categories";
 
 interface Props {
   selected: string;
@@ -9,6 +10,12 @@ export default function CategoryFilter({
   selected,
   onSelect,
 }: Props) {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    getCategories().then(setCategories);
+  }, []);
+
   return (
     <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-1 sm:gap-2">
       <button

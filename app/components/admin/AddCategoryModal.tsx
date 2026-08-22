@@ -10,6 +10,7 @@ interface Props {
 function slugify(text: string) {
   return text
     .toLowerCase()
+    .trim()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }
@@ -21,8 +22,7 @@ export default function AddCategoryModal({
 }: Props) {
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
-  const [description, setDescription] =
-    useState("");
+  const [description, setDescription] = useState("");
 
   if (!open) return null;
 
@@ -36,10 +36,12 @@ export default function AddCategoryModal({
 
     setLoading(true);
 
+    const slug = slugify(trimmedName);
+
     const { data: existing } = await supabase
       .from("categories")
       .select("id")
-      .eq("slug", slugify(trimmedName))
+      .eq("slug", slug)
       .maybeSingle();
 
     if (existing) {
@@ -48,15 +50,14 @@ export default function AddCategoryModal({
       return;
     }
 
-    const { data: lastCategory } =
-      await supabase
-        .from("categories")
-        .select("sort_order")
-        .order("sort_order", {
-          ascending: false,
-        })
-        .limit(1)
-        .maybeSingle();
+    const { data: lastCategory } = await supabase
+      .from("categories")
+      .select("sort_order")
+      .order("sort_order", {
+        ascending: false,
+      })
+      .limit(1)
+      .maybeSingle();
 
     const nextSortOrder =
       (lastCategory?.sort_order ?? -1) + 1;
@@ -65,7 +66,7 @@ export default function AddCategoryModal({
       .from("categories")
       .insert({
         name: trimmedName,
-        slug: slugify(trimmedName),
+        slug,
         description: description.trim() || null,
         enabled: true,
         sort_order: nextSortOrder,
@@ -100,9 +101,7 @@ export default function AddCategoryModal({
           className="mb-4 w-full rounded-lg border p-3"
           placeholder="Category Name"
           value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
+          onChange={(e) => setName(e.target.value)}
         />
 
         <textarea
@@ -131,9 +130,7 @@ export default function AddCategoryModal({
             disabled={loading}
             className="rounded-lg bg-[var(--burgundy)] px-5 py-2 text-white disabled:opacity-50"
           >
-            {loading
-              ? "Saving..."
-              : "Save Category"}
+            {loading ? "Saving..." : "Save Category"}
           </button>
         </div>
       </div>

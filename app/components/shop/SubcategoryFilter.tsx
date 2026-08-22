@@ -1,4 +1,14 @@
-import { subcategories } from "../../data/subcategories";
+import { useEffect, useState } from "react";
+
+import { supabase } from "../../lib/supabase";
+
+interface Subcategory {
+  id: number;
+  name: string;
+  category_id: number;
+  enabled?: boolean;
+  sort_order?: number;
+}
 
 interface Props {
   category: string;
@@ -11,13 +21,54 @@ export default function SubcategoryFilter({
   selected,
   onSelect,
 }: Props) {
-  if (category === "All") return null;
+  const [items, setItems] = useState<Subcategory[]>([]);
 
-  const key = category.toLowerCase().replace(/\s+/g, "-");
-  const items =
-    subcategories[key as keyof typeof subcategories] ?? [];
+  useEffect(() => {
+    async function loadSubcategories() {
+      if (category === "All") {
+        setItems([]);
+        return;
+      }
 
-  if (items.length === 0) return null;
+      const { data: categoryData, error: categoryError } =
+        await supabase
+          .from("categories")
+          .select("id")
+          .eq("name", category)
+          .single();
+
+      if (categoryError || !categoryData) {
+        setItems([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("subcategories")
+        .select("*")
+        .eq("category_id", categoryData.id)
+        .order("sort_order", {
+          ascending: true,
+        });
+
+      if (error) {
+        console.error(
+          "Failed to load subcategories:",
+          error
+        );
+
+        setItems([]);
+        return;
+      }
+
+      setItems(data ?? []);
+    }
+
+    loadSubcategories();
+  }, [category]);
+
+  if (category === "All" || items.length === 0) {
+    return null;
+  }
 
   return (
     <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-1 sm:gap-2">
@@ -36,15 +87,15 @@ export default function SubcategoryFilter({
       {items.map((item) => (
         <button
           type="button"
-          key={item}
-          onClick={() => onSelect(item)}
+          key={item.id}
+          onClick={() => onSelect(item.name)}
           className={`flex w-full items-center rounded-xl px-1.5 py-0.5 text-left text-[9px] transition ${
-            selected === item
+            selected === item.name
               ? "bg-[var(--burgundy)] text-white"
               : "border border-black/10 hover:border-[var(--burgundy)] hover:bg-[var(--burgundy)]/5"
           }`}
         >
-          {item}
+          {item.name}
         </button>
       ))}
     </div>

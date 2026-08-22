@@ -27,17 +27,13 @@ export default function ShopPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
-    const categoryFromUrl = searchParams.get("category");
-    const subcategoryFromUrl = searchParams.get("subcategory");
+  const categoryFromUrl = searchParams.get("category");
+  const subcategoryFromUrl =
+    searchParams.get("subcategory");
 
-    if (categoryFromUrl) {
-      setCategory(categoryFromUrl);
-    }
-
-    if (subcategoryFromUrl) {
-      setSubcategory(subcategoryFromUrl);
-    }
-  }, []);
+  setCategory(categoryFromUrl ?? "All");
+  setSubcategory(subcategoryFromUrl ?? "All");
+}, [searchParams]);
 
 
   useEffect(() => {
@@ -201,15 +197,16 @@ export default function ShopPage() {
 
           <div className={`grid grid-cols-1 gap-6 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10 lg:items-start ${filtersOpen ? "" : ""}`}>
           <aside className={`${filtersOpen ? "block" : "hidden"} space-y-2 rounded-2xl border border-black/5 bg-white p-3 shadow-sm lg:sticky lg:top-28 lg:block`}>
-           <div>
+           <div className="pb-4">
               <h2 className="text-lg font-semibold">Filters</h2>
-              <p className="mt-1 hidden text-sm text-[var(--muted)] lg:block">
+
+              <p className="mt-2 text-sm leading-6 text-[var(--muted)] lg:block">
                 Refine your collection.
               </p>
             </div>
 
-            <div>
-              <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
+            <div className="pt-2">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
                 Category
               </h3>
               <CategoryFilter

@@ -2,7 +2,7 @@ import { supabase } from "./supabase";
 
 import type { Product } from "../types/product";
 
-const PRODUCTS_CACHE_KEY = "dln-products-cache-v1";
+const PRODUCTS_CACHE_KEY = "dln-products-cache-v2";
 
 function saveProductsToLocalCache(products: Product[]) {
   try {
@@ -44,27 +44,42 @@ function getProductsFromLocalCache(): Product[] {
 }
 
 export async function getProducts(): Promise<Product[]> {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .order("created_at", {
-      ascending: false,
-    });
+  const pageSize = 1000;
+  let from = 0;
+  const allProducts: Product[] = [];
 
-  if (error) {
-    console.error(
-      "Failed to load products from Supabase:",
-      error
-    );
+  while (true) {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", {
+        ascending: false,
+      })
+      .range(from, from + pageSize - 1);
 
-    return getProductsFromLocalCache();
+    if (error) {
+      console.error(
+        "Failed to load products from Supabase:",
+        error
+      );
+
+      return getProductsFromLocalCache();
+    }
+
+    const page = (data ?? []) as Product[];
+
+    allProducts.push(...page);
+
+    if (page.length < pageSize) {
+      break;
+    }
+
+    from += pageSize;
   }
 
-  const products = (data ?? []) as Product[];
+  saveProductsToLocalCache(allProducts);
 
-  saveProductsToLocalCache(products);
-
-  return products;
+  return allProducts;
 }
 
 export async function getProductBySlug(
