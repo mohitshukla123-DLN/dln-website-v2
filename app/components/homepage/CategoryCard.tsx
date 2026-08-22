@@ -40,11 +40,11 @@ export default function CategoryCard({ category, productImages = [] }: Props) {
         <img
           src={images[currentImage] ?? category.image}
           alt={category.name}
-          className="h-44 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80"
+          className="h-36 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80"
         />
       </div>
 
-      <div className={`border border-black/10 py-3 text-center shadow-sm transition-colors duration-300 sm:py-5 ${colorClass}`}>
+      <div className={`border border-black/10 py-2.5 text-center shadow-sm transition-colors duration-300 sm:py-5 ${colorClass}`}>
         <h3 className="text-[0.95rem] font-medium leading-5 text-[var(--foreground)] transition-colors group-hover:text-[var(--burgundy)] sm:text-[1.3rem] sm:leading-normal">
           {category.name}
         </h3>
