@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import type { HomepageSettings } from "../../types/homepage";
-import type { Product } from "../../types/product";
 import Container from "../ui/Container";
 import CategoryCard from "./CategoryCard";
 import { getCategories, type Category as DbCategory } from "../../lib/categories";
-import { getProducts } from "../../lib/products";
 
 interface Props {
   settings: HomepageSettings | null;
@@ -12,21 +10,18 @@ interface Props {
 
 export default function CategoryGrid({ settings }: Props) {
   const [categories, setCategories] = useState<DbCategory[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    async function loadData() {
-      const [categoryData, productData] = await Promise.all([
-        getCategories(),
-        getProducts(),
-      ]);
+  async function loadCategories() {
+    const categoryData = await getCategories();
 
-      setCategories(categoryData);
-      setProducts(productData);
-    }
+    console.log("Featured categories rendered:", categoryData);
 
-    loadData();
-  }, []);
+    setCategories(categoryData);
+  }
+
+  loadCategories();
+}, []);
 
   if (settings?.featured_categories_enabled === false) {
     return null;
@@ -51,17 +46,7 @@ export default function CategoryGrid({ settings }: Props) {
 
         <div className="grid grid-cols-2 gap-2.5 sm:gap-8 lg:grid-cols-4">
           {categories.map((category) => {
-            const productImages = products
-            .filter(
-              (product) =>
-                product.category?.trim().toLowerCase() ===
-                category.name.trim().toLowerCase()
-            )
-            .map((product) => product.image || product.images?.[0])
-            .filter(Boolean);
-
           const categoryImage =
-            productImages[0] ||
             category.image ||
             category.banner ||
             "";
@@ -78,7 +63,7 @@ export default function CategoryGrid({ settings }: Props) {
                   description: "",
                   subCategories: [],
                 }}
-                productImages={productImages}
+                productImages={[]}
               />
             );
           })}
