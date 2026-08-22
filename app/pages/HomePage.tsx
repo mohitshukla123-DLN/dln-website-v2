@@ -51,7 +51,7 @@ export default function HomePage() {
 
   const cmsHeroImage = settings?.hero_image_url?.trim();
 
-  const heroImage400 = cmsHeroImage || heroLogo400;
+  const heroImage400 = heroLogo400;
   const heroImage800 = cmsHeroImage || heroLogo800;
 
   return (
