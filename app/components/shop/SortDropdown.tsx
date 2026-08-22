@@ -17,7 +17,7 @@ export default function SortDropdown({
       id="sort"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="rounded-xl border border-black/10 bg-white px-4 py-2 outline-none transition focus:border-[var(--burgundy)]"
+      className="h-9 rounded-xl border border-black/10 bg-white px-3 text-[13px] outline-none transition focus:border-[var(--burgundy)] sm:h-auto sm:px-4 sm:py-2 sm:text-sm"
     >
       <option value="featured">Featured</option>
       <option value="newest">Newest</option>

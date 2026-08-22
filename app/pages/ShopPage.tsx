@@ -187,7 +187,7 @@ export default function ShopPage() {
             type="button"
             onClick={() => setFiltersOpen((open) => !open)}
             aria-expanded={filtersOpen}
-            className="mb-2 flex w-full items-center justify-between rounded-lg border border-black/10 bg-white px-3 py-1 text-left text-sm shadow-sm lg:hidden"
+            className="mb-2 flex h-9 w-full items-center justify-between rounded-lg border border-black/10 bg-white px-3 text-left text-[13px] font-medium shadow-sm lg:hidden"
           >
             <span className="font-semibold">Filters & Sort</span>
             <span className="text-[10px] text-[var(--muted)]" aria-hidden="true">
@@ -196,7 +196,7 @@ export default function ShopPage() {
           </button>
 
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-10 lg:items-start">
-          <aside className={`${filtersOpen ? "block" : "hidden"} space-y-2 rounded-2xl border border-black/5 bg-white p-2 shadow-sm lg:sticky lg:top-28 lg:block lg:p-3`}>
+          <aside className={`${filtersOpen ? "block" : "hidden"} space-y-1.5 rounded-2xl border border-black/5 bg-white p-1.5 shadow-sm lg:sticky lg:top-28 lg:block lg:space-y-2 lg:p-3`}>
            <div className="pb-1 lg:pb-4">
               <h2 className="text-base font-semibold lg:text-lg">Filters</h2>
 
@@ -243,7 +243,7 @@ export default function ShopPage() {
               type="button"
               onClick={resetFilters}
               aria-label="Reset filters"
-              className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 px-3 py-1 text-sm font-medium text-[var(--muted)] transition hover:border-[var(--burgundy)] hover:text-[var(--burgundy)]"
+              className="flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-black/10 px-3 text-[13px] font-medium ..."
             >
               <span aria-hidden="true">↻</span>
               Reset
