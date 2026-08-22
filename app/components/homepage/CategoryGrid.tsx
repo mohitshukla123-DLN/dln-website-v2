@@ -52,13 +52,19 @@ export default function CategoryGrid({ settings }: Props) {
         <div className="grid grid-cols-2 gap-2.5 sm:gap-8 lg:grid-cols-4">
           {categories.map((category) => {
             const productImages = products
-              .filter(
-                (product) =>
-                  product.category?.toLowerCase() ===
-                  category.name.toLowerCase()
-              )
-              .map((product) => product.image || product.images?.[0])
-              .filter(Boolean);
+            .filter(
+              (product) =>
+                product.category?.trim().toLowerCase() ===
+                category.name.trim().toLowerCase()
+            )
+            .map((product) => product.image || product.images?.[0])
+            .filter(Boolean);
+
+          const categoryImage =
+            productImages[0] ||
+            category.image ||
+            category.banner ||
+            "";
 
             return (
               <CategoryCard
@@ -67,8 +73,8 @@ export default function CategoryGrid({ settings }: Props) {
                   id: String(category.id),
                   name: category.name,
                   slug: category.slug,
-                  image: productImages[0] || "",
-                  banner: productImages[0] || "",
+                  image: categoryImage,
+                  banner: categoryImage,
                   description: "",
                   subCategories: [],
                 }}

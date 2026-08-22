@@ -38,7 +38,7 @@ export default function CategoryCard({ category, productImages = [] }: Props) {
     >
       <div className="overflow-hidden">
         <img
-          src={images[currentImage] ?? category.image}
+          src={images[currentImage] || category.image || category.banner}
           alt={category.name}
           className="h-36 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80"
         />
