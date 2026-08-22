@@ -1,7 +1,7 @@
-const CACHE_NAME = "dln-v21";
-const API_CACHE_NAME = "dln-api-v3";
-const FONT_CACHE_NAME = "dln-fonts-v3";
-const IMAGE_CACHE_NAME = "dln-images-v3";
+const CACHE_NAME = "dln-v23";
+const API_CACHE_NAME = "dln-api-v5";
+const FONT_CACHE_NAME = "dln-fonts-v5";
+const IMAGE_CACHE_NAME = "dln-images-v5";
 
 importScripts("/sw-assets.js");
 
