@@ -37,11 +37,19 @@ export default function CategoryCard({ category, productImages = [] }: Props) {
       className="group overflow-hidden rounded-2xl border border-black/10 sm:rounded-3xl"
     >
       <div className="overflow-hidden">
-        <img
-          src={images[currentImage] || category.image || category.banner}
-          alt={category.name}
-          className="h-36 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80"
-        />
+        {images.length > 0 || category.image || category.banner ? (
+          <img
+            src={images[currentImage] || category.image || category.banner}
+            alt={category.name}
+            className="h-36 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-80"
+          />
+        ) : (
+          <div className="flex h-36 w-full items-center justify-center bg-[var(--surface)] sm:h-80">
+            <span className="px-4 text-center text-lg font-medium text-[var(--foreground)]">
+              {category.name}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className={`border border-black/10 py-2.5 text-center shadow-sm transition-colors duration-300 sm:py-5 ${colorClass}`}>
