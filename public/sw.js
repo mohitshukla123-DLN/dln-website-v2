@@ -1,7 +1,7 @@
-const CACHE_NAME = "dln-v20";
-const API_CACHE_NAME = "dln-api-v2";
-const FONT_CACHE_NAME = "dln-fonts-v2";
-const IMAGE_CACHE_NAME = "dln-images-v2";
+const CACHE_NAME = "dln-v21";
+const API_CACHE_NAME = "dln-api-v3";
+const FONT_CACHE_NAME = "dln-fonts-v3";
+const IMAGE_CACHE_NAME = "dln-images-v3";
 
 importScripts("/sw-assets.js");
 
@@ -36,6 +36,8 @@ const FONT_EXTENSIONS =
  */
 
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
+
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);

@@ -22,20 +22,19 @@ export async function getCategories(): Promise<Category[]> {
     });
 
   if (error) {
-    console.error(
-      "Failed to load categories:",
-      error
-    );
-
+    console.error("Failed to load categories:", error);
     return [];
   }
 
-  return (data ?? []).map((category) => ({
-    ...category,
+  console.log("Featured categories loaded:", data);
 
-    image: category.image ?? "",
-    banner: category.banner ?? "",
-    description: category.description ?? "",
-    subCategories: category.subCategories ?? [],
-  }));
+  return (data ?? [])
+    .filter((category) => category.enabled !== false)
+    .map((category) => ({
+      ...category,
+      image: category.image ?? "",
+      banner: category.banner ?? "",
+      description: category.description ?? "",
+      subCategories: category.subCategories ?? [],
+    }));
 }
