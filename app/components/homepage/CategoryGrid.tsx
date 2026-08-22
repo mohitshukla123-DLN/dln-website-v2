@@ -35,10 +35,10 @@ export default function CategoryGrid({ settings }: Props) {
   return (
     <section
       id="featured-categories"
-      className="scroll-mt-20 bg-[var(--background)] py-12 sm:py-24"
+      className="scroll-mt-20 bg-[var(--background)] py-8 sm:py-24"
     >
       <Container>
-        <div className="mb-8 text-center sm:mb-14">
+        <div className="mb-6 text-center sm:mb-14">
           <h2 className="text-3xl font-bold sm:text-5xl">
             {settings?.featured_categories_title || "Shop by Category"}
           </h2>
@@ -49,7 +49,7 @@ export default function CategoryGrid({ settings }: Props) {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-8 lg:grid-cols-4">
           {categories.map((category) => {
             const productImages = products
               .filter(
