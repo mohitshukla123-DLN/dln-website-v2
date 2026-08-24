@@ -41,18 +41,16 @@ export default function HomePage() {
   const [settings, setSettings] = useState<HomepageSettings | null>(null);
 
   useEffect(() => {
-    async function loadHomepage() {
-      const data = await getHomepageSettings();
-      setSettings(data);
-    }
+  async function loadHomepage() {
+    const data = await getHomepageSettings();
+    setSettings(data);
+  }
 
     loadHomepage();
   }, []);
 
-  const cmsHeroImage = settings?.hero_image_url?.trim();
-
   const heroImage400 = heroLogo400;
-const heroImage800 = heroLogo800;
+  const heroImage800 = heroLogo800;
 
   return (
     <>
@@ -70,7 +68,8 @@ const heroImage800 = heroLogo800;
                 <picture>
                   <source
                     media="(max-width: 639px)"
-                    srcSet={heroImage400}
+                    srcSet={`${heroImage400} 400w`}
+                    sizes="326px"
                   />
 
                   <img
@@ -80,7 +79,7 @@ const heroImage800 = heroLogo800;
                     height={806}
                     loading="eager"
                     fetchPriority="high"
-                    decoding="async"
+                    decoding="sync"
                     className="relative block h-auto w-[326px] max-w-full object-contain max-sm:max-h-[460px] lg:w-[800px] lg:max-h-[700px]"
                   />
                 </picture>

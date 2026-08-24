@@ -14,7 +14,7 @@ export default function Newsletter({ settings }: Props) {
   return (
    <section
   id="newsletter"
-  className="scroll-mt-20 bg-[var(--background)] py-14 text-[var(--foreground)] sm:py-20 lg:py-24"
+  className="scroll-mt-20 bg-[var(--background)] py-10 text-[var(--foreground)] sm:py-14 lg:py-16"
 >
   <Container>
     <div className="mx-auto max-w-3xl text-center">
@@ -32,7 +32,7 @@ export default function Newsletter({ settings }: Props) {
           "Be the first to know about new arrivals, exclusive collections, wedding style inspiration and special offers."}
       </p>
 
-      <form className="mx-auto mt-8 flex max-w-xl flex-col gap-3 sm:mt-10 sm:flex-row">
+      <form className="mx-auto mt-6 flex max-w-xl flex-col gap-3 sm:mt-8 sm:flex-row">
         <input
           type="email"
           placeholder="Enter your email"

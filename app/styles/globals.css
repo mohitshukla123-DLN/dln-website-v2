@@ -1,9 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap");
-
 @font-face {
   font-family: "P22 Operina Romano";
   src: url("/fonts/P22-Operina-Romano-Romano.ttf") format("truetype");
-  font-weight: 100 900;
+  font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
@@ -55,9 +53,10 @@ body {
   color: var(--foreground);
 
   font-family:
-    "Trebuchet MS",
-    Arial,
-    sans-serif;
+  "Playfair Display",
+  Georgia,
+  "Times New Roman",
+  serif;
 
   font-size: 16px;
   line-height: 1.55;
@@ -110,11 +109,11 @@ button {
 
 .hero-title {
   font-family:
-    "P22 Operina Romano",
-    "P22 Operina",
-    Georgia,
-    "Times New Roman",
-    serif;
+  "P22 Operina Romano",
+  "P22 Operina",
+  Georgia,
+  "Times New Roman",
+  serif;
   font-weight: 300;
   font-style: normal;
   letter-spacing: 0.015em;
@@ -132,10 +131,9 @@ h4,
 h5,
 h6 {
   font-family:
-    "Cormorant Garamond",
-    Georgia,
-    "Times New Roman",
-    serif;
+    "Trebuchet MS",
+    Arial,
+    sans-serif;
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: 0;

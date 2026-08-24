@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 export default function Footer() {
   const [siteName, setSiteName] = useState("Dress Like Nawaabs");
   const [tagline, setTagline] = useState("");
+  const [footerLoaded, setFooterLoaded] = useState(false);
 
   const [phone, setPhone] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -48,13 +49,18 @@ export default function Footer() {
       setLinkedin(data.linkedin ?? "");
 
       setCopyrightText(data.copyright_text ?? "");
+      setFooterLoaded(true);
     }
 
     loadSettings();
   }, []);
 
   return (
-    <footer className="mt-8 bg-black text-white sm:mt-7">
+    <footer
+        className={`mt-8 min-h-[199px] bg-black text-white sm:mt-7 ${
+          footerLoaded ? "" : "opacity-0"
+        }`}
+      >
       <Container className="py-7 sm:py-9">
         <div className="flex flex-col items-center text-center">
           <h2 className="text-2xl font-semibold sm:text-3xl">

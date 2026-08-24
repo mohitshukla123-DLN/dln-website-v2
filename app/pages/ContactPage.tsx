@@ -107,7 +107,7 @@ export default function ContactPage() {
               Contact Dress Like Nawaabs
             </p>
 
-            <h1 className="text-5xl font-bold lg:text-6xl">
+            <h1 className="font-serif text-5xl font-bold lg:text-6xl">
               We'd Love To Hear From You
             </h1>
 

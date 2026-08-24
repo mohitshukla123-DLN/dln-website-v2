@@ -5,7 +5,7 @@ export default function SizeGuidePage() {
     <>
     <section className="py-20">
       <Container>
-        <h1 className="text-5xl font-bold">
+        <h1 className="font-serif text-5xl font-bold">
           Size Guide
         </h1>
 

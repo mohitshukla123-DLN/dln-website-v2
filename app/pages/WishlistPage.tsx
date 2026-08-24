@@ -50,7 +50,7 @@ export default function WishlistPage() {
       <section className="bg-[var(--burgundy)] py-8 text-white sm:py-10">
         <Container>
           <div className="text-center">
-            <h1 className="text-3xl font-semibold sm:text-5xl">
+            <h1 className="font-serif text-3xl font-semibold sm:text-5xl">
               Wishlist
             </h1>
 

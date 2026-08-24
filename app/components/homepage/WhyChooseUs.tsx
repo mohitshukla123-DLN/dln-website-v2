@@ -39,16 +39,16 @@ export default function WhyChooseUs({ settings }: Props) {
   }
 
   return (
-    <section id="why-choose-us" className="scroll-mt-20 bg-[var(--surface)] py-8 sm:py-10">
+    <section id="why-choose-us" className="scroll-mt-20 bg-[var(--surface)] py-6 sm:py-8">
       <Container>
 
-        <div className="mb-7 text-center sm:mb-14">
+        <div className="mb-5 text-center sm:mb-10">
 
           <p className="text-sm uppercase tracking-[0.35em] text-[var(--burgundy)]">
             Why Choose Us
           </p>
 
-          <h2 className="mt-4 text-2xl font-bold sm:text-4xl">
+          <h2 className="mt-4 font-serif text-2xl font-bold sm:text-4xl">
             {settings?.why_choose_us_title ??
               "Crafted for Modern Royalty"}
           </h2>
@@ -64,7 +64,7 @@ export default function WhyChooseUs({ settings }: Props) {
           {features.map((feature) => (
             <article
               key={feature.title}
-              className="rounded-3xl bg-white p-6 text-center shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
+              className="rounded-3xl bg-white p-5 text-center shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
             >
               <div className="text-5xl">
                 {feature.icon}

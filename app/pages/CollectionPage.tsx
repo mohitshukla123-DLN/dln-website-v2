@@ -34,7 +34,7 @@ export default function CollectionPage() {
       <>
         <Container>
           <section className="py-24 text-center">
-            <h1 className="text-4xl font-bold">
+            <h1 className="font-serif text-4xl font-bold">
               Collection not found
             </h1>
           </section>
@@ -59,7 +59,7 @@ export default function CollectionPage() {
 
       <section className="py-20">
         <Container>
-          <h1 className="text-5xl font-bold">
+          <h1 className="font-serif text-5xl font-bold">
             {collection.title}
           </h1>
 

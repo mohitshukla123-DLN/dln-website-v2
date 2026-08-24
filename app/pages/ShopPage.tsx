@@ -163,7 +163,7 @@ export default function ShopPage() {
     <section className="bg-[var(--burgundy)] py-4 sm:py-6 text-white">
       <Container className="max-w-[1680px]">
         <div className="mb-2 text-center sm:mb-3">
-          <h1 className="text-3xl font-bold sm:text-5xl">
+          <h1 className="font-serif text-3xl font-bold sm:text-5xl">
             Shop
           </h1>
 

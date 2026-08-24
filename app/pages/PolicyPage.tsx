@@ -5,7 +5,7 @@ export default function PolicyPage() {
     <>
       <section className="bg-[var(--burgundy)] py-8 text-white sm:py-10">
         <Container className="max-w-5xl text-center">
-          <h1 className="text-3xl font-bold sm:text-5xl">
+          <h1 className="font-serif text-3xl font-bold sm:text-5xl">
             Policies
           </h1>
           <p className="mt-2 text-white/80 sm:mt-3">

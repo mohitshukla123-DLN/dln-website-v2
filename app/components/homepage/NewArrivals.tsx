@@ -43,7 +43,7 @@ export default function NewArrivals({ settings }: Props) {
   }
 
   return (
-    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--surface)] py-10 sm:py-16">
+    <section id="new-arrivals-section" className="scroll-mt-20 bg-[var(--surface)] py-8 sm:py-12">
       <Container>
 
         <div className="mb-6 text-center sm:mb-8">
@@ -51,7 +51,7 @@ export default function NewArrivals({ settings }: Props) {
             {settings?.new_arrivals_subtitle ?? "Latest Collection"}
           </p>
 
-          <h2 className="mt-1 text-2xl font-bold sm:mt-2 sm:text-4xl">
+          <h2 className="mt-1 font-serif text-2xl font-bold sm:mt-2 sm:text-4xl">
             {settings?.new_arrivals_title ?? "New Arrivals"}
           </h2>
 
