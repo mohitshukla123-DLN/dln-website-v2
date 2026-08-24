@@ -1,18 +1,18 @@
 export function initializeClarity() {
   if (typeof window === "undefined") return;
 
-  (function (c: any, l: Document, a: string, r: string, i: string, t?: HTMLScriptElement, y?: HTMLScriptElement) {
-    c[a] =
-      c[a] ||
-      function (...args: unknown[]) {
-        (c[a].q = c[a].q || []).push(args);
-      };
+  const load = () => {
+    if (document.querySelector('script[src*="clarity.ms"]')) return;
 
-    t = l.createElement(r) as HTMLScriptElement;
-    t.async = true;
-    t.src = "https://www.clarity.ms/tag/" + i;
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://www.clarity.ms/tag/xwq1i03hj3";
+    document.head.appendChild(script);
+  };
 
-    y = l.getElementsByTagName(r)[0] as HTMLScriptElement;
-    y.parentNode?.insertBefore(t, y);
-  })(window, document, "clarity", "script", "xwq1i03hj3");
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(load, { timeout: 3000 });
+  } else {
+    setTimeout(load, 3000);
+  }
 }
