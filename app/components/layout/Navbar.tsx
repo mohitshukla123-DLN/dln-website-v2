@@ -1,9 +1,8 @@
 import { Link, NavLink } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Container from "../ui/Container";
 import fallbackLogo from "../../assets/logos/logo-navbar.png";
-import { supabase } from "../../lib/supabase";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `transition-colors ${
@@ -13,24 +12,9 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   }`;
 
 export default function Navbar() {
-  const [logoUrl, setLogoUrl] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    async function loadLogo() {
-      const { data } = await supabase
-        .from("site_settings")
-        .select("logo_url")
-        .eq("id", 1)
-        .single();
-
-      setLogoUrl(data?.logo_url?.trim() || "");
-    }
-
-    loadLogo();
-  }, []);
-
-  const currentLogo = logoUrl || fallbackLogo;
+  const currentLogo = fallbackLogo;
 
   return (
   <header className="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur-md">
@@ -40,6 +24,10 @@ export default function Navbar() {
           <img
             src={currentLogo}
             alt="Dress Like Nawaabs"
+            width={56}
+            height={56}
+            loading="eager"
+            decoding="async"
             className="h-14 w-14 rounded-full object-cover"
             onError={(e) => {
               e.currentTarget.src = fallbackLogo;

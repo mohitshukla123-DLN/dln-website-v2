@@ -52,7 +52,7 @@ export default function HomePage() {
   const cmsHeroImage = settings?.hero_image_url?.trim();
 
   const heroImage400 = heroLogo400;
-  const heroImage800 = cmsHeroImage || heroLogo800;
+const heroImage800 = heroLogo800;
 
   return (
     <>
@@ -81,7 +81,7 @@ export default function HomePage() {
                     loading="eager"
                     fetchPriority="high"
                     decoding="async"
-                    className="relative max-h-[680px] w-auto max-w-full object-contain max-sm:max-h-[460px] lg:max-h-[700px]"
+                    className="relative block h-auto w-[326px] max-w-full object-contain max-sm:max-h-[460px] lg:w-[800px] lg:max-h-[700px]"
                   />
                 </picture>
               </div>

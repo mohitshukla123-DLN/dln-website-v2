@@ -3,10 +3,10 @@ import { supabase } from "../../lib/supabase";
 
 export default function AnnouncementBar() {
   const [message, setMessage] = useState("");
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(true);
 
   useEffect(() => {
-    async function loadAnnouncement() {
+    const loadAnnouncement = async () => {
       const { data, error } = await supabase
         .from("site_settings")
         .select("announcement_text, announcement_enabled")
@@ -19,7 +19,7 @@ export default function AnnouncementBar() {
 
       setMessage(data?.announcement_text?.trim() || "");
       setEnabled(data?.announcement_enabled ?? false);
-    }
+    };
 
     loadAnnouncement();
   }, []);

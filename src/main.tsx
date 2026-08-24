@@ -15,8 +15,12 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-initializeAnalytics();
-initializeClarity();
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    initializeAnalytics();
+    initializeClarity();
+  }, 3000);
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
