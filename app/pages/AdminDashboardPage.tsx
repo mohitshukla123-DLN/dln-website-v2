@@ -19,6 +19,11 @@ export default function AdminDashboardPage() {
       link: "/admin/products",
     },
     {
+      title: "FAQs",
+      description: "Manage product FAQs",
+      link: "/admin/faqs",
+    },
+    {
       title: "Categories",
       description: "Coming Soon",
       link: "/admin/categories",

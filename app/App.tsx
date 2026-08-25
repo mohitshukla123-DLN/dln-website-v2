@@ -27,6 +27,7 @@ const AdminHomepagePage = lazy(() => import("./pages/admin/AdminHomepagePage"));
 const AdminCategoriesPage = lazy(() => import("./pages/admin/AdminCategoriesPage"));
 const AdminSiteSettingsPage = lazy(() => import("./pages/admin/AdminSiteSettingsPage"));
 const AdminMediaLibraryPage = lazy(() => import("./pages/admin/Admin/AdminMediaLibraryPage"));
+const AdminFAQsPage = lazy(() => import("./pages/admin/AdminFAQsPage"));
 
 
 export default function App() {
@@ -208,6 +209,33 @@ export default function App() {
               <ProtectedRoute>
                 <AdminMediaLibraryPage />
               </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/media"
+            element={
+              <ProtectedRoute>
+                <AdminMediaLibraryPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/faqs"
+            element={
+              <ProtectedRoute>
+                <AdminFAQsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="*"
+            element={
+              <RootLayout>
+                <NotFoundPage />
+              </RootLayout>
             }
           />
 
