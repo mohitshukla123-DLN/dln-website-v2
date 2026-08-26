@@ -1,6 +1,19 @@
+import { useEffect, useState } from "react";
 import Container from "../components/ui/Container";
+import { getPolicySections } from "../lib/policies";
+import type { PolicySection } from "../lib/policies";
 
 export default function PolicyPage() {
+  const [sections, setSections] = useState<PolicySection[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getPolicySections()
+      .then(setSections)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <>
       <section className="bg-[var(--burgundy)] py-8 text-white sm:py-10">
@@ -16,53 +29,29 @@ export default function PolicyPage() {
 
       <section className="bg-white py-8 sm:py-10">
         <Container className="max-w-5xl">
-
-          <section>
-            <h2 className="text-2xl font-semibold sm:text-3xl">
-              Privacy Policy
-            </h2>
-            <p className="mt-3 leading-7 text-[var(--muted)]">
-              We respect your privacy. Any personal information shared with
-              Dress Like Nawaabs is used only to process enquiries, communicate
-              with you, and improve our services. We never sell or share your
-              personal information with third parties except where required by law.
+          {loading ? (
+            <p className="py-8 text-center text-[var(--muted)]">
+              Loading policies...
             </p>
-          </section>
-
-          <section className="mt-8">
-            <h2 className="text-2xl font-semibold sm:text-3xl">
-              Shipping Policy
-            </h2>
-            <p className="mt-3 leading-7 text-[var(--muted)]">
-              Shipping timelines vary depending on product availability and
-              customization requirements. Customers will be informed of the
-              estimated delivery time during order confirmation.
+          ) : sections.length === 0 ? (
+            <p className="py-8 text-center text-[var(--muted)]">
+              No policies are currently available.
             </p>
-          </section>
+          ) : (
+            <div className="space-y-8">
+              {sections.map((section) => (
+                <section key={section.id}>
+                  <h2 className="text-xl font-semibold sm:text-2xl">
+                    {section.title}
+                  </h2>
 
-          <section className="mt-8">
-            <h2 className="text-2xl font-semibold sm:text-3xl">
-              Returns & Refunds
-            </h2>
-            <p className="mt-3 leading-7 text-[var(--muted)]">
-              Due to the handcrafted and customized nature of our products,
-              returns and refunds are accepted only for damaged or incorrect
-              items reported within 48 hours of delivery.
-            </p>
-          </section>
-
-          <section className="mt-8">
-            <h2 className="text-2xl font-semibold sm:text-3xl">
-              Terms & Conditions
-            </h2>
-            <p className="mt-3 leading-7 text-[var(--muted)]">
-              By using this website, you agree to provide accurate information
-              for enquiries and purchases. Dress Like Nawaabs reserves the
-              right to update product information, pricing, and policies
-              without prior notice.
-            </p>
-          </section>
-
+                  <div className="mt-3 whitespace-pre-line leading-7 text-[var(--muted)]">
+                    {section.content}
+                  </div>
+                </section>
+              ))}
+            </div>
+          )}
         </Container>
       </section>
     </>

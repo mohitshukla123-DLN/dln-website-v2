@@ -11,6 +11,7 @@ import {
 import { getCategories, type Category } from "../../lib/categories";
 import { getProducts } from "../../lib/products";
 import type { Product } from "../../types/product";
+import Container from "../../components/ui/Container";
 
 const emptyForm = {
   question: "",
@@ -232,16 +233,24 @@ export default function AdminFAQsPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="font-serif text-3xl font-bold">
-          Frequently Asked Questions
-        </h1>
+  <Container>
+    <section className="py-10 sm:py-12 lg:py-16">
+      <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold sm:text-4xl">
+            FAQs
+          </h1>
 
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Add, edit, delete and reorder FAQs for your product
-          pages.
-        </p>
+          <p className="mt-1 text-sm text-[var(--muted)]">
+            Manage frequently asked questions shown on product pages.
+          </p>
+        </div>
+
+        {sortedFaqs.length > 0 && (
+          <span className="text-sm text-[var(--muted)]">
+            {sortedFaqs.length} {sortedFaqs.length === 1 ? "FAQ" : "FAQs"}
+          </span>
+        )}
       </div>
 
       {error && (
@@ -252,7 +261,7 @@ export default function AdminFAQsPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm"
+        className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm sm:p-6"
       >
         <div className="grid gap-5">
           <div>
@@ -307,7 +316,7 @@ export default function AdminFAQsPage() {
                   product_slug: "",
                 })
               }
-              className="w-full rounded-xl border border-black/10 px-4 py-3"
+              className="w-full rounded-lg border border-black/10 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[var(--burgundy)] focus:ring-1 focus:ring-[var(--burgundy)] sm:px-4 sm:py-3"
             >
               <option value="all">All Products</option>
               <option value="category">Specific Category</option>
@@ -394,7 +403,7 @@ export default function AdminFAQsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-xl bg-[var(--burgundy)] px-6 py-3 font-semibold text-white disabled:opacity-50"
+              className="rounded-lg bg-[var(--burgundy)] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {saving
                 ? "Saving..."
@@ -407,7 +416,7 @@ export default function AdminFAQsPage() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="rounded-xl border border-black/10 px-6 py-3 font-semibold"
+                className="rounded-lg border border-black/10 px-5 py-2.5 text-sm font-semibold transition hover:bg-black/[0.03]"
               >
                 Cancel
               </button>
@@ -429,12 +438,12 @@ export default function AdminFAQsPage() {
           sortedFaqs.map((faq, index) => (
             <div
               key={faq.id}
-              className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm"
+              className="rounded-2xl border border-black/10 bg-white p-4 shadow-sm transition hover:shadow-md sm:p-5"
             >
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-[var(--surface)] px-3 py-1 text-xs font-semibold">
+                    <span className="rounded-full bg-[var(--surface)] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide">
                       {scopeLabel(faq)}
                     </span>
 
@@ -445,11 +454,11 @@ export default function AdminFAQsPage() {
                     )}
                   </div>
 
-                  <h2 className="mt-3 font-semibold">
+                  <h2 className="mt-3 text-sm font-semibold leading-6 sm:text-base">
                     {faq.question}
                   </h2>
 
-                  <p className="mt-2 whitespace-pre-line text-sm text-[var(--muted)]">
+                  <p className="mt-2 whitespace-pre-line text-sm leading-6 text-[var(--muted)]">
                     {faq.answer}
                   </p>
                 </div>
@@ -459,7 +468,7 @@ export default function AdminFAQsPage() {
                     type="button"
                     onClick={() => moveFAQ(index, -1)}
                     disabled={index === 0}
-                    className="rounded-lg border border-black/10 px-3 py-2 text-sm disabled:opacity-30"
+                    className="rounded-lg border border-black/10 px-3 py-2 text-sm font-semibold transition hover:border-[var(--burgundy)] hover:text-[var(--burgundy)] sm:px-4"
                   >
                     ↑
                   </button>
@@ -470,7 +479,7 @@ export default function AdminFAQsPage() {
                     disabled={
                       index === sortedFaqs.length - 1
                     }
-                    className="rounded-lg border border-black/10 px-3 py-2 text-sm disabled:opacity-30"
+                    className="rounded-lg border border-black/10 px-4 py-2 text-sm font-semibold transition hover:border-[var(--burgundy)] hover:text-[var(--burgundy)]"
                   >
                     ↓
                   </button>
@@ -478,7 +487,7 @@ export default function AdminFAQsPage() {
                   <button
                     type="button"
                     onClick={() => editFAQ(faq)}
-                    className="rounded-lg border border-black/10 px-4 py-2 text-sm font-semibold"
+                    className="rounded-lg border border-black/10 px-3 py-2 text-sm font-semibold transition hover:border-[var(--burgundy)] hover:text-[var(--burgundy)] sm:px-4"
                   >
                     Edit
                   </button>
@@ -486,7 +495,7 @@ export default function AdminFAQsPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete(faq.id)}
-                    className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600"
+                    className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
                   >
                     Delete
                   </button>
@@ -496,6 +505,7 @@ export default function AdminFAQsPage() {
           ))
         )}
       </div>
-    </div>
-  );
+        </section>
+  </Container>
+);
 }

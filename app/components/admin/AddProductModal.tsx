@@ -79,6 +79,7 @@ export default function AddProductModal({
   const [price, setPrice] = useState("");
 
   const [sizes, setSizes] = useState({
+    "Free Size": "",
     "32": "",
     "34": "",
     "36": "",

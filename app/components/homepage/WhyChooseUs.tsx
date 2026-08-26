@@ -39,21 +39,21 @@ export default function WhyChooseUs({ settings }: Props) {
   }
 
   return (
-    <section id="why-choose-us" className="scroll-mt-20 bg-[var(--surface)] py-6 sm:py-8">
+    <section id="why-choose-us" className="scroll-mt-20 bg-[var(--surface)] py-5 sm:py-8">
       <Container>
 
-        <div className="mb-5 text-center sm:mb-10">
+        <div className="mb-4 text-center sm:mb-8">
 
-          <p className="text-sm uppercase tracking-[0.35em] text-[var(--burgundy)]">
+          <p className="text-xs uppercase tracking-[0.25em] text-[var(--burgundy)] sm:text-sm">
             Why Choose Us
           </p>
 
-          <h2 className="mt-4 font-serif text-2xl font-bold sm:text-4xl">
+          <h2 className="mt-2 font-serif text-lg font-bold leading-tight tracking-normal sm:mt-4 sm:text-4xl">
             {settings?.why_choose_us_title ??
               "Crafted for Modern Royalty"}
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-[var(--muted)]">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)] sm:mt-5 sm:text-base">
             {settings?.why_choose_us_subtitle ??
               "We blend heritage craftsmanship with contemporary design to create clothing that makes every celebration unforgettable."}
           </p>
@@ -64,7 +64,7 @@ export default function WhyChooseUs({ settings }: Props) {
           {features.map((feature) => (
             <article
               key={feature.title}
-              className="rounded-3xl bg-white p-5 text-center shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-xl"
+              className="rounded-2xl bg-white p-4 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-5"
             >
               <div className="text-5xl">
                 {feature.icon}

@@ -45,7 +45,8 @@ export default function EditProductModal({
 
   const [color, setColor] = useState("");
   const [price, setPrice] = useState("");
-  const [sizes, setSizes] = useState({
+  const [sizes, setSizes] = useState<Record<string, string>>({
+  "Free Size": "",
   "32": "",
   "34": "",
   "36": "",
@@ -136,14 +137,15 @@ export default function EditProductModal({
 
       setPrice(product.price.toString());
       setSizes({
-          "32": product.sizes?.["32"] ?? "",
-          "34": product.sizes?.["34"] ?? "",
-          "36": product.sizes?.["36"] ?? "",
-          "38": product.sizes?.["38"] ?? "",
-          "40": product.sizes?.["40"] ?? "",
-          "42": product.sizes?.["42"] ?? "",
-          "44": product.sizes?.["44"] ?? "",
-          "46": product.sizes?.["46"] ?? "",
+        "Free Size": String(product.sizes?.["Free Size"] ?? ""),
+        "32": String(product.sizes?.["32"] ?? ""),
+        "34": String(product.sizes?.["34"] ?? ""),
+        "36": String(product.sizes?.["36"] ?? ""),
+        "38": String(product.sizes?.["38"] ?? ""),
+        "40": String(product.sizes?.["40"] ?? ""),
+        "42": String(product.sizes?.["42"] ?? ""),
+        "44": String(product.sizes?.["44"] ?? ""),
+        "46": String(product.sizes?.["46"] ?? ""),
         });
 
       setDescription(product.description ?? "");

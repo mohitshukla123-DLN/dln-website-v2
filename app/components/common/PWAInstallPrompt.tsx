@@ -260,8 +260,11 @@ export default function PWAInstallPrompt() {
           </button>
 
           {/* Text */}
-          <p className="min-w-0 flex-1 text-sm font-semibold leading-5 text-gray-900">
-            Install Dress Like Nawaabs App
+          <p className="min-w-0 flex-1 text-sm font-normal leading-5 text-gray-900">
+            Install{" "}
+            <strong className="font-semibold">
+              Dress Like Nawaabs App
+            </strong>
             <span className="font-normal text-gray-700">
               {" "}
               for quick access.

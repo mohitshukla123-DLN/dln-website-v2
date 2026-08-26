@@ -6,28 +6,30 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default function ProtectedRoute({
-  children,
-}: Props) {
+const ADMIN_USER_ID = "46de4026-8db4-4200-be4f-aa7941abf861";
+
+export default function ProtectedRoute({ children }: Props) {
   const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] =
-    useState(false);
+  const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
     let mounted = true;
 
-    async function checkSession() {
+    async function checkAdmin() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
       if (!mounted) return;
 
-      setAuthenticated(!!session);
+      const isAdmin =
+        session?.user?.id === ADMIN_USER_ID;
+
+      setAuthorized(isAdmin);
       setLoading(false);
     }
 
-    checkSession();
+    checkAdmin();
 
     const {
       data: { subscription },
@@ -35,7 +37,10 @@ export default function ProtectedRoute({
       (_event, session) => {
         if (!mounted) return;
 
-        setAuthenticated(!!session);
+        const isAdmin =
+          session?.user?.id === ADMIN_USER_ID;
+
+        setAuthorized(isAdmin);
         setLoading(false);
       }
     );
@@ -56,7 +61,7 @@ export default function ProtectedRoute({
     );
   }
 
-  if (!authenticated) {
+  if (!authorized) {
     return (
       <Navigate
         to="/admin/login"

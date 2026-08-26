@@ -22,7 +22,7 @@ export default function Newsletter({ settings }: Props) {
         Stay Updated
       </p>
 
-      <h2 className="mt-4 font-serif text-3xl font-normal leading-tight tracking-wide sm:mt-5 sm:text-5xl">
+      <h2 className="mt-2 font-serif text-lg font-bold leading-tight tracking-normal sm:mt-4 sm:text-4xl">
         {settings?.newsletter_title ??
           "Join the Dress Like Nawaabs Family"}
       </h2>

@@ -18,7 +18,6 @@ import ProductSpecifications from "../components/product/ProductSpecifications";
 import ProductReviews from "../components/product/ProductReviews";
 import ProductFAQ from "../components/product/ProductFAQ";
 import ProductCard from "../components/product/ProductCard";
-import ProductShare from "../components/product/ProductShare";
 import {getWishlist,toggleWishlist,} from "../lib/wishlist";
 
 import SEO from "../components/common/SEO";
@@ -242,9 +241,8 @@ export default function ProductPage() {
         ].join(", ")}
       />
 
-      <section className="py-10 sm:py-14 lg:py-16">
-        <Container>
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
+        <Container className="pt-2 sm:pt-5 lg:pt-8">
+          <div className="grid grid-cols-1 items-start gap-5 sm:gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10">
 
             <div className="relative">
               <ProductGallery
@@ -284,8 +282,7 @@ export default function ProductPage() {
               </button>
             </div>
 
-            <div>
-
+            <div className="min-w-0 pt-0 lg:pt-1">
               <ProductInfo
                 category={product.category}
                 name={product.name}
@@ -310,13 +307,29 @@ export default function ProductPage() {
               <ProductActions
                 product={product}
                 selectedSize={selectedSize}
-              />
+                onShare={async () => {
+                  const url = window.location.href;
 
-              <div className="mt-4">
-                <ProductShare
-                  title={product.name}
-                />
-              </div>
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: product.name,
+                        url,
+                      });
+                    } catch {
+                      // User cancelled the share sheet.
+                    }
+
+                    return;
+                  }
+
+                  try {
+                    await navigator.clipboard.writeText(url);
+                  } catch {
+                    // Clipboard unavailable.
+                  }
+                }}
+              />
 
               <ProductDescription
                 description={product.description}
@@ -348,18 +361,18 @@ export default function ProductPage() {
 
             </div>
 
-          </div>
-                  </Container>
+           </div>
+</Container>
 
         {relatedProducts.length > 0 && (
-          <section className="mt-24">
+          <section className="mt-16">
             <Container>
 
-              <h2 className="mb-10 text-4xl font-bold">
+              <h2 className="mb-6 font-serif text-2xl font-bold sm:text-3xl">
                 You May Also Like
               </h2>
 
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {relatedProducts.map((item) => (
                   <ProductCard
                     key={item.id}
@@ -400,8 +413,6 @@ export default function ProductPage() {
             onImageChange={setActiveImage}
           />
         </Suspense>
-
-      </section>
     </>
   );
 }

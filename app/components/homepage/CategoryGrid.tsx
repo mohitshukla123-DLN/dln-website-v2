@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import type { HomepageSettings } from "../../types/homepage";
 import Container from "../ui/Container";
 import CategoryCard from "./CategoryCard";
-import { getCategories, type Category as DbCategory } from "../../lib/categories";
+import {
+  getCategories,
+  type Category as DbCategory,
+} from "../../lib/categories";
+import { getProducts } from "../../lib/products";
+
 
 interface Props {
   settings: HomepageSettings | null;
@@ -10,46 +15,72 @@ interface Props {
 
 export default function CategoryGrid({ settings }: Props) {
   const [categories, setCategories] = useState<DbCategory[]>([]);
+  const [categoryImages, setCategoryImages] = useState<
+    Record<string, string[]>
+  >({});
 
   useEffect(() => {
-  async function loadCategories() {
-    const categoryData = await getCategories();
+    async function loadCategories() {
+      const categoryData = await getCategories();
+      setCategories(categoryData);
 
-    console.log("Featured categories rendered:", categoryData);
+      const products = await getProducts();
 
-    setCategories(categoryData);
-  }
+      const imagesByCategory: Record<string, string[]> = {};
 
-  loadCategories();
-}, []);
+      for (const product of products) {
+        const key = product.category?.trim().toLowerCase();
+        if (!key) continue;
 
-  if (settings?.featured_categories_enabled === false) {
-    return null;
-  }
+        const images = [
+          ...(product.images ?? []),
+          product.image,
+        ].filter(
+          (image): image is string =>
+            typeof image === "string" && image.trim().length > 0
+        );
+
+        if (!imagesByCategory[key]) {
+          imagesByCategory[key] = [];
+        }
+
+        imagesByCategory[key].push(...images);
+      }
+
+      for (const key of Object.keys(imagesByCategory)) {
+        imagesByCategory[key] = Array.from(
+          new Set(imagesByCategory[key])
+        );
+      }
+
+      setCategoryImages(imagesByCategory);
+    }
+
+    loadCategories();
+  }, []);
 
   return (
-    <section
-      id="featured-categories"
-      className="scroll-mt-20 bg-[var(--background)] py-6 sm:py-12"
-    >
+    <section className="py-10 sm:py-14 lg:py-16">
       <Container>
-        <div className="mb-5 text-center sm:mb-8">
-          <h2 className="font-serif text-3xl font-bold sm:text-5xl">
-            {settings?.featured_categories_title || "Shop by Category"}
-          </h2>
-
-          <p className="mt-3 text-[var(--muted)] sm:mt-5">
-            {settings?.featured_categories_subtitle ||
-              "Explore our handcrafted collections."}
+        <div className="mb-6 text-center sm:mb-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--burgundy)]">
+            Featured Categories
           </p>
+
+          <h2 className="mt-2 font-serif text-xl font-bold leading-tight tracking-normal sm:mt-4 sm:text-4xl">
+            Explore Our Collections
+          </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-8 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
           {categories.map((category) => {
-          const categoryImage =
-            category.image ||
-            category.banner ||
-            "";
+            const categoryImage =
+              category.image?.trim() ||
+              category.banner?.trim() ||
+              "";
+
+            const productImages =
+              categoryImages[category.name.toLowerCase()] ?? [];
 
             return (
               <CategoryCard
@@ -63,7 +94,9 @@ export default function CategoryGrid({ settings }: Props) {
                   description: "",
                   subCategories: [],
                 }}
-                productImages={[]}
+                productImages={
+                    categoryImages[category.name.trim().toLowerCase()] ?? []
+                  }
               />
             );
           })}

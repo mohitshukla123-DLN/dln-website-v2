@@ -39,7 +39,7 @@ export interface AdminProduct {
 
   care: string | null;
 
-  sizes: string[];
+  sizes: Record<string, number>;
 
   image: string | null;
   images: string[];

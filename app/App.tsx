@@ -26,6 +26,7 @@ const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
 const AdminHomepagePage = lazy(() => import("./pages/admin/AdminHomepagePage"));
 const AdminCategoriesPage = lazy(() => import("./pages/admin/AdminCategoriesPage"));
 const AdminSiteSettingsPage = lazy(() => import("./pages/admin/AdminSiteSettingsPage"));
+const AdminPoliciesPage = lazy(() => import("./pages/admin/AdminPoliciesPage"));
 const AdminMediaLibraryPage = lazy(() => import("./pages/admin/Admin/AdminMediaLibraryPage"));
 const AdminFAQsPage = lazy(() => import("./pages/admin/AdminFAQsPage"));
 
@@ -199,6 +200,15 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <AdminSiteSettingsPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/policies"
+            element={
+              <ProtectedRoute>
+                <AdminPoliciesPage />
               </ProtectedRoute>
             }
           />

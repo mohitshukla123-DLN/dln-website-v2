@@ -17,16 +17,16 @@ export default function ProductInfo({
 }: Props) {
   return (
     <>
-      <p className="text-sm uppercase tracking-[0.35em] text-[var(--burgundy)]">
+      <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--burgundy)] sm:text-xs sm:tracking-[0.28em]">
         {category}
       </p>
 
-      <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+      <h1 className="mt-1.5 text-lg font-bold leading-tight sm:mt-3 sm:text-4xl lg:text-5xl">
         {name}
       </h1>
 
-      <div className="mt-4 flex items-center gap-3">
-        <span className="text-xl text-yellow-500">
+      <div className="mt-2 flex items-center gap-2 sm:mt-4 sm:gap-3">
+        <span className="text-base text-yellow-500 sm:text-xl">
           ★★★★★
         </span>
 
@@ -35,12 +35,12 @@ export default function ProductInfo({
         </span>
       </div>
 
-      <p className="mt-4 text-3xl font-bold text-black sm:text-4xl">
+      <p className="mt-1.5 text-lg font-bold text-black sm:mt-4 sm:text-4xl">
         ₹{price.toLocaleString("en-IN")}
       </p>
 
       {color && (
-        <p className="mt-3 text-sm text-[var(--muted)]">
+        <p className="mt-2 text-xs text-[var(--muted)] sm:mt-3 sm:text-sm">
           <span className="font-semibold text-[var(--foreground)]">
             Color:
           </span>{" "}

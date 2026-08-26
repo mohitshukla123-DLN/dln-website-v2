@@ -53,6 +53,11 @@ export default function AdminDashboardPage() {
     description: "Logo, Footer, Contact, SEO",
     link: "/admin/site-settings",
     },
+    {
+      title: "Policies",
+      description: "Manage website policies and legal information.",
+      link: "/admin/policies",
+    },
   ];
 
   return (

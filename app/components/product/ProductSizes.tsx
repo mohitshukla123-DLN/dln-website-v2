@@ -18,25 +18,42 @@ export default function ProductSizes({
     "42",
     "44",
     "46",
+    "Free Size",
   ];
 
   return (
-    <div className="mt-7">
-      <p className="mb-4 font-semibold">
-        Select Size
-      </p>
+    <div className="mt-4 sm:mt-5">
+      <div className="mb-3 flex items-center justify-between gap-3">
+          <p className="text-sm font-semibold sm:text-base">
+            Select Size{" "}
+            <span className="font-normal text-[var(--muted)]">
+              (Inches)
+            </span>
+          </p>
 
-      <div className="flex flex-wrap gap-3">
+          <a
+            href="/size-guide"
+            className="text-sm font-medium text-[var(--burgundy)] underline underline-offset-4"
+          >
+            Size Guide
+          </a>
+        </div>
+
+        <p className="mb-3 text-[11px] text-[var(--muted)] sm:text-xs">
+          Measurements in inches
+        </p>
+
+      <div className="flex flex-wrap gap-2">
         {allSizes.map((size) => {
           const stock = Number(sizes?.[size] ?? 0);
 
           return (
             <button
-              key={size}
+              key={size === "Free Size" ? size : `${size}"`}
               type="button"
               disabled={stock === 0}
               onClick={() => setSelectedSize(size)}
-              className={`rounded-xl border px-5 py-3 transition
+              className={`min-w-[44px] rounded-lg border px-3 py-2 text-sm font-medium transition active:scale-[0.98] sm:min-w-[58px] sm:rounded-xl sm:px-4 sm:py-2.5
                 ${
                   selectedSize === size
                     ? "border-[var(--burgundy)] bg-[var(--burgundy)] text-white"

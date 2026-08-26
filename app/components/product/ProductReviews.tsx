@@ -48,35 +48,31 @@ export default function ProductReviews({
   };
 
   return (
-    <section className="mt-16">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold sm:text-3xl">
-            Customer Ratings
-          </h2>
+    <section className="mt-6 sm:mt-16">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+      <div className="min-w-0">
+        <h2 className="text-lg font-bold sm:text-3xl">
+          Customer Ratings
+        </h2>
 
-          <p className="mt-2 text-[var(--muted)]">
-            Based on {reviews.length}{" "}
-            {reviews.length === 1
-              ? "Rating"
-              : "Ratings"}
+        <p className="mt-0.5 text-[11px] text-[var(--muted)] sm:mt-2 sm:text-base">
+          Based on {reviews.length}{" "}
+          {reviews.length === 1 ? "Rating" : "Ratings"}
+        </p>
+      </div>
+
+      {reviews.length > 0 && (
+        <div className="shrink-0 text-right">
+          <div className="text-base tracking-wide text-yellow-500 sm:text-3xl">
+            {"★".repeat(Math.round(Number(average)))}
+          </div>
+
+          <p className="text-xs font-semibold sm:text-lg">
+            {average} / 5
           </p>
         </div>
-
-        {reviews.length > 0 && (
-          <div className="text-right">
-            <div className="text-3xl text-yellow-500">
-              {"★".repeat(
-                Math.round(Number(average))
-              )}
-            </div>
-
-            <p className="font-semibold text-lg">
-              {average} / 5
-            </p>
-          </div>
-        )}
-      </div>
+      )}
+    </div>
 
       {reviews.length === 0 ? (
         <p className="mt-8 text-[var(--muted)]">
@@ -85,18 +81,18 @@ export default function ProductReviews({
         </p>
       ) : (
         <>
-          <div className="mt-8 space-y-4">
+          <div className="mt-3 space-y-2 sm:mt-8 sm:space-y-4">
             {[5, 4, 3, 2, 1].map(
               (stars) => (
                 <div
                   key={stars}
-                  className="flex items-center gap-4"
+                  className="flex items-center gap-2 sm:gap-4"
                 >
-                  <span className="w-16 text-sm font-medium">
+                  <span className="w-12 text-xs font-medium sm:w-16 sm:text-sm">
                     {"★".repeat(stars)}
                   </span>
 
-                  <div className="h-3 flex-1 overflow-hidden rounded-full bg-gray-200">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-200 sm:h-3">
                     <div
                       className="h-full rounded-full bg-yellow-500"
                       style={{
@@ -114,7 +110,7 @@ export default function ProductReviews({
                     />
                   </div>
 
-                  <span className="w-6 text-right text-sm">
+                  <span className="w-5 text-right text-xs sm:w-6 sm:text-sm">
                     {
                       ratingCounts[
                         stars as keyof typeof ratingCounts
@@ -126,13 +122,13 @@ export default function ProductReviews({
             )}
           </div>
 
-          <div className="mt-8 text-center">
+          <div className="mt-3 text-center sm:mt-8">
             <button
               type="button"
               onClick={() =>
                 setExpanded(!expanded)
               }
-              className="rounded-xl border border-black/10 px-5 py-3 font-medium transition hover:bg-gray-50"
+              className="rounded-lg border border-black/10 px-3 py-2 text-xs font-medium transition hover:bg-gray-50 sm:rounded-xl sm:px-5 sm:py-3 sm:text-sm"
             >
               {expanded
                 ? "▲ Hide Individual Ratings"
@@ -141,12 +137,12 @@ export default function ProductReviews({
           </div>
 
           {expanded && (
-            <div className="mt-8 space-y-4">
+            <div className="mt-5 space-y-3 sm:mt-8 sm:space-y-4">
               {sortedReviews.map(
                 (review, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between rounded-xl border border-black/10 p-5"
+                    className="flex items-center justify-between rounded-xl border border-black/10 p-4 sm:p-5"
                   >
                     <span className="font-medium">
                       {
