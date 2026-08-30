@@ -71,7 +71,7 @@ export default function Footer() {
             <div className="mt-2 flex items-center justify-center gap-1">
               {whatsapp && (
                 <a
-                  href={`https://wa.me/${whatsapp.replace(/[^+\d]/g, "")}`}
+                  href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}
                   target="_blank"
                   rel="noreferrer"
                   aria-label={`WhatsApp ${whatsapp}`}
