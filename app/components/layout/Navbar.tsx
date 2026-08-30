@@ -53,15 +53,16 @@ export default function Navbar() {
             About Us
           </NavLink>
 
+          <NavLink to="/policies" className={navLinkClass}>
+            Policies
+          </NavLink>
+
           <NavLink to="/contact" className={navLinkClass}>
             Contact
           </NavLink>
+
           <NavLink to="/wishlist" className={navLinkClass}>
             Wishlist
-          </NavLink>
-
-          <NavLink to="/policies" className={navLinkClass}>
-            Policies
           </NavLink>
 
           <Link
@@ -123,28 +124,28 @@ export default function Navbar() {
             </NavLink>
 
             <NavLink
-              to="/contact"
-              className={navLinkClass}
-              onClick={() => setMenuOpen(false)}
-            >
-              Contact
-            </NavLink>
+                to="/contact"
+                className={navLinkClass}
+                onClick={() => setMenuOpen(false)}
+              >
+                Contact
+              </NavLink>
 
-            <NavLink
-              to="/wishlist"
-              className={navLinkClass}
-              onClick={() => setMenuOpen(false)}
-            >
-              Wishlist
-            </NavLink>
+              <NavLink
+                to="/wishlist"
+                className={navLinkClass}
+                onClick={() => setMenuOpen(false)}
+              >
+                Wishlist
+              </NavLink>
 
-            <NavLink
-              to="/policies"
-              className={navLinkClass}
-              onClick={() => setMenuOpen(false)}
-            >
-              Policies
-            </NavLink>
+              <NavLink
+                to="/policies"
+                className={navLinkClass}
+                onClick={() => setMenuOpen(false)}
+              >
+                Policies
+              </NavLink>
 
             <Link
               to="/shop"
